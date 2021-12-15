@@ -32,7 +32,7 @@ import kotlin.concurrent.fixedRateTimer
 @Composable
 @Preview
 fun App() {
-    var PRESSURE by remember { mutableStateOf(100) }
+    var PRESSURE by remember { mutableStateOf(0) }
 
 
     fixedRateTimer("timer", false, 5000L,2000) {
@@ -45,7 +45,7 @@ fun App() {
     MaterialTheme {
         Row{
             leftPiece()
-            centerPiece(1,1,1,1,11,23,1,1)
+            centerPiece(PRESSURE,(PRESSURE*0.4).toInt(),1,1,11,23,1,1)
             rightPiece()
         }
 
