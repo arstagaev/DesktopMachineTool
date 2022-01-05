@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +31,10 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 @Composable
-fun GaugeView2(SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int) {
+fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int) {
+    var SIZE_ALL = input_SIZE_ALL
     var angle = 0f
     if (PRESSURE_Input <= maxValue) {
         if (PRESSURE_Input <= minValue) {
@@ -68,8 +71,8 @@ fun GaugeView2(SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int
     //var WIDTH = size
 
     Box(
-        modifier = Modifier.size(SIZE_ALL.dp).border(BorderStroke(2.dp, Color(57, 57, 57)))
-
+        modifier = Modifier.size(SIZE_ALL.dp).border(BorderStroke(2.dp, Color(57, 57, 57))),
+        contentAlignment = Alignment.Center
     ) {
 //        val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
         Text("${PRESSURE_Input}", modifier = Modifier
@@ -102,6 +105,19 @@ fun GaugeView2(SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int
 //            for (i in 0..4) {
 //                drawBackgroundIndicators(path, size, i, gaugeWidth)
 //            }
+            val canvasSize = size
+            val canvasWidth = size.width
+            val canvasHeight = size.height
+
+            println("## h ${canvasHeight} w ${canvasWidth}")
+//            drawRect(
+//                color = Color.Gray,
+//                topLeft = Offset(x = 0F, y = 0F),
+//                size = this.size
+//            )
+
+            SIZE_ALL = canvasWidth.toInt()
+
             drawCircle(
                 color = Color.Green,
                 radius = 8.dp.toPx(),
@@ -168,8 +184,7 @@ fun GaugeView2(SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int
                 center = Offset(calcNumGaug(45f,SIZE_ALL).x ,calcNumGaug(45f,SIZE_ALL).y)
             )
 
-            var angle = 0f
-            val textSize = 16.sp.toPx()
+
             val textPaint = Paint().asFrameworkPaint()
 
             drawIntoCanvas { canvas ->
@@ -262,8 +277,25 @@ fun GaugeView2(SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int
 data class XY(var x : Float, var y : Float)
 
 fun calcNumGaug(angle : Float, size : Int) : XY {
-    //        cx cy              R
-    var X = (size/2  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
-    var Y = (size/2  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
+
+    //        cx cy              R (has been 0.4f for mac i guess)
+    var X = (size / 2f  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
+    var Y = (size / 2f  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
+
+    println(" >> ${size}  x:${X} y:${Y} ")
     return XY(X,Y)
+}
+
+
+
+
+data class XY_DP(var x : Dp, var y : Dp)
+fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
+
+    //        cx cy              R (has been 0.4f for mac i guess)
+    var X = (size / 2f  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
+    var Y = (size / 2f  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
+
+    println(" >> ${size}  x:${X} y:${Y} ")
+    return XY_DP(X.dp,Y.dp)
 }
