@@ -37,520 +37,56 @@ fun seekbarSetup(
     var position6SeekBar by remember { mutableStateOf(10) }
     var position7SeekBar by remember { mutableStateOf(10) }
     var position8SeekBar by remember { mutableStateOf(10) }
-
-
     Row(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        Column(
-            modifier = Modifier.padding(0.dp, 1.dp)
-                .weight(1f)
-                .height(120.dp)
-                .background(Color.Red)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
+        justBar("Канал 1",pressure1,duration)
+        justBar("Канал 2",pressure2,duration)
+        justBar("Канал 3",pressure2,duration)
+        justBar("Канал 4",pressure2,duration)
 
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                    )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-            Row(
-                modifier = Modifier.height(20.dp)
-            ) {
-                Seekbar(
-                    position = position1SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position1SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.Transparent)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position2SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position2SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position3SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position3SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position4SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position4SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
     }
-    ///////////
-
     Row(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
+        justBar("Канал 5",pressure1,duration)
+        justBar("Канал 6",pressure2,duration)
+        justBar("Канал 7",pressure2,duration)
+        justBar("Канал 8",pressure2,duration)
 
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position5SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position5SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.Transparent)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position6SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position6SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position7SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position7SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(0.dp, 10.dp)
-                .weight(1f)
-                .fillMaxHeight()
-                .background(Color.White)
-                .padding(5.dp)
-            //.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                    Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
-                }
-
-                Spacer(modifier = Modifier.width(3.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Green,
-
-                        )
-                ) {
-                    Text("+")
-                }
-                //Spacer(modifier = Modifier.width(20.dp))
-                Button(
-                    onClick = { /* Do something! */ },
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Red,
-
-                        )
-                ) {
-                    Text("-")
-                }
-
-            }
-
-
-
-            Row(
-                modifier = Modifier
-            ) {
-                Seekbar(
-                    position = position8SeekBar,
-                    duration = duration.collectAsState(),
-                    onNewProgress = { },
-                    onDragStart = { },
-                    onDragEnd = {
-                        position8SeekBar = it.toInt()
-                    }
-                )
-            }
-        }
     }
+
+
+
 }
 
 
 @Composable
-fun justBar() {
+fun justBar(channelName : String,pressure1: Int, duration: MutableStateFlow<Long>,) {
     Column(
         modifier = Modifier.padding(0.dp, 1.dp)
-            .weight(1f)
-            .height(120.dp)
-            .background(Color.Red)
+            .width(200.dp)
+            .height(90.dp)
+            .background(Color.White)
             .padding(5.dp)
         //.fillMaxWidth()
     ) {
+        var position1SeekBar by remember { mutableStateOf(10) }
+
         Row(
             modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.DarkGray),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Channel 1     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                Text(" Current: ${pressure1} \n PWN: 1209", fontSize = 12.sp)
+                Text("${channelName}     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
+                Text(" Current: ${pressure1} \n PWN: 0", fontSize = 12.sp)
             }
 
             Spacer(modifier = Modifier.width(3.dp))

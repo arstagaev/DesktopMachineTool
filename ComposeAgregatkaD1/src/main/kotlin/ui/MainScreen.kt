@@ -19,7 +19,7 @@ fun App() {
 
     fixedRateTimer("timer", false, 5000L,2000) {
         PRESSURE = (0..90).random()
-        print("well ${PRESSURE}")
+        //print("well ${PRESSURE}")
     }
 
 

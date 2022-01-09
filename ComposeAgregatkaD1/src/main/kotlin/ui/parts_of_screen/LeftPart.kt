@@ -15,14 +15,25 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.fazecast.jSerialComm.SerialPort
+import initSerialCommunication
+import serialPort
+import stopSerialCommunication
+import utils.COM_PORT
+import utils.DELAY_FOR_GET_DATA
+import utils.getCommaports
 
-val textStateMin = mutableStateOf(TextFieldValue("0"))
-val textStateMax = mutableStateOf(TextFieldValue("4096"))
+var textStateMin = mutableStateOf(TextFieldValue("0"))
+var textStateMax = mutableStateOf(TextFieldValue("4096"))
+var textCOMPORT= mutableStateOf(TextFieldValue(COM_PORT))
+var textDelay = mutableStateOf(TextFieldValue("200"))
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun leftPiece(){
-    val openDialog = remember { mutableStateOf(false)  }
+    var openDialog = remember { mutableStateOf(false)  }
+    val openDialogSettings = remember { mutableStateOf(false)  }
     if (openDialog.value) {
 
         AlertDialog(
@@ -41,7 +52,6 @@ fun leftPiece(){
                     modifier = Modifier.width(300.dp).height(300.dp).background(Color.Gray),
                     verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
 
                     Text(text = "Set Min & Min value", color = Color.Green)
                     TextField(
@@ -90,6 +100,66 @@ fun leftPiece(){
             }
         )
     }
+    if (openDialogSettings.value == true) {
+
+        AlertDialog(
+            backgroundColor = Color.Black,
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = { Text(text = "Main Setup", color = Color.Green) },
+            text = {
+                Column (
+                    modifier = Modifier.width(300.dp).height(300.dp).background(Color.Gray),
+                    verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(text = "Choose ComPort, type like: COM3", color = Color.Green)
+                    TextField(
+                        value = textCOMPORT.value,
+                        onValueChange = {
+                            //it.text.
+                            if (it.text.toIntOrNull() != null) {
+                                textCOMPORT.value = it
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+                    Text(text = "Задержка для стрелки", color = Color.Green)
+                    TextField(
+                        value = textDelay.value,
+                        onValueChange = {
+                            //it.text.
+                            if (it.text.toIntOrNull() != null) {
+                                textDelay.value = it
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+
+                    onClick = {
+                        initSerialCommunication(textCOMPORT.value.text)
+                        openDialogSettings.value = false
+                    }) {
+                    Text("Start")
+                }
+            },
+            dismissButton = {
+                Button(
+
+                    onClick = {
+                        //stopSerialCommunication()
+                        openDialogSettings.value = false
+                    }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
     Column (
         modifier = Modifier //.padding(10.dp)
             .width(200.dp)
@@ -97,9 +167,34 @@ fun leftPiece(){
             .background(Color.White)
 
     ) {
-        Text("Agregatka",
-            modifier = Modifier.padding(4.dp), fontFamily = FontFamily.Monospace)
+        Text("Порт: ${COM_PORT}",
+            modifier = Modifier.width(200.dp).height(30.dp).padding(4.dp),fontSize = 20.sp, fontFamily = FontFamily.Monospace, )
 
+        Text("Доступные порты:${getCommaports()}",
+            modifier = Modifier.width(200.dp).height(40.dp).padding(4.dp), fontFamily = FontFamily.Monospace, fontSize = 15.sp)
+//        Text("Port is open:${getCommaports()}",
+//            modifier = Modifier.width(200.dp).height(40.dp).padding(4.dp), fontFamily = FontFamily.Monospace, fontSize = 15.sp)
+
+        Row(modifier = Modifier.width(IntrinsicSize.Min).height(90.dp)){
+            Button(
+                onClick = { openDialogSettings.value = true },
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Gray,contentColor = Color.Black),
+                modifier = Modifier
+            ) {
+                Text("▶", modifier = Modifier.size(20.dp))
+            }
+            Button(
+
+                onClick = { stopSerialCommunication() },
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Gray,contentColor = Color.Black),
+                modifier = Modifier
+            ) {
+                Text("✖", modifier = Modifier.size(20.dp))
+            }
+            //initSerialCommunication("COM3")
+        }
         Button(
 
             onClick = { openDialog.value = true },
@@ -107,7 +202,7 @@ fun leftPiece(){
                 backgroundColor = Color.Gray,contentColor = Color.Black),
             modifier = Modifier.padding(10.dp)
         ) {
-            Text("Set up Min & Max")
+            Text("Установить Min и Max")
         }
         Button(
 

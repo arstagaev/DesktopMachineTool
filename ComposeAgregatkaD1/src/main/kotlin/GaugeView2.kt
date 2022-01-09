@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
+import ui.parts_of_screen.textDelay
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -58,7 +59,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
             animatedPercentage.animateTo(
                 targetValue = angle.toFloat(),
                 animationSpec = tween(
-                    durationMillis = 200,
+                    durationMillis = textDelay.value.text.toInt(),
                     easing = FastOutLinearInEasing
 //                    easing = {
 //                        BounceInterpolator().getInterpolation(it)
@@ -71,7 +72,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
     //var WIDTH = size
 
     Box(
-        modifier = Modifier.size(SIZE_ALL.dp).border(BorderStroke(2.dp, Color(57, 57, 57))),
+        modifier = Modifier.size(SIZE_ALL.dp).border(BorderStroke(2.dp, Color.Gray)),
         contentAlignment = Alignment.Center
     ) {
 //        val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
@@ -91,7 +92,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
         Canvas(
             modifier = Modifier
                 .padding(2.dp)
-                .size(SIZE_ALL.dp).border(BorderStroke(4.dp, Color.Red))
+                .size(SIZE_ALL.dp).border(BorderStroke(4.dp, Color.DarkGray))
         ) {
 
 
@@ -109,7 +110,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
             val canvasWidth = size.width
             val canvasHeight = size.height
 
-            println("## h ${canvasHeight} w ${canvasWidth}")
+            //println("## h ${canvasHeight} w ${canvasWidth}")
 //            drawRect(
 //                color = Color.Gray,
 //                topLeft = Offset(x = 0F, y = 0F),
@@ -282,7 +283,7 @@ fun calcNumGaug(angle : Float, size : Int) : XY {
     var X = (size / 2f  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
     var Y = (size / 2f  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
 
-    println(" >> ${size}  x:${X} y:${Y} ")
+    //println(" >> ${size}  x:${X} y:${Y} ")
     return XY(X,Y)
 }
 
