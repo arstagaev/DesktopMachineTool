@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.sp
 import com.fazecast.jSerialComm.SerialPort
 import initSerialCommunication
 import serialPort
+import showMeSnackBar
 import stopSerialCommunication
 import utils.COM_PORT
 import utils.DELAY_FOR_GET_DATA
 import utils.getCommaports
+import visiMainScr
 
 var textStateMin = mutableStateOf(TextFieldValue("0"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
@@ -31,7 +33,8 @@ var textDelay = mutableStateOf(TextFieldValue("200"))
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun leftPiece(){
+fun leftPiece(visibilityOfMainScreen: Boolean) {
+
     var openDialog = remember { mutableStateOf(false)  }
     val openDialogSettings = remember { mutableStateOf(false)  }
     if (openDialog.value) {
@@ -200,7 +203,7 @@ fun leftPiece(){
             onClick = { openDialog.value = true },
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = Color.Gray,contentColor = Color.Black),
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(5.dp)
         ) {
             Text("Установить Min и Max")
         }
@@ -209,7 +212,7 @@ fun leftPiece(){
             onClick = { /* Do something! */ },
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = Color.Gray, contentColor = Color.Black),
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(5.dp)
         ) {
             Text("Set up locations of setting file")
         }
@@ -218,9 +221,22 @@ fun leftPiece(){
             onClick = { /* Do something! */ },
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = Color.Gray,contentColor = Color.Black),
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(5.dp)
         ) {
             Text("Scenarios")
+        }
+        Button(
+            onClick = {
+                visiMainScr.value = !visiMainScr.value
+                if (visiMainScr.value) {
+                    showMeSnackBar("Это графики",Color.White)
+                }
+            },
+            colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.Gray,contentColor = Color.Black),
+            modifier = Modifier.padding(5.dp)
+        ) {
+            Text("Chart")
         }
 
     }

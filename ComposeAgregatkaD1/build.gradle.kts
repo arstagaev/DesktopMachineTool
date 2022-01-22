@@ -13,13 +13,25 @@ version = "1.0"
 repositories {
     google()
     mavenCentral()
+    jcenter()
+    maven ("https://jitpack.io" )
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven ("https://repo1.maven.org/maven2/")
 }
 
 dependencies {
     implementation(compose.desktop.currentOs)
     //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
     implementation("com.fazecast:jSerialComm:2.7.0")
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation("org.apache.poi:poi:5.0.0")
+    //implementation("com.github.tehras:charts:beta-01")
+    //implementation("io.github.bytebeats:compose-charts:0.1.0")
+    // https://mvnrepository.com/artifact/jfree/jfreechart
+
+    implementation("org.jfree:jcommon:1.0.24")
+    implementation("org.jfree:jfreechart:1.5.3")
+
 }
 
 tasks.withType<KotlinCompile>() {

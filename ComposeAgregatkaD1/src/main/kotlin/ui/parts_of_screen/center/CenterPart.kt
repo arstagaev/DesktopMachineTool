@@ -15,12 +15,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import ui.parts_of_screen.center.support_elements.seekbarSetup
+import ui.parts_of_screen.center.support_elements.currentPanelSetup
 import ui.parts_of_screen.textStateMax
 import ui.parts_of_screen.textStateMin
 import utils.DELAY_FOR_GET_DATA
 import utils.dataChunkTrans
-import utils.firstGaugeData
 
 
 @Composable
@@ -103,7 +102,7 @@ fun centerPiece(
                 GaugeView2(200,pressure8X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
             }
 
-            seekbarSetup(
+            currentPanelSetup(
                 0,
                 0,
                 0,

@@ -8,6 +8,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import parsing.readExcelFile
 import ui.parts_of_screen.center.onesAndTens
 import utils.*
 
@@ -16,6 +17,7 @@ fun main() = singleWindowApplication (
     title = "Агрегатка Tech v.0.01", state = WindowState(size = DpSize(1000.dp, 800.dp))
 ) {
     getCommaports()
+    readExcelFile()
     App()
     //initSerialCommunication("COM3")
 }

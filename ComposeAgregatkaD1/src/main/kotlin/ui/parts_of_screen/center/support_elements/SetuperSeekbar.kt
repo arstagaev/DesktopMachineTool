@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
+import parsing.solenoids
+import showMeSnackBar
 
 @Composable
-fun seekbarSetup(
+fun currentPanelSetup(
     pressure1: Int,
     pressure2: Int,
     pressure3: Int,
@@ -37,16 +39,27 @@ fun seekbarSetup(
     var position6SeekBar by remember { mutableStateOf(10) }
     var position7SeekBar by remember { mutableStateOf(10) }
     var position8SeekBar by remember { mutableStateOf(10) }
+    if (solenoids.size<5){
+        showMeSnackBar("Excel error",Color.Red)
+    }else {
+        showMeSnackBar("Excel config parse success",Color.White)
+    }
     Row(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        justBar("Канал 1",pressure1,duration)
-        justBar("Канал 2",pressure2,duration)
-        justBar("Канал 3",pressure2,duration)
-        justBar("Канал 4",pressure2,duration)
+
+            justBar(solenoids[0].displayName,pressure1,duration)
+            justBar(solenoids[1].displayName,pressure2,duration)
+            justBar(solenoids[2].displayName,pressure2,duration)
+            justBar(solenoids[3].displayName,pressure2,duration)
+
+//            justBar("Канал 1",pressure1,duration)
+//            justBar("Канал 2",pressure2,duration)
+//            justBar("Канал 3",pressure2,duration)
+//            justBar("Канал 4",pressure2,duration)
 
     }
     Row(
@@ -55,10 +68,10 @@ fun seekbarSetup(
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        justBar("Канал 5",pressure1,duration)
-        justBar("Канал 6",pressure2,duration)
-        justBar("Канал 7",pressure2,duration)
-        justBar("Канал 8",pressure2,duration)
+        justBar(solenoids[4].displayName,pressure1,duration)
+        justBar(solenoids[5].displayName,pressure2,duration)
+        justBar(solenoids[6].displayName,pressure2,duration)
+        justBar(solenoids[7].displayName,pressure2,duration)
 
     }
 
@@ -85,8 +98,8 @@ fun justBar(channelName : String,pressure1: Int, duration: MutableStateFlow<Long
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("${channelName}     ", modifier = Modifier.padding(2.dp), fontSize = 12.sp)
-                Text(" Current: ${pressure1} \n PWN: 0", fontSize = 12.sp)
+                Text("${channelName}     ", modifier = Modifier.padding(2.dp), fontSize = 8.sp)
+                Text(" Current: ${pressure1} \n PWN: 0", fontSize = 7.sp)
             }
 
             Spacer(modifier = Modifier.width(3.dp))
