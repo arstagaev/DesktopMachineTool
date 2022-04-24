@@ -39,11 +39,11 @@ fun currentPanelSetup(
     var position6SeekBar by remember { mutableStateOf(10) }
     var position7SeekBar by remember { mutableStateOf(10) }
     var position8SeekBar by remember { mutableStateOf(10) }
-    if (solenoids.size<5){
-        showMeSnackBar("Excel error",Color.Red)
-    }else {
-        showMeSnackBar("Excel config parse success",Color.White)
-    }
+//    if (solenoids.size<5){
+//        showMeSnackBar("Excel error",Color.Red)
+//    }else {
+//        showMeSnackBar("Excel config parse success",Color.White)
+//    }
     Row(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)

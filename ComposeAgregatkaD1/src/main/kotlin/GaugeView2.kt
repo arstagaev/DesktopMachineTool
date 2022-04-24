@@ -34,7 +34,7 @@ import kotlin.math.sin
 
 
 @Composable
-fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int) {
+fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int,nameOfGauge : String) {
     var SIZE_ALL = input_SIZE_ALL
     var angle = 0f
     if (PRESSURE_Input <= maxValue) {
@@ -72,13 +72,21 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
     //var WIDTH = size
 
     Box(
-        modifier = Modifier.size(SIZE_ALL.dp).border(BorderStroke(2.dp, Color.Gray)),
+        modifier = Modifier
+            .width((SIZE_ALL).dp)
+            .height((SIZE_ALL+30).dp).border(BorderStroke(2.dp, Color.Gray)),
         contentAlignment = Alignment.Center
     ) {
 //        val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
-        Text("${PRESSURE_Input}", modifier = Modifier
+        Text(nameOfGauge, modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(10.dp)
+            //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+            , fontFamily = FontFamily.Cursive, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.LightGray
+        )
+        Text("${PRESSURE_Input}", modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(30.dp)
             //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
             , fontFamily = FontFamily.Default, fontSize = 30.sp, fontWeight = FontWeight.Bold
         )
@@ -92,6 +100,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
         Canvas(
             modifier = Modifier
                 .padding(2.dp)
+                .align(Alignment.TopCenter)
                 .size(SIZE_ALL.dp).border(BorderStroke(4.dp, Color.DarkGray))
         ) {
 

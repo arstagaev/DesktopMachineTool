@@ -72,7 +72,7 @@ fun readExcelFile() {
     for (i in 0 until wholeSheet[2].size-1) {
         solenoids.add(
             SolenoidHolder(
-                wholeSheet[2][i+1],
+                displayName = wholeSheet[2][i+1],
                 wholeSheet[3][i+1].toDouble().toInt(),
                 wholeSheet[3][i+1].toDouble().toInt(),
                 wholeSheet[4][i+1].toDouble().toInt(),
@@ -88,13 +88,13 @@ fun readExcelFile() {
     for (i in 0 until wholeSheet[14].size-1) {
         pressures.add(
             PressuresHolder(
-                wholeSheet[14][i+1],
-                wholeSheet[15][i+1].toDouble().toInt(),
-                wholeSheet[16][i+1].toDouble().toInt(),
-                wholeSheet[17][i+1].toDouble().toInt(),
-                wholeSheet[18][i+1],
-                wholeSheet[19][i+1],
-                wholeSheet[20][i+1]
+                displayName =  wholeSheet[14][i+1],
+                index =        wholeSheet[15][i+1].toDouble().toInt(),
+                maxValue =     wholeSheet[16][i+1].toDouble().toInt(),
+                tolerance =    wholeSheet[17][i+1].toDouble().toInt(),
+                unit =         wholeSheet[18][i+1],
+                commentString =wholeSheet[19][i+1],
+                prefferedColor=wholeSheet[20][i+1]
             )
         )
     }

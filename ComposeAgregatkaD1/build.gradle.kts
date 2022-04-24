@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation(compose.desktop.currentOs)
+    implementation(compose.desktop.windows_x64)
     //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
     implementation("com.fazecast:jSerialComm:2.7.0")
     // https://mvnrepository.com/artifact/org.apache.poi/poi
@@ -44,7 +44,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ComposeAgregatkaD1"
-            packageVersion = "1.0.0"
+            packageVersion = "1.1.3"
         }
     }
 }

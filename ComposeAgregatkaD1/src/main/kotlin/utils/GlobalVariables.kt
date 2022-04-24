@@ -14,7 +14,10 @@ var firstGaugeData  = MutableSharedFlow<Int>()
 //var seventhGaugeData  = MutableSharedFlow<Int>()
 //var eighthGaugeData = MutableSharedFlow<Int>()
 
-var dataChunkTrans = MutableSharedFlow<DataChunkG>()
+var longForChart   = arrayListOf<Int>()
+
+var dataChunkGauges   = MutableSharedFlow<DataChunkG>()
+var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>()
 
 data class DataChunkG(
     var firstGaugeData: Int,
@@ -26,3 +29,14 @@ data class DataChunkG(
     var seventhGaugeData: Int,
     var eighthGaugeData: Int
     )
+
+data class DataChunkCurrent(
+    var firstCurrentData: Int,
+    var secondCurrentData: Int,
+    var thirdCurrentData: Int,
+    var fourthCurrentData: Int,
+    var fifthCurrentData: Int,
+    var sixthCurrentData: Int,
+    var seventhCurrentData: Int,
+    var eighthCurrentData: Int
+)

@@ -34,6 +34,7 @@ import org.jfree.data.xy.XYSeriesCollection
 import ui.parts_of_screen.center.centerPiece
 import ui.parts_of_screen.leftPiece
 import ui.parts_of_screen.rightPiece
+import utils.longForChart
 import java.awt.Font
 import java.io.File
 import java.io.FileOutputStream
@@ -114,7 +115,7 @@ fun snackBarShow() {
         Row(
             modifier = Modifier.fillMaxWidth().height(200.dp).background(Color.Black.copy(alpha = 0.6f))
         ) {
-            Text("${textForSnackBar.value}", fontSize = 60.sp,modifier = Modifier.fillMaxSize().padding(30.dp), color =textForSnackBarColor.value)
+            Text("${textForSnackBar.value}", fontSize = 40.sp,modifier = Modifier.fillMaxSize().padding(30.dp), color =textForSnackBarColor.value)
         }
         GlobalScope.launch {
             delay(3000)
@@ -161,9 +162,14 @@ fun chartX() {
     val series1 = XYSeries("Pressure (Bar)")
     val series2 = XYSeries("PWM (A)")
     var step1 = 0.0
-    for (i in 0 until 100) {
-        series1.add(step1, (0..12).random().toDouble()+step1)
-        step1+= 0.5
+//    for (i in 0 until 100) {
+//        series1.add(step1, (0..12).random().toDouble()+step1)
+//        step1+= 0.5
+//    }
+    print("*** ${longForChart.joinToString()}")
+    for (i in 0 until longForChart.size) {
+        series1.add(step1, longForChart[i])
+        step1+= 0.01
     }
 
 //    series1.add(1150.0, 1150.0)
@@ -196,11 +202,18 @@ fun chartX() {
 
     //customize the plot with renderers and axis
     plot.setRenderer(0, XYSplineRenderer()) //use default fill paint for first series
+    plot.setRenderer(1, XYSplineRenderer()) //use default fill paint for first series
 
     val splinerenderer = XYSplineRenderer()
     splinerenderer.setSeriesFillPaint(0, java.awt.Color.BLUE)
     splinerenderer.setSeriesShapesVisible(0,false)
+
+    splinerenderer.setSeriesFillPaint    (1, java.awt.Color.RED)
+    splinerenderer.setSeriesShapesVisible(1,false)
+
     plot.setRenderer(1, splinerenderer)
+    plot.setRenderer(0, splinerenderer)
+
     plot.setRangeAxis(0, NumberAxis(series1.key.toString()))
     plot.setRangeAxis(1, NumberAxis(series2.key.toString()))
     plot.domainAxis = NumberAxis("Time (seconds)")

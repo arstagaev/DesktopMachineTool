@@ -28,8 +28,10 @@ import visiMainScr
 
 var textStateMin = mutableStateOf(TextFieldValue("0"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
-var textCOMPORT= mutableStateOf(TextFieldValue(COM_PORT))
+var textCOMPORT= mutableStateOf(TextFieldValue("COM3"))
 var textDelay = mutableStateOf(TextFieldValue("200"))
+var speedOfPort = mutableStateOf(TextFieldValue("115200"))
+var timeOfMeasure = mutableStateOf(0L)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -52,7 +54,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             },
             text = {
                 Column (
-                    modifier = Modifier.width(300.dp).height(300.dp).background(Color.Gray),
+                    modifier = Modifier.width(200.dp).height(300.dp).background(Color.Gray),
                     verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -117,16 +119,16 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                     verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    Text(text = "Choose ComPort, type like: COM3", color = Color.Green)
+                    Text(text = "Выберите ComPort, например: COM3", color = Color.Green)
                     TextField(
                         value = textCOMPORT.value,
                         onValueChange = {
                             //it.text.
-                            if (it.text.toIntOrNull() != null) {
+                            if (it.text != null) {
                                 textCOMPORT.value = it
                             }
                         },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
                     )
                     Text(text = "Задержка для стрелки", color = Color.Green)
                     TextField(
@@ -135,6 +137,16 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                             //it.text.
                             if (it.text.toIntOrNull() != null) {
                                 textDelay.value = it
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+                    Text(text = "BoundRate ComPort", color = Color.Green)
+                    TextField(
+                        value = speedOfPort.value,
+                        onValueChange = {
+                            if (it.text.toIntOrNull() != null) {
+                                speedOfPort.value = it
                             }
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
@@ -170,8 +182,10 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             .background(Color.White)
 
     ) {
-        Text("Порт: ${COM_PORT}",
+        Text("Порт: ${textCOMPORT.value.text}",
             modifier = Modifier.width(200.dp).height(30.dp).padding(4.dp),fontSize = 20.sp, fontFamily = FontFamily.Monospace, )
+        Text("Boundrate: ${speedOfPort.value.text}",
+            modifier = Modifier.width(200.dp).height(30.dp).padding(4.dp),fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
 
         Text("Доступные порты:${getCommaports()}",
             modifier = Modifier.width(200.dp).height(40.dp).padding(4.dp), fontFamily = FontFamily.Monospace, fontSize = 15.sp)
@@ -198,6 +212,9 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             }
             //initSerialCommunication("COM3")
         }
+        Text("Time: ${(timeOfMeasure.value/1000L).toInt()}s",
+            modifier = Modifier.width(200.dp).height(60.dp).padding(4.dp),fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
+
         Button(
 
             onClick = { openDialog.value = true },

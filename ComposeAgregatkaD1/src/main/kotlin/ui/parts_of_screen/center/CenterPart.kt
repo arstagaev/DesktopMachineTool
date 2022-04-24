@@ -15,11 +15,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import parsing.pressures
 import ui.parts_of_screen.center.support_elements.currentPanelSetup
 import ui.parts_of_screen.textStateMax
 import ui.parts_of_screen.textStateMin
 import utils.DELAY_FOR_GET_DATA
-import utils.dataChunkTrans
+import utils.dataChunkGauges
+import utils.longForChart
 
 
 @Composable
@@ -35,14 +37,14 @@ fun centerPiece(
     //sizeRowRAW : IntSize
 ) {
     var sizeRow by remember { mutableStateOf(Size.Zero) }
-    var pressure1X by remember { mutableStateOf(1) }
-    var pressure2X by remember { mutableStateOf(1) }
-    var pressure3X by remember { mutableStateOf(1) }
-    var pressure4X by remember { mutableStateOf(1) }
-    var pressure5X by remember { mutableStateOf(1) }
-    var pressure6X by remember { mutableStateOf(1) }
-    var pressure7X by remember { mutableStateOf(1) }
-    var pressure8X by remember { mutableStateOf(1) }
+    var pressure1X by remember { mutableStateOf(0) }
+    var pressure2X by remember { mutableStateOf(0) }
+    var pressure3X by remember { mutableStateOf(0) }
+    var pressure4X by remember { mutableStateOf(0) }
+    var pressure5X by remember { mutableStateOf(0) }
+    var pressure6X by remember { mutableStateOf(0) }
+    var pressure7X by remember { mutableStateOf(0) }
+    var pressure8X by remember { mutableStateOf(0) }
     val duration = MutableStateFlow(100L)
     GlobalScope.launch {
 //        firstGaugeData.collect { value ->
@@ -50,9 +52,12 @@ fun centerPiece(
 //            println("|<<<<<<<<<<<<<<<<<<< [${value}]")
 //            pressure1X = value
 //        }
-        dataChunkTrans.collect {
+        dataChunkGauges.collect {
             delay(DELAY_FOR_GET_DATA)
             //println("|<<<<<<<<<<<<<<<<<<< [${it.firstGaugeData}]")
+            //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
+            longForChart.add(pressure1X)
+
             pressure1X = it.firstGaugeData
             pressure2X = it.secondGaugeData
             pressure3X = it.thirdGaugeData
@@ -81,25 +86,16 @@ fun centerPiece(
                 }
         ) {
             Row {
-
-                Box {
-                    GaugeView2(200,pressure1X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                }
-                Box {
-                    GaugeView2(200,pressure2X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                }
-                Box {
-                    GaugeView2(200,pressure3X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                }
-                Box {
-                    GaugeView2(200,pressure4X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                }
+                GaugeView2(200,pressure1X, pressures[0].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[0].displayName)
+                GaugeView2(200,pressure2X, pressures[1].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[1].displayName)
+                GaugeView2(200,pressure3X, pressures[2].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[2].displayName)
+                GaugeView2(200,pressure4X, pressures[3].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[3].displayName)
             }
             Row {
-                GaugeView2(200,pressure5X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                GaugeView2(200,pressure6X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                GaugeView2(200,pressure7X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
-                GaugeView2(200,pressure8X, textStateMax.value.text.toInt(), textStateMin.value.text.toInt())
+                GaugeView2(200,pressure5X, pressures[4].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[4].displayName)
+                GaugeView2(200,pressure6X, pressures[5].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[5].displayName)
+                GaugeView2(200,pressure7X, pressures[6].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[6].displayName)
+                GaugeView2(200,pressure8X, pressures[7].maxValue.toInt(), textStateMin.value.text.toInt(),pressures[7].displayName)
             }
 
             currentPanelSetup(
