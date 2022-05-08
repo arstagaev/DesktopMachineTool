@@ -7,7 +7,8 @@ import androidx.compose.ui.window.singleWindowApplication
 import com.fazecast.jSerialComm.SerialPort
 import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import parsing.readExcelFile
 import ui.parts_of_screen.center.onesAndTens
@@ -32,7 +33,10 @@ fun main() = singleWindowApplication (
 }
 
 var serialPort: SerialPort = SerialPort.getCommPort("COM3")
-private var newData : ByteArray? = null
+private var newData = ByteArray(16)
+
+var pressures = ByteArray(16)
+var currents  = ByteArray(16)
 
 
 
@@ -62,7 +66,7 @@ fun initSerialCommunication(COMPORT_NUMBER: String) {
     } catch (e: InterruptedException) {
         e.printStackTrace()
     }
-    while (a < 10) {
+    while (a < 1) {
         serialPort.writeBytes(sendBytes, 1)
 
         //            try {
@@ -77,6 +81,7 @@ fun initSerialCommunication(COMPORT_NUMBER: String) {
     }
     timeOfMeasure.value = 0L
     startTimer()
+    var counter = 0
 
     serialPort.addDataListener(object : SerialPortDataListener {
         override fun getListeningEvents(): Int {
@@ -84,35 +89,49 @@ fun initSerialCommunication(COMPORT_NUMBER: String) {
         }
 
         override fun serialEvent(event: SerialPortEvent) {
-            if (event.eventType != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                //sound(-1)
-                return
-            }
-            newData = ByteArray(serialPort.bytesAvailable())
+//            if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+//                //return
+//                try {
+//                    serialPort.readBytes(newData,15)
+//                }catch (e: Exception) {
+//                    println("error: ${e.message}")
+//                }
+//            }
 
+            //newData = ByteArray(serialPort.bytesAvailable())
+            if (event.eventType === SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+                //val bufferDeLectura = ByteArray(16)
+                serialPort.readBytes(newData, 16)
+
+                //println(">>>> ${bufferDeLectura.joinToString()}")
+            }
+
+            //println(">>> ${newData}")
             if (newData == null)
                 return
 
-            val numRead = serialPort.readBytes(newData, newData!!.size.toLong())
 
-            //println("conv " + (newData.toUByteArray()).joinToString() + "[[ ${newData.size}")
-            //curPoint =
-            println(">> ${onesAndTens(newData!![0] ,newData!![1]).toInt()}")
+            if ( newData[1] >= 15 ){
+                currents
+            }else {
+
+            }
             // MAIN PARSER:
             var dch = DataChunkG(
-                onesAndTens(newData!![0] ,newData!![1]).toInt(),
-                onesAndTens(newData!![2] ,newData!![3]).toInt(),
-                onesAndTens(newData!![4] ,newData!![5]).toInt(),
-                onesAndTens(newData!![6] ,newData!![7]).toInt(),
+                onesAndTens(newData[0] ,newData[1]).toInt(),
+                onesAndTens(newData[2] ,newData[3]).toInt(),
+                onesAndTens(newData[4] ,newData[5]).toInt(),
+                onesAndTens(newData[6] ,newData[7]).toInt(),
 
-                onesAndTens(newData!![8] ,newData!![9]).toInt(),
-                onesAndTens(newData!![10],newData!![11]).toInt(),
-                onesAndTens(newData!![12],newData!![13]).toInt(),
-                onesAndTens(newData!![14],newData!![15]).toInt()
+                onesAndTens(newData[8] ,newData[9]).toInt(),
+                onesAndTens(newData[10],newData[11]).toInt(),
+                onesAndTens(newData[12],newData[13]).toInt(),
+                onesAndTens(newData[14],newData[15]).toInt()
             )
             //println("> ${dch.toString()}")
             try {
-                GlobalScope.launch {
+                CoroutineScope(Dispatchers.IO).launch {
+                    println("### ${newData?.joinToString()}")
                     dataChunkGauges.emit(dch)
 //                firstGaugeData.emit(  onesAndTens(newData[0],newData[1]).toInt())
 //                secondGaugeData.emit( onesAndTens(newData[2],newData[3]).toInt())
