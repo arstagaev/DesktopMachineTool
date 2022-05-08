@@ -28,9 +28,9 @@ import visiMainScr
 
 var textStateMin = mutableStateOf(TextFieldValue("0"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
-var textCOMPORT= mutableStateOf(TextFieldValue("COM3"))
+var textCOMPORT= mutableStateOf(TextFieldValue("COM9"))
 var textDelay = mutableStateOf(TextFieldValue("200"))
-var speedOfPort = mutableStateOf(TextFieldValue("115200"))
+var speedOfPort = mutableStateOf(TextFieldValue("9600"))
 var timeOfMeasure = mutableStateOf(0L)
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -157,7 +157,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                 Button(
 
                     onClick = {
-                        initSerialCommunication(textCOMPORT.value.text)
+                        initSerialCommunication()
                         openDialogSettings.value = false
                     }) {
                     Text("Start")

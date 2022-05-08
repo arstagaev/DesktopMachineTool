@@ -1,4 +1,5 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ fun main() = singleWindowApplication (
     getCommaports()
     readExcelFile()
     App()
+    initSerialCommunication()
 
 //    val properties: Properties = Properties()
 //    properties.load(App::class.java.getResourceAsStream("/version.properties"))
@@ -38,21 +40,22 @@ private var newData = ByteArray(16)
 var pressures = ByteArray(16)
 var currents  = ByteArray(16)
 
-
+var COUNTER = 0L
 
 fun startTimer() {
-    fixedRateTimer("timer_2", daemon = false, 0L,10) {
+    fixedRateTimer("timer_2", daemon = false, 0L,1L) {
 
-        timeOfMeasure.value += 1
-
+        //timeOfMeasure.value += 1
+        COUNTER++
     }
 }
 
-fun initSerialCommunication(COMPORT_NUMBER: String) {
+fun initSerialCommunication() {
 
     serialPort = SerialPort.getCommPort(textCOMPORT.value.text.toString())
     //SerialPort.getCommPorts()
     println(">>>serial communication has been started")
+
     serialPort.baudRate = speedOfPort.value.text.toInt()
 
     serialPort.setComPortParameters(speedOfPort.value.text.toInt(),8,1,SerialPort.NO_PARITY)
@@ -81,7 +84,7 @@ fun initSerialCommunication(COMPORT_NUMBER: String) {
     }
     timeOfMeasure.value = 0L
     startTimer()
-    var counter = 0
+    var cnt10 = 0
 
     serialPort.addDataListener(object : SerialPortDataListener {
         override fun getListeningEvents(): Int {
@@ -99,40 +102,48 @@ fun initSerialCommunication(COMPORT_NUMBER: String) {
 //            }
 
             //newData = ByteArray(serialPort.bytesAvailable())
-            if (event.eventType === SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                //val bufferDeLectura = ByteArray(16)
-                serialPort.readBytes(newData, 16)
+            var updData = ByteArray(16)
 
-                //println(">>>> ${bufferDeLectura.joinToString()}")
+            if (event.eventType === SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+                cnt10++
+                if (COUNTER <= cnt10) {
+                    serialPort.readBytes(updData, 16)
+                    println("### ${updData?.joinToString()}")
+                    cnt10 = 0
+                } else {
+                    COUNTER = 0L
+
+                }
             }
 
+           // println("###>>> ${newData?.joinToString()}")
             //println(">>> ${newData}")
             if (newData == null)
                 return
 
-
-            if ( newData[1] >= 15 ){
-                currents
-            }else {
-
-            }
+//
+//            if ( newData[1] >= 15 ){
+//
+//            }else {
+//
+//            }
             // MAIN PARSER:
-            var dch = DataChunkG(
-                onesAndTens(newData[0] ,newData[1]).toInt(),
-                onesAndTens(newData[2] ,newData[3]).toInt(),
-                onesAndTens(newData[4] ,newData[5]).toInt(),
-                onesAndTens(newData[6] ,newData[7]).toInt(),
-
-                onesAndTens(newData[8] ,newData[9]).toInt(),
-                onesAndTens(newData[10],newData[11]).toInt(),
-                onesAndTens(newData[12],newData[13]).toInt(),
-                onesAndTens(newData[14],newData[15]).toInt()
-            )
+//            var dch = DataChunkG(
+//                onesAndTens(newData[0] ,newData[1]).toInt(),
+//                onesAndTens(newData[2] ,newData[3]).toInt(),
+//                onesAndTens(newData[4] ,newData[5]).toInt(),
+//                onesAndTens(newData[6] ,newData[7]).toInt(),
+//
+//                onesAndTens(newData[8] ,newData[9]).toInt(),
+//                onesAndTens(newData[10],newData[11]).toInt(),
+//                onesAndTens(newData[12],newData[13]).toInt(),
+//                onesAndTens(newData[14],newData[15]).toInt()
+//            )
             //println("> ${dch.toString()}")
             try {
                 CoroutineScope(Dispatchers.IO).launch {
-                    println("### ${newData?.joinToString()}")
-                    dataChunkGauges.emit(dch)
+
+                    //dataChunkGauges.emit(dch)
 //                firstGaugeData.emit(  onesAndTens(newData[0],newData[1]).toInt())
 //                secondGaugeData.emit( onesAndTens(newData[2],newData[3]).toInt())
 //                thirdGaugeData.emit(  onesAndTens(newData[4],newData[5]).toInt())
