@@ -47,6 +47,7 @@ fun startTimer() {
 
         //timeOfMeasure.value += 1
         COUNTER++
+        println("pip")
     }
 }
 
@@ -104,18 +105,18 @@ fun initSerialCommunication() {
             //newData = ByteArray(serialPort.bytesAvailable())
             var updData = ByteArray(16)
 
-            if (event.eventType === SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                cnt10++
-                if (COUNTER <= cnt10) {
+            if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+
+                if (COUNTER <= 10) {
                     serialPort.readBytes(updData, 16)
                     println("### ${updData?.joinToString()}")
-                    cnt10 = 0
+
                 } else {
-                    COUNTER = 0L
+
 
                 }
             }
-
+            COUNTER = 0L
            // println("###>>> ${newData?.joinToString()}")
             //println(">>> ${newData}")
             if (newData == null)
