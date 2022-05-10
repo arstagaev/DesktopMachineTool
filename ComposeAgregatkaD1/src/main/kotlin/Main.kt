@@ -130,6 +130,7 @@ fun initSerialCommunication() {
 
 
                 }else {
+                    // here is analyzer of broken chunk/packet
                     println("BROKEN PACKET ")
                 }
 
