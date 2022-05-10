@@ -165,7 +165,7 @@ fun initSerialCommunication() {
             if (newData == null)
                 return
 
-//
+
 //            if ( newData[1] >= 15 ){
 //
 //            }else {
