@@ -30,7 +30,7 @@ var textStateMin = mutableStateOf(TextFieldValue("0"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
 var textCOMPORT= mutableStateOf(TextFieldValue("COM10"))
 var textDelay = mutableStateOf(TextFieldValue("200"))
-var speedOfPort = mutableStateOf(TextFieldValue("9600"))
+var speedOfPort = mutableStateOf(TextFieldValue("512000"))
 var timeOfMeasure = mutableStateOf(0L)
 
 @OptIn(ExperimentalMaterialApi::class)

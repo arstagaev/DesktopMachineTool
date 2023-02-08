@@ -4,13 +4,17 @@ import androidx.compose.ui.graphics.Color
 import com.fazecast.jSerialComm.SerialPort
 import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
+import initSerialCommunication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import serialPort
 import showMeSnackBar
-import ui.parts_of_screen.center.onesAndTens
+import stopSerialCommunication
 import ui.parts_of_screen.timeOfMeasure
+import utils.DataChunkG
+import utils.onesAndTens
+import utils.toHexString
 import kotlin.concurrent.fixedRateTimer
 
 var pressures = ByteArray(16)
@@ -33,6 +37,12 @@ fun startTimer() {
 
 fun parseBytesCallback() {
     println("Initialize listener parseBytesCallback")
+    var arrCurrRaw  = arrayListOf<ByteArray>()
+    var arrPressRaw = arrayListOf<ByteArray>()
+
+    var arrCurr =  arrayListOf<ArrayList<Int>>()
+    var arrPress = arrayListOf<ArrayList<Int>>()
+
     serialPort.addDataListener(object : SerialPortDataListener {
         override fun getListeningEvents(): Int {
             return SerialPort.LISTENING_EVENT_DATA_AVAILABLE
@@ -47,65 +57,86 @@ fun parseBytesCallback() {
 //                    println("error: ${e.message}")
 //                }
 //            }
+            //>>>>
+            //val newData0 = ByteArray(serialPort.bytesAvailable())
+            //val numRead: Int = serialPort.readBytes(newData, newData0.size.toLong())
+            //println("Read $numRead bytes.")
 
             //newData = ByteArray(serialPort.bytesAvailable())
-            println("Inside that listener, what happening")
+            //println("Inside that listener, what happening")
             var updData = ByteArray(16)
-            val CB = 16
-            val CB2 = 15
+
             if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
                 serialPort.readBytes(updData, 16)
-                println("1 Received bytes: ${event.receivedData}")
-                println("2 Received bytes: ${event.serialPort.readBytes(updData,16)}")
-                println("3 Received bytes: ${updData}")
+
+                println("> ${updData.toHexString()} [size:${updData.size}]")
                 // >= 16  - четные  currents
                 // <= 15 - pressure
                 // четные в условии если нет - то фиговый пакет
-                println("input: ${updData[1] } ${updData[3]} ${updData[5]} ${updData[7]} ${updData[9]} ${updData[11]} ${updData[13]} ${updData[15]}")
-                if( updData[1]>= CB && updData[3]>= CB && updData[5]>= CB && updData[7]>= CB && updData[9]>= CB && updData[11]>= CB && updData[13]>= CB && updData[15]>= CB ){
-                    //println("###currents: ${updData?.joinToString()}")
-                    cur1++
-                    prs4 = 0
-                    currents = updData
 
+                //println("|----------------------------------|")
 
+                //vtory bytes
+                // >= 16 tok
+                // если в интервал не входит то сбрасываем
+                // MAIN PARSER:
 
-                }else if (updData[1]+updData[3] != 0 && updData[1] <= CB2 && updData[3]<= CB2 && updData[5]<= CB2 && updData[7]<= CB2 && updData[9]<= CB2 && updData[11]<= CB2 && updData[13]<= CB2 && updData[15]<= CB2 ) {
-                    //println(">>>pressures: ${updData?.joinToString()}")
-                    prs4++
-                    cur1 = 0
-                    pressures = updData
+                var dch = DataChunkG(
+                    onesAndTens(updData[0].toUInt() ,updData[1].toUInt()).toInt(),
+                    onesAndTens(updData[2].toUInt() ,updData[3].toUInt()).toInt(),
+                    onesAndTens(updData[4].toUInt() ,updData[5].toUInt()).toInt(),
+                    onesAndTens(updData[6].toUInt() ,updData[7].toUInt()).toInt(),
 
+                    onesAndTens( updData[8].toUInt() ,updData[9].toUInt()).toInt(),
+                    onesAndTens(updData[10].toUInt(),updData[11].toUInt()).toInt(),
+                    onesAndTens(updData[12].toUInt(),updData[13].toUInt()).toInt(),
+                    onesAndTens(updData[14].toUInt(),updData[15].toUInt()).toInt()
+                )
+                println(">> ${dch.toString()}")
 
+                val FST_CNDN = 16
+                when {
+                    updData[1] >= FST_CNDN && updData[3] >= FST_CNDN && updData[5] >= FST_CNDN && updData[7] >= FST_CNDN -> {
+                        arrCurrRaw.add(updData)
 
-                }else {
-                    // here is analyzer of broken chunk/packet
-                    println("BROKEN PACKET ")
+                        arrCurr.add(arrayListOf(dch.firstGaugeData,dch.secondGaugeData,dch.thirdGaugeData,dch.fourthGaugeData,dch.fifthGaugeData,dch.sixthGaugeData,dch.seventhGaugeData,dch.eighthGaugeData))
+
+                    }
+                    updData[1] < FST_CNDN && updData[3] < FST_CNDN && updData[5] < FST_CNDN && updData[7] < FST_CNDN -> {
+                        arrPressRaw.add(updData)
+
+                        arrPress.add(arrayListOf(dch.firstGaugeData,dch.secondGaugeData,dch.thirdGaugeData,dch.fourthGaugeData,dch.fifthGaugeData,dch.sixthGaugeData,dch.seventhGaugeData,dch.eighthGaugeData))
+
+                    }
+                    else -> {
+                        // if not valid numbers - refresh connection
+                        initSerialCommunication()
+                    }
+
                 }
 
 
-
-//                if (cnt4 < 4) {
-//
-//                    println("### ${updData?.joinToString()}")
-//                    cnt4++
-//                } else if (cnt4 == 4) {
-//                    cnt4 = 0
-//                    println(">>> ${updData?.joinToString()}")
-//
-//                }
-//                if (!isPacketCompletable()) {
-//
-//                }else {
-//
-//                }
-                if (pressures.isNotEmpty() && pressures.sum() != 0) {
-                    println("pressures: ${pressures.joinToString()}")
+                // print clear results:
+                if (arrCurrRaw.size > 9) {
+                    stopSerialCommunication()
+                    println("_______current:")
+                    repeat(arrCurrRaw.size) {
+                        println(arrCurrRaw[it].toHexString())
+                    }
+                    println("_______pressure:")
+                    repeat(arrPressRaw.size) {
+                        println(arrPressRaw[it].toHexString())
+                    }
+                    ///
+                    println("********************************")
+                    return
+                    repeat(arrCurr.size) {
+                        println(arrCurr[it])
+                    }
+                    repeat(arrPress.size) {
+                        println(arrPress[it])
+                    }
                 }
-                if (currents.isNotEmpty() && currents.sum() != 0) {
-                    println("currents:  ${currents.joinToString()}")
-                }
-                println("|_________________________________|")
             }
             pressures = ByteArray(16)
             currents = ByteArray(16)
@@ -116,24 +147,6 @@ fun parseBytesCallback() {
                 return
 
 
-//            if ( newData[1] >= 15 ){
-//
-//            }else {
-//
-//            }
-            // MAIN PARSER:
-//            var dch = DataChunkG(
-//                onesAndTens(newData[0] ,newData[1]).toInt(),
-//                onesAndTens(newData[2] ,newData[3]).toInt(),
-//                onesAndTens(newData[4] ,newData[5]).toInt(),
-//                onesAndTens(newData[6] ,newData[7]).toInt(),
-//
-//                onesAndTens(newData[8] ,newData[9]).toInt(),
-//                onesAndTens(newData[10],newData[11]).toInt(),
-//                onesAndTens(newData[12],newData[13]).toInt(),
-            onesAndTens(newData[14],newData[15]).toInt()
-//            )
-            //println("> ${dch.toString()}")
             try {
                 CoroutineScope(Dispatchers.IO).launch {
 
