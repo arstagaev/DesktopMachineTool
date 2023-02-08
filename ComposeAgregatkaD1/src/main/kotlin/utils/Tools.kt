@@ -2,16 +2,18 @@ package utils
 
 import com.fazecast.jSerialComm.SerialPort
 
-fun getCommaports() : String{
+fun getComPorts_JustString() : String{
     var comports = SerialPort.getCommPorts()
-    var output_comports = ""
+    var output_comport = ""
 
     for (i in comports) {
-        output_comports+= " ${i.systemPortName},"
+        output_comport+= " ${i.systemPortName},"
 
     }
     if (comports.isNotEmpty()) {
         COM_PORT = comports[0].systemPortName
     }
-    return output_comports
+    return output_comport
 }
+
+fun getComPorts_Array() = SerialPort.getCommPorts().toMutableList()
