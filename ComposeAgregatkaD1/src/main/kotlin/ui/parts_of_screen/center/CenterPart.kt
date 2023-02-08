@@ -15,9 +15,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import parsing.pressures
+import parsing_excel.pressures
 import ui.parts_of_screen.center.support_elements.currentPanelSetup
-import ui.parts_of_screen.textStateMax
 import ui.parts_of_screen.textStateMin
 import utils.DELAY_FOR_GET_DATA
 import utils.dataChunkGauges

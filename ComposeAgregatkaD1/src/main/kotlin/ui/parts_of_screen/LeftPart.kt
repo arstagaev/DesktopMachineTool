@@ -23,12 +23,12 @@ import showMeSnackBar
 import stopSerialCommunication
 import utils.COM_PORT
 import utils.DELAY_FOR_GET_DATA
-import utils.getCommaports
+import utils.getComPorts_JustString
 import visiMainScr
 
 var textStateMin = mutableStateOf(TextFieldValue("0"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
-var textCOMPORT= mutableStateOf(TextFieldValue("COM9"))
+var textCOMPORT= mutableStateOf(TextFieldValue("COM10"))
 var textDelay = mutableStateOf(TextFieldValue("200"))
 var speedOfPort = mutableStateOf(TextFieldValue("9600"))
 var timeOfMeasure = mutableStateOf(0L)
@@ -187,7 +187,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
         Text("Boundrate: ${speedOfPort.value.text}",
             modifier = Modifier.width(200.dp).height(30.dp).padding(4.dp),fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
 
-        Text("Доступные порты:${getCommaports()}",
+        Text("Доступные порты:${getComPorts_JustString()}",
             modifier = Modifier.width(200.dp).height(40.dp).padding(4.dp), fontFamily = FontFamily.Monospace, fontSize = 15.sp)
 //        Text("Port is open:${getCommaports()}",
 //            modifier = Modifier.width(200.dp).height(40.dp).padding(4.dp), fontFamily = FontFamily.Monospace, fontSize = 15.sp)

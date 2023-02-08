@@ -14,8 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
-import parsing.solenoids
-import showMeSnackBar
+import parsing_excel.solenoids
 
 @Composable
 fun currentPanelSetup(
