@@ -13,6 +13,7 @@ import showMeSnackBar
 import stopSerialCommunication
 import ui.parts_of_screen.timeOfMeasure
 import utils.DataChunkG
+import utils.byteToInt
 import utils.onesAndTens
 import utils.toHexString
 import kotlin.concurrent.fixedRateTimer
@@ -69,43 +70,65 @@ fun parseBytesCallback() {
             if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
                 serialPort.readBytes(updData, 16)
 
-                println("> ${updData.toHexString()} [size:${updData.size}]")
-                // >= 16  - четные  currents
-                // <= 15 - pressure
-                // четные в условии если нет - то фиговый пакет
-
-                //println("|----------------------------------|")
-
-                //vtory bytes
-                // >= 16 tok
-                // если в интервал не входит то сбрасываем
-                // MAIN PARSER:
-
-                var dch = DataChunkG(
-                    onesAndTens(updData[0].toUInt() ,updData[1].toUInt()).toInt(),
-                    onesAndTens(updData[2].toUInt() ,updData[3].toUInt()).toInt(),
-                    onesAndTens(updData[4].toUInt() ,updData[5].toUInt()).toInt(),
-                    onesAndTens(updData[6].toUInt() ,updData[7].toUInt()).toInt(),
-
-                    onesAndTens( updData[8].toUInt() ,updData[9].toUInt()).toInt(),
-                    onesAndTens(updData[10].toUInt(),updData[11].toUInt()).toInt(),
-                    onesAndTens(updData[12].toUInt(),updData[13].toUInt()).toInt(),
-                    onesAndTens(updData[14].toUInt(),updData[15].toUInt()).toInt()
-                )
-                println(">> ${dch.toString()}")
-
                 val FST_CNDN = 16
                 when {
+                    //currency
                     updData[1] >= FST_CNDN && updData[3] >= FST_CNDN && updData[5] >= FST_CNDN && updData[7] >= FST_CNDN -> {
+                        var dch = DataChunkG(
+                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()-16u),
+
+                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
+                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
+                        )
+
                         arrCurrRaw.add(updData)
 
-                        arrCurr.add(arrayListOf(dch.firstGaugeData,dch.secondGaugeData,dch.thirdGaugeData,dch.fourthGaugeData,dch.fifthGaugeData,dch.sixthGaugeData,dch.seventhGaugeData,dch.eighthGaugeData))
+                        arrCurr.add(arrayListOf(
+                            dch.firstGaugeData,
+                            dch.secondGaugeData,
+                            dch.thirdGaugeData,
+                            dch.fourthGaugeData,
+                            dch.fifthGaugeData,
+                            dch.sixthGaugeData,
+                            dch.seventhGaugeData,
+                            dch.eighthGaugeData
+                        ))
 
                     }
+                    //pressure
                     updData[1] < FST_CNDN && updData[3] < FST_CNDN && updData[5] < FST_CNDN && updData[7] < FST_CNDN -> {
+                        println("> ${updData.toHexString()} [size:${updData.size}]")
+
+                        var dch = DataChunkG(
+                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()),
+                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()),
+                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()),
+                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()),
+
+                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()),
+                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()),
+                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()),
+                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt())
+                        )
+
+
                         arrPressRaw.add(updData)
 
-                        arrPress.add(arrayListOf(dch.firstGaugeData,dch.secondGaugeData,dch.thirdGaugeData,dch.fourthGaugeData,dch.fifthGaugeData,dch.sixthGaugeData,dch.seventhGaugeData,dch.eighthGaugeData))
+                        arrPress.add(arrayListOf(
+                            dch.firstGaugeData,
+                            dch.secondGaugeData,
+                            dch.thirdGaugeData,
+                            dch.fourthGaugeData,
+                            dch.fifthGaugeData,
+                            dch.sixthGaugeData,
+                            dch.seventhGaugeData,
+                            dch.eighthGaugeData
+                        ))
 
                     }
                     else -> {
@@ -117,7 +140,7 @@ fun parseBytesCallback() {
 
 
                 // print clear results:
-                if (arrCurrRaw.size > 9) {
+                if (arrPressRaw.size > 9) {
                     stopSerialCommunication()
                     println("_______current:")
                     repeat(arrCurrRaw.size) {
@@ -129,7 +152,7 @@ fun parseBytesCallback() {
                     }
                     ///
                     println("********************************")
-                    return
+
                     repeat(arrCurr.size) {
                         println(arrCurr[it])
                     }

@@ -9,6 +9,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
 import kotlinx.coroutines.*
 import parsing_bytes.parseBytesCallback
+import parsing_excel.readExcelFile
 import ui.parts_of_screen.speedOfPort
 import ui.parts_of_screen.timeOfMeasure
 import utils.*
@@ -18,10 +19,10 @@ import kotlin.concurrent.fixedRateTimer
 fun main() = singleWindowApplication (
     title = "Агрегатка Tech v.1.1.3",
     state = WindowState(size = DpSize(1000.dp, 800.dp)),
-    visible = false
+    visible = true
 ) {
     COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
-    //readExcelFile()
+    readExcelFile()
     //App()
     initSerialCommunication()
 

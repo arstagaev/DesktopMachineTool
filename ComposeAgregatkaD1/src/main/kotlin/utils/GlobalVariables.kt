@@ -20,14 +20,14 @@ var dataChunkGauges   = MutableSharedFlow<DataChunkG>()
 var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>()
 
 data class DataChunkG(
-    var firstGaugeData: Int,
-    var secondGaugeData: Int,
-    var thirdGaugeData: Int,
-    var fourthGaugeData: Int,
-    var fifthGaugeData: Int,
-    var sixthGaugeData: Int,
+    var firstGaugeData:   Int,
+    var secondGaugeData:  Int,
+    var thirdGaugeData:   Int,
+    var fourthGaugeData:  Int,
+    var fifthGaugeData:   Int,
+    var sixthGaugeData:   Int,
     var seventhGaugeData: Int,
-    var eighthGaugeData: Int
+    var eighthGaugeData:  Int
     )
 
 data class DataChunkCurrent(
