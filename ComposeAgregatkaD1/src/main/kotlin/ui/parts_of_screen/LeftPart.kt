@@ -17,16 +17,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fazecast.jSerialComm.SerialPort
+import enums.State
 import initSerialCommunication
 import serialPort
 import showMeSnackBar
 import stopSerialCommunication
 import utils.COM_PORT
 import utils.DELAY_FOR_GET_DATA
+import utils.GLOBAL_STATE
 import utils.getComPorts_JustString
 import visiMainScr
 
-var textStateMin = mutableStateOf(TextFieldValue("0"))
+var textStateMin = mutableStateOf(TextFieldValue("-1"))
 var textStateMax = mutableStateOf(TextFieldValue("4096"))
 var textCOMPORT= mutableStateOf(TextFieldValue("COM10"))
 var textDelay = mutableStateOf(TextFieldValue("200"))
@@ -159,6 +161,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                     onClick = {
                         initSerialCommunication()
                         openDialogSettings.value = false
+                        GLOBAL_STATE.value = State.PLAY
                     }) {
                     Text("Start")
                 }
@@ -203,7 +206,11 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             }
             Button(
 
-                onClick = { stopSerialCommunication() },
+                onClick = {
+                    stopSerialCommunication()
+                    GLOBAL_STATE.value = State.STOP
+                },
+
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Gray,contentColor = Color.Black),
                 modifier = Modifier

@@ -4,6 +4,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Row
+import utils.logAct
+import utils.logInfo
 import java.io.File
 import java.io.FileInputStream
 import javax.swing.JFileChooser
@@ -18,16 +20,20 @@ fun readExcelFile() {
     val theDir = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool")
     if (!theDir.exists()) {
         theDir.mkdirs()
+        logAct("Excel-config folder created: ${theDir.absoluteFile}")
     }
+
     val theDirXls = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config.xls")
     if (!theDirXls.exists()) {
         theDirXls.mkdirs()
+        logAct("Excel file-config created: ${theDir.absoluteFile}")
     }
+
     //obtaining input bytes from a file
-    val file = FileInputStream(File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config.xls"))
+    val locatedFile = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config.xls")
+    val file = FileInputStream(locatedFile)
+    logInfo("Config file location: ${locatedFile.absoluteFile}")
 
-
-    //println("well >"+JFileChooser().fileSystemView.defaultDirectory.toString())
     //creating workbook instance that refers to .xls file
     val wb = HSSFWorkbook(file)
     //creating a Sheet object to retrieve the object
@@ -66,7 +72,6 @@ fun readExcelFile() {
 
     for(i in wholeSheet) {
         println("~~~ ${wholeSheet[2][1]} ${wholeSheet[2][2]} ${wholeSheet[2][3]}")
-        //i[2][1]
     }
 
     for (i in 0 until wholeSheet[2].size-1) {
@@ -90,11 +95,12 @@ fun readExcelFile() {
             PressuresHolder(
                 displayName =  wholeSheet[14][i+1],
                 index =        wholeSheet[15][i+1].toDouble().toInt(),
-                maxValue =     wholeSheet[16][i+1].toDouble().toInt(),
-                tolerance =    wholeSheet[17][i+1].toDouble().toInt(),
-                unit =         wholeSheet[18][i+1],
-                commentString =wholeSheet[19][i+1],
-                prefferedColor=wholeSheet[20][i+1]
+                minValue =     wholeSheet[16][i+1].toDouble().toInt(),
+                maxValue =     wholeSheet[17][i+1].toDouble().toInt(),
+                tolerance =    wholeSheet[18][i+1].toDouble().toInt(),
+                unit =         wholeSheet[19][i+1],
+                commentString =wholeSheet[20][i+1],
+                prefferedColor=wholeSheet[21][i+1]
             )
         )
     }
@@ -116,7 +122,8 @@ data class SolenoidHolder(
 data class PressuresHolder(
     val displayName : String,
     val index : Int,
-    val maxValue : Int,
+    var minValue : Int,
+    var maxValue : Int,
     val tolerance : Int,
     val unit : String,
     val commentString : String,

@@ -1,18 +1,22 @@
 package utils
 
+import androidx.compose.runtime.mutableStateOf
+import enums.State
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 var COM_PORT = "COM3"
 var DELAY_FOR_GET_DATA = 0L
 
+var GLOBAL_STATE = mutableStateOf(State.INIT)
+
 var firstGaugeData  = MutableSharedFlow<Int>()
-//var secondGaugeData = MutableSharedFlow<Int>()
-//var thirdGaugeData  = MutableSharedFlow<Int>()
-//var fourthGaugeData = MutableSharedFlow<Int>()
-//var fifthGaugeData  = MutableSharedFlow<Int>()
-//var sixthGaugeData  = MutableSharedFlow<Int>()
-//var seventhGaugeData  = MutableSharedFlow<Int>()
-//var eighthGaugeData = MutableSharedFlow<Int>()
+var secondGaugeData = MutableSharedFlow<Int>()
+var thirdGaugeData  = MutableSharedFlow<Int>()
+var fourthGaugeData = MutableSharedFlow<Int>()
+var fifthGaugeData  = MutableSharedFlow<Int>()
+var sixthGaugeData  = MutableSharedFlow<Int>()
+var seventhGaugeData  = MutableSharedFlow<Int>()
+var eighthGaugeData = MutableSharedFlow<Int>()
 
 var longForChart   = arrayListOf<Int>()
 

@@ -11,9 +11,9 @@ fun getComPorts_JustString() : String{
         output_comport+= " ${i.systemPortName},"
 
     }
-    if (comports.isNotEmpty()) {
-        COM_PORT = comports[0].systemPortName
-    }
+//    if (comports.isNotEmpty()) {
+//        COM_PORT = comports[0].systemPortName
+//    }
     return output_comport
 }
 

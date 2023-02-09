@@ -121,9 +121,7 @@ fun snackBarShow() {
             delay(3000)
             visibilityOfToast = false
         }
-
     }
-
 }
 
 @Composable
@@ -150,6 +148,7 @@ fun chartView() {
         }
     }
 }
+
 @Composable
 fun chartX() {
     var visibilityOfMainScreen by remember { visiMainScr }
@@ -157,7 +156,7 @@ fun chartX() {
 //    val chart = createChart(dataset!!)
 //    val chartPanel = ChartPanel(chart)
 //    chartPanel.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
-    //create the series - add some dummy data
+
     //create the series - add some dummy data
     val series1 = XYSeries("Pressure (Bar)")
     val series2 = XYSeries("PWM (A)")

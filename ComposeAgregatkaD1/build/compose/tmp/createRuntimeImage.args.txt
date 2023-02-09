@@ -11,4 +11,4 @@
 --no-man-pages
 --strip-native-commands
 --output
-"C:\\Users\\ion8\\Documents\\DesktopMachineTool\\ComposeAgregatkaD1\\build\\compose\\tmp\\main\\runtime"
+"C:\\Users\\ion8\\IdeaProjects\\DesktopMachineTool\\ComposeAgregatkaD1\\build\\compose\\tmp\\main\\runtime"

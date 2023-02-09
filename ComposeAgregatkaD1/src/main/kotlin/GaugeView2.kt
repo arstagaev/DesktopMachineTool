@@ -28,6 +28,7 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
 import ui.parts_of_screen.textDelay
+import utils.rndTo2deci
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -37,6 +38,16 @@ import kotlin.math.sin
 fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int,nameOfGauge : String) {
     var SIZE_ALL = input_SIZE_ALL
     var angle = 0f
+
+    val scale1 = rndTo2deci(minValue.toFloat() + ( maxValue.toFloat() - minValue.toFloat() ) / 6f)
+    val scale2 = rndTo2deci(scale1   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
+    val scale3 = rndTo2deci(scale2   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
+    val scale4 = rndTo2deci(scale3   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
+    val scale5 = rndTo2deci(scale4   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
+    val scale6 = rndTo2deci(scale5   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
+    //println("~~~~ ${scale1} ${scale2} ${scale3} ${scale4} ${scale5} ${scale6} ")
+
+
     if (PRESSURE_Input <= maxValue) {
         if (PRESSURE_Input <= minValue) {
             angle = 0f
@@ -205,34 +216,34 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
                     textPaint
                 )
                 canvas.nativeCanvas.drawTextLine(
-                    TextLine.Companion.make("${maxValue/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                    TextLine.Companion.make("${scale1}", Font(typeFace,FONT_SIZE_SCALE)),
                     calcNumGaug(180f,SIZE_ALL).x-13,calcNumGaug(180f,SIZE_ALL).y,
                     textPaint
                 )
                 canvas.nativeCanvas.drawTextLine(
-                    TextLine.Companion.make("${(maxValue*2)/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                    TextLine.Companion.make("${scale2}", Font(typeFace,FONT_SIZE_SCALE)),
                     calcNumGaug(225f,SIZE_ALL).x-13,calcNumGaug(225f,SIZE_ALL).y,
                     textPaint
                 )
                 canvas.nativeCanvas.drawTextLine(
-                    TextLine.Companion.make("${(maxValue*3)/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                    TextLine.Companion.make("${scale3}", Font(typeFace,FONT_SIZE_SCALE)),
                     calcNumGaug(270f,SIZE_ALL).x-13,calcNumGaug(270f,SIZE_ALL).y,
                     textPaint
                 )
                 canvas.nativeCanvas.drawTextLine(
-                    TextLine.Companion.make("${(maxValue*4)/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                    TextLine.Companion.make("${scale4}", Font(typeFace,FONT_SIZE_SCALE)),
                     calcNumGaug(315f,SIZE_ALL).x-13,calcNumGaug(315f,SIZE_ALL).y,
                     textPaint
                 )
                 if (((maxValue*5)/6)>999) {
                     canvas.nativeCanvas.drawTextLine(
-                        TextLine.Companion.make("${(maxValue*5)/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                        TextLine.Companion.make("${scale5}", Font(typeFace,FONT_SIZE_SCALE)),
                         calcNumGaug(0f,SIZE_ALL).x-18,calcNumGaug(0f,SIZE_ALL).y,
                         textPaint
                     )
                 } else {
                     canvas.nativeCanvas.drawTextLine(
-                        TextLine.Companion.make("${(maxValue*5)/6}", Font(typeFace,FONT_SIZE_SCALE)),
+                        TextLine.Companion.make("${scale6}", Font(typeFace,FONT_SIZE_SCALE)),
                         calcNumGaug(0f,SIZE_ALL).x-13,calcNumGaug(0f,SIZE_ALL).y,
                         textPaint
                     )

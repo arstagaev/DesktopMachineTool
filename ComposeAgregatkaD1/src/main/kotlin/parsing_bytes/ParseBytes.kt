@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.fazecast.jSerialComm.SerialPort
 import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
+import crtx1
 import initSerialCommunication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,10 +13,7 @@ import serialPort
 import showMeSnackBar
 import stopSerialCommunication
 import ui.parts_of_screen.timeOfMeasure
-import utils.DataChunkG
-import utils.byteToInt
-import utils.onesAndTens
-import utils.toHexString
+import utils.*
 import kotlin.concurrent.fixedRateTimer
 
 var pressures = ByteArray(16)
@@ -26,6 +24,7 @@ private var newData = ByteArray(16)
 var COUNTER = 0L
 var prs4 = 0
 var cur1 = 0
+private val DEBUG_PARSING = false
 
 fun startTimer() {
     fixedRateTimer("timer_2", daemon = false, 0L,1L) {
@@ -43,6 +42,7 @@ fun parseBytesCallback() {
 
     var arrCurr =  arrayListOf<ArrayList<Int>>()
     var arrPress = arrayListOf<ArrayList<Int>>()
+
 
     serialPort.addDataListener(object : SerialPortDataListener {
         override fun getListeningEvents(): Int {
@@ -66,100 +66,118 @@ fun parseBytesCallback() {
             //newData = ByteArray(serialPort.bytesAvailable())
             //println("Inside that listener, what happening")
             var updData = ByteArray(16)
+            var dch: DataChunkG? = null
 
             if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                serialPort.readBytes(updData, 16)
+                event.serialPort.readBytes(updData, 16L)
+                //serialPort.readBytes(updData, 16)
+                println("> ${updData[0]} [size:${updData.size}]")
+                //serialPort.flushIOBuffers()
+                //serialPort
+                //event.serialPort.readBytes(updData,16L,16)
 
-                val FST_CNDN = 16
-                when {
-                    //currency
-                    updData[1] >= FST_CNDN && updData[3] >= FST_CNDN && updData[5] >= FST_CNDN && updData[7] >= FST_CNDN -> {
-                        var dch = DataChunkG(
-                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()-16u),
+//                val FST_CNDN = 16
+//                when {
+//                    //currency
+//                    updData[1] >= FST_CNDN && updData[3] >= FST_CNDN && updData[5] >= FST_CNDN && updData[7] >= FST_CNDN -> {
+//                        var dch = DataChunkG(
+//                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()-16u),
+//
+//                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
+//                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
+//                        )
+//
+//                        if (DEBUG_PARSING) {
+//                            arrCurrRaw.add(updData)
+//
+//                            arrCurr.add(arrayListOf(
+//                                dch.firstGaugeData,
+//                                dch.secondGaugeData,
+//                                dch.thirdGaugeData,
+//                                dch.fourthGaugeData,
+//                                dch.fifthGaugeData,
+//                                dch.sixthGaugeData,
+//                                dch.seventhGaugeData,
+//                                dch.eighthGaugeData
+//                            ))
+//                        }
+//
+//
+//                    }
+//                    //pressure
+//                    updData[1] < FST_CNDN && updData[3] < FST_CNDN && updData[5] < FST_CNDN && updData[7] < FST_CNDN -> {
+//                        println("> ${updData.toHexString()} [size:${updData.size}]")
+//
+//                        dch = DataChunkG(
+//                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()),
+//                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()),
+//                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()),
+//                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()),
+//
+//                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()),
+//                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()),
+//                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()),
+//                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt())
+//                        )
+//
+//                        //logGarbage(">>> ${dch.toString()}")
+//
+//                        CoroutineScope(crtx1).launch {
+//                            dataChunkGauges.emit(dch)
+//                            //firstGaugeData  .emit(dch.firstGaugeData)
+//                        }
+//
+//                        if (DEBUG_PARSING) {
+//                            arrPressRaw.add(updData)
+//
+//                            arrPress.add(arrayListOf(
+//                                dch.firstGaugeData,
+//                                dch.secondGaugeData,
+//                                dch.thirdGaugeData,
+//                                dch.fourthGaugeData,
+//                                dch.fifthGaugeData,
+//                                dch.sixthGaugeData,
+//                                dch.seventhGaugeData,
+//                                dch.eighthGaugeData
+//                            ))
+//                        }
+//                    }
+//                    else -> {
+//                        // if not valid numbers - refresh connection
+//                        initSerialCommunication()
+//                    }
+//
+//                }
 
-                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
-                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
-                        )
+                if (DEBUG_PARSING) {
+                    // print clear results:
+                    if (arrPressRaw.size > 9) {
+                        stopSerialCommunication()
+                        println("_______current:")
+                        repeat(arrCurrRaw.size) {
+                            println(arrCurrRaw[it].toHexString())
+                        }
+                        println("_______pressure:")
+                        repeat(arrPressRaw.size) {
+                            println(arrPressRaw[it].toHexString())
+                        }
+                        ///
+                        println("********************************")
 
-                        arrCurrRaw.add(updData)
-
-                        arrCurr.add(arrayListOf(
-                            dch.firstGaugeData,
-                            dch.secondGaugeData,
-                            dch.thirdGaugeData,
-                            dch.fourthGaugeData,
-                            dch.fifthGaugeData,
-                            dch.sixthGaugeData,
-                            dch.seventhGaugeData,
-                            dch.eighthGaugeData
-                        ))
-
+                        repeat(arrCurr.size) {
+                            println(arrCurr[it])
+                        }
+                        repeat(arrPress.size) {
+                            println(arrPress[it])
+                        }
                     }
-                    //pressure
-                    updData[1] < FST_CNDN && updData[3] < FST_CNDN && updData[5] < FST_CNDN && updData[7] < FST_CNDN -> {
-                        println("> ${updData.toHexString()} [size:${updData.size}]")
-
-                        var dch = DataChunkG(
-                            onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()),
-                            onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()),
-                            onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()),
-                            onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()),
-
-                            onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()),
-                            onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()),
-                            onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()),
-                            onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt())
-                        )
-
-
-                        arrPressRaw.add(updData)
-
-                        arrPress.add(arrayListOf(
-                            dch.firstGaugeData,
-                            dch.secondGaugeData,
-                            dch.thirdGaugeData,
-                            dch.fourthGaugeData,
-                            dch.fifthGaugeData,
-                            dch.sixthGaugeData,
-                            dch.seventhGaugeData,
-                            dch.eighthGaugeData
-                        ))
-
-                    }
-                    else -> {
-                        // if not valid numbers - refresh connection
-                        initSerialCommunication()
-                    }
-
                 }
 
-
-                // print clear results:
-                if (arrPressRaw.size > 9) {
-                    stopSerialCommunication()
-                    println("_______current:")
-                    repeat(arrCurrRaw.size) {
-                        println(arrCurrRaw[it].toHexString())
-                    }
-                    println("_______pressure:")
-                    repeat(arrPressRaw.size) {
-                        println(arrPressRaw[it].toHexString())
-                    }
-                    ///
-                    println("********************************")
-
-                    repeat(arrCurr.size) {
-                        println(arrCurr[it])
-                    }
-                    repeat(arrPress.size) {
-                        println(arrPress[it])
-                    }
-                }
             }
             pressures = ByteArray(16)
             currents = ByteArray(16)
@@ -172,9 +190,8 @@ fun parseBytesCallback() {
 
             try {
                 CoroutineScope(Dispatchers.IO).launch {
+                    //dataChunkGauges.emit(dch!!)
 
-                    //dataChunkGauges.emit(dch)
-//                firstGaugeData.emit(  onesAndTens(newData[0],newData[1]).toInt())
 //                secondGaugeData.emit( onesAndTens(newData[2],newData[3]).toInt())
 //                thirdGaugeData.emit(  onesAndTens(newData[4],newData[5]).toInt())
 //                fourthGaugeData.emit( onesAndTens(newData[6],newData[7]).toInt())

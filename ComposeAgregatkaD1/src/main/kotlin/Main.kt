@@ -15,6 +15,7 @@ import ui.parts_of_screen.timeOfMeasure
 import utils.*
 import kotlin.concurrent.fixedRateTimer
 
+val crtx1 = CoroutineName("main")
 
 fun main() = singleWindowApplication (
     title = "Агрегатка Tech v.1.1.3",
@@ -23,14 +24,14 @@ fun main() = singleWindowApplication (
 ) {
     COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
     readExcelFile()
-    //App()
+    App()
     initSerialCommunication()
 
 
 //    val properties: Properties = Properties()
 //    properties.load(App::class.java.getResourceAsStream("/version.properties"))
 //    System.out.println(properties.getProperty("version"))
-    //initSerialCommunication("COM3")
+//    initSerialCommunication("COM3")
 }
 
 var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
@@ -43,10 +44,11 @@ fun initSerialCommunication() {
         println(">>>Available Com ports:${getComPorts_Array().get(it).systemPortName} is Open: ${getComPorts_Array().get(it).isOpen}||${getComPorts_Array().get(it).descriptivePortName}")
     }
 
-    GlobalScope.launch {
+    CoroutineScope(crtx1).launch {
+
         launchSerialCommunication()
 
-        delay(2000)
+        delay(3000)
         println("Run Callbacks::")
 
         parseBytesCallback()
@@ -61,7 +63,7 @@ fun launchSerialCommunication() {
     //SerialPort.getCommPorts()
 
 
-    serialPort.baudRate = speedOfPort.value.text.toInt()
+    //serialPort.baudRate = speedOfPort.value.text.toInt()
 
     serialPort.setComPortParameters(512000,8,1,SerialPort.NO_PARITY)
     serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
