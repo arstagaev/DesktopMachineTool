@@ -1,0 +1,4 @@
+
+*.bin
+ComposeAgregatkaD1/.gradle/*
+ComposeAgregatkaD1/build/

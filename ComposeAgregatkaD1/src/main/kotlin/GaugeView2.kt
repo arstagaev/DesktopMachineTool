@@ -1,10 +1,9 @@
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -28,6 +27,7 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
 import ui.parts_of_screen.textDelay
+import ui.styles.colorTrans60
 import utils.rndTo2deci
 import kotlin.math.PI
 import kotlin.math.cos
@@ -35,9 +35,14 @@ import kotlin.math.sin
 
 
 @Composable
-fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValue: Int,nameOfGauge : String) {
+fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input_raw: Int, maxValue: Int, minValue: Int, nameOfGauge : String, units: String = "",comment: String = "") {
     var SIZE_ALL = input_SIZE_ALL
     var angle = 0f
+
+    val interpolation = ( (maxValue+minValue).toFloat() / utils.PRESSURE_MAX_RAW.toFloat() )
+    var PRS_INP = map(x = PRESSURE_Input_raw, in_min = 0, in_max = utils.PRESSURE_MAX_RAW, out_min = minValue, out_max = maxValue)
+    //(if (PRESSURE_Input_raw == 0) minValue else PRESSURE_Input_raw.toFloat() * interpolation).toInt()
+    //println("GaugeView2 ${interpolation} || ${PRESSURE_Input_raw}-> ${utils.PRESSURE_MAX_RAW}/ ${maxValue} ${minValue} = ${interpolation} . ${PRS_INP}")
 
     val scale1 = rndTo2deci(minValue.toFloat() + ( maxValue.toFloat() - minValue.toFloat() ) / 6f)
     val scale2 = rndTo2deci(scale1   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
@@ -46,15 +51,15 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
     val scale5 = rndTo2deci(scale4   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
     val scale6 = rndTo2deci(scale5   + ( maxValue.toFloat() - minValue.toFloat() ) / 6)
     //println("~~~~ ${scale1} ${scale2} ${scale3} ${scale4} ${scale5} ${scale6} ")
+    var isCommentVisible = remember { mutableStateOf(false) }
 
-
-    if (PRESSURE_Input <= maxValue) {
-        if (PRESSURE_Input <= minValue) {
+    if (PRS_INP <= maxValue) {
+        if (PRS_INP <= minValue) {
             angle = 0f
         } else {
-            angle = (270f* PRESSURE_Input) / maxValue
+            angle = (270f* PRS_INP) / maxValue
         }
-    }else {
+    } else {
         angle = 270f
     }
 
@@ -85,7 +90,10 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
     Box(
         modifier = Modifier
             .width((SIZE_ALL).dp)
-            .height((SIZE_ALL+30).dp).border(BorderStroke(2.dp, Color.Gray)),
+            .height((SIZE_ALL+30).dp).border(BorderStroke(2.dp, Color.Gray))
+            .clickable {
+                isCommentVisible.value = !isCommentVisible.value
+            },
         contentAlignment = Alignment.Center
     ) {
 //        val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
@@ -95,7 +103,13 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
             //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
             , fontFamily = FontFamily.Cursive, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.LightGray
         )
-        Text("${PRESSURE_Input}", modifier = Modifier
+        Text("${units}", modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 80.dp)
+            //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+            , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Gray
+        )
+        Text("${PRS_INP}", modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(30.dp)
             //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
@@ -267,9 +281,6 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
 
             //print("| x= ${X}   y= ${Y} |")
 
-
-
-
             drawCircle(
                 color = Color.Black,
                 radius = 4.dp.toPx()
@@ -292,8 +303,20 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input: Int, maxValue: Int, minValu
 //                .background(Color.White),
 //            fontSize = 15.sp
 //        )
+        AnimatedVisibility(isCommentVisible.value) {
+            Box(modifier = Modifier.fillMaxSize().background(colorTrans60)) {
+                Text("raw: ${PRESSURE_Input_raw} .. ${comment}", modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(10.dp)
+                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
+            }
+        }
 
     }
+
+
 }
 data class XY(var x : Float, var y : Float)
 
@@ -319,4 +342,8 @@ fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
 
     println(" >> ${size}  x:${X} y:${Y} ")
     return XY_DP(X.dp,Y.dp)
+}
+
+fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 }

@@ -2,6 +2,7 @@ package utils
 
 import androidx.compose.runtime.mutableStateOf
 import enums.State
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 var COM_PORT = "COM3"
@@ -20,8 +21,11 @@ var eighthGaugeData = MutableSharedFlow<Int>()
 
 var longForChart   = arrayListOf<Int>()
 
-var dataChunkGauges   = MutableSharedFlow<DataChunkG>()
-var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>()
+var dataChunkGauges   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
+var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
+
+val PRESSURE_MAX_RAW = 4095
+val CURRENT_MAX_RAW = 255
 
 data class DataChunkG(
     var firstGaugeData:   Int,

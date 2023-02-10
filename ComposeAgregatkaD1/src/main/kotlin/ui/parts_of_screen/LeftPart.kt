@@ -4,24 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fazecast.jSerialComm.SerialPort
 import enums.State
-import initSerialCommunication
-import serialPort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import serial_port.initSerialCommunication
+import serial_port.serialPort
+import serial_port.stopSerialCommunication
+import serial_port.writeToSerialPort
 import showMeSnackBar
-import stopSerialCommunication
 import utils.COM_PORT
 import utils.DELAY_FOR_GET_DATA
 import utils.GLOBAL_STATE
@@ -41,6 +41,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
 
     var openDialog = remember { mutableStateOf(false)  }
     val openDialogSettings = remember { mutableStateOf(false)  }
+    val rmbcrtx = rememberCoroutineScope().coroutineContext
     if (openDialog.value) {
 
         AlertDialog(
@@ -159,7 +160,14 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                 Button(
 
                     onClick = {
-                        initSerialCommunication()
+
+                        CoroutineScope(rmbcrtx).launch {
+                            //writeToSerialPort(byteArrayOf(0x78.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                            writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
+                            delay(500)
+                            //initSerialCommunication()
+                        }
+
                         openDialogSettings.value = false
                         GLOBAL_STATE.value = State.PLAY
                     }) {
@@ -200,7 +208,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                 onClick = { openDialogSettings.value = true },
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Gray,contentColor = Color.Black),
-                modifier = Modifier
+                modifier = Modifier.weight(1f)
             ) {
                 Text("▶", modifier = Modifier.size(20.dp))
             }
@@ -213,9 +221,50 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
 
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Gray,contentColor = Color.Black),
-                modifier = Modifier
+                modifier = Modifier.weight(1f)
             ) {
                 Text("✖", modifier = Modifier.size(20.dp))
+            }
+
+
+            Button(
+
+                onClick = {
+                    CoroutineScope(rmbcrtx).launch {
+                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        GLOBAL_STATE.value = State.STOP
+                    }
+
+                },
+
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Gray,contentColor = Color.Black),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("⏸", modifier = Modifier.size(20.dp))
+            }
+
+            Button(
+
+                onClick = {
+                    CoroutineScope(rmbcrtx).launch {
+                        writeToSerialPort(byteArrayOf(0x78.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        delay(500)
+                        serialPort.flushIOBuffers()
+                        writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+
+                        GLOBAL_STATE.value = State.STOP
+                    }
+
+                },
+
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Gray,contentColor = Color.Black),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("⟲", modifier = Modifier.size(20.dp))
             }
             //initSerialCommunication("COM3")
         }

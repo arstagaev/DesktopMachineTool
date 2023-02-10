@@ -22,9 +22,9 @@ repositories {
 dependencies {
     implementation(compose.desktop.windows_x64)
     //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
-    implementation("com.fazecast:jSerialComm:2.7.0")
+    //implementation("com.fazecast:jSerialComm:2.7.0")
 
-    //implementation("com.fazecast:jSerialComm:2.9.3")
+    implementation("com.fazecast:jSerialComm:2.9.3")
 
     // https://mvnrepository.com/artifact/org.apache.poi/poi
     implementation("org.apache.poi:poi:5.0.0")

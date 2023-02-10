@@ -13,22 +13,23 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import parsing_excel.solenoids
+import utils.DELAY_FOR_GET_DATA
+import utils.dataChunkCurrents
+import utils.dataChunkGauges
 
 @Composable
 fun currentPanelSetup(
-    pressure1: Int,
-    pressure2: Int,
-    pressure3: Int,
-    pressure4: Int,
-    pressure5: Int,
-    pressure6: Int,
-    pressure7: Int,
-    pressure8: Int,
     sizeRow: Size,
     duration: MutableStateFlow<Long>
 ) {
+    var crctx = rememberCoroutineScope().coroutineContext
+
     var position1SeekBar by remember { mutableStateOf(10) }
     var position2SeekBar by remember { mutableStateOf(10) }
     var position3SeekBar by remember { mutableStateOf(10) }
@@ -43,22 +44,41 @@ fun currentPanelSetup(
 //    }else {
 //        showMeSnackBar("Excel config parse success",Color.White)
 //    }
+    CoroutineScope(crctx).launch {
+        dataChunkCurrents.collect {
+            delay(DELAY_FOR_GET_DATA)
+            //println("|currrr [${it.firstCurrentData}]")
+            //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
+            //longForChart.add(pressure1X)
+
+            position1SeekBar = it.firstCurrentData
+            position2SeekBar = it.secondCurrentData
+            position3SeekBar = it.thirdCurrentData
+            position4SeekBar = it.fourthCurrentData
+
+            position5SeekBar = it.fifthCurrentData
+            position6SeekBar = it.sixthCurrentData
+            position7SeekBar = it.seventhCurrentData
+            position8SeekBar = it.eighthCurrentData
+        }
+    }
+
     Row(
-        modifier = androidx.compose.ui.Modifier //.padding(10.dp)
+        modifier = Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
 
-            justBar(solenoids[0].displayName,pressure1,duration)
-            justBar(solenoids[1].displayName,pressure2,duration)
-            justBar(solenoids[2].displayName,pressure2,duration)
-            justBar(solenoids[3].displayName,pressure2,duration)
+            justBar(solenoids[0].displayName, position1SeekBar, duration)
+            justBar(solenoids[1].displayName, position2SeekBar, duration)
+            justBar(solenoids[2].displayName, position3SeekBar, duration)
+            justBar(solenoids[3].displayName, position4SeekBar, duration)
 
-//            justBar("Канал 1",pressure1,duration)
-//            justBar("Канал 2",pressure2,duration)
-//            justBar("Канал 3",pressure2,duration)
-//            justBar("Канал 4",pressure2,duration)
+//            justBar(solenoids[4].displayName, position5SeekBar, duration)
+//            justBar(solenoids[5].displayName, position6SeekBar, duration)
+//            justBar(solenoids[6].displayName, position7SeekBar, duration)
+//            justBar(solenoids[7].displayName, position8SeekBar, duration)
 
     }
     Row(
@@ -67,10 +87,10 @@ fun currentPanelSetup(
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        justBar(solenoids[4].displayName,pressure1,duration)
-        justBar(solenoids[5].displayName,pressure2,duration)
-        justBar(solenoids[6].displayName,pressure2,duration)
-        justBar(solenoids[7].displayName,pressure2,duration)
+        justBar(solenoids[4].displayName,position5SeekBar,duration)
+        justBar(solenoids[5].displayName,position6SeekBar,duration)
+        justBar(solenoids[6].displayName,position7SeekBar,duration)
+        justBar(solenoids[7].displayName,position8SeekBar,duration)
 
     }
 

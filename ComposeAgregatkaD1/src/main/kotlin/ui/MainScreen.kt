@@ -291,14 +291,8 @@ fun chartX() {
         }
     }
 
-
-
-
-
-
-
-
 }
+
 ///////
 fun createDataset(): CategoryDataset? {
     var data = arrayOf(

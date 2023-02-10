@@ -112,7 +112,7 @@ data class SolenoidHolder(
     val displayName : String,
     val index : Int,
     val maxPWM : Int,
-    val tolerance : Int,
+    val step : Int,
 
     val frequency : Int,
     val preferredColor : String,
