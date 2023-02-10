@@ -77,14 +77,14 @@ fun readExcelFile() {
     for (i in 0 until wholeSheet[2].size-1) {
         solenoids.add(
             SolenoidHolder(
-                displayName = wholeSheet[2][i+1],
-                wholeSheet[3][i+1].toDouble().toInt(),
-                wholeSheet[3][i+1].toDouble().toInt(),
-                wholeSheet[4][i+1].toDouble().toInt(),
-                wholeSheet[5][i+1].toDouble().toInt(),
-                wholeSheet[6][i+1],
-                wholeSheet[7][i+1].toDouble().toInt(),
-                wholeSheet[8][i+1].toBoolean()
+                displayName =       wholeSheet[2][i+1],
+                index =             wholeSheet[3][i+1].toDouble().toInt(),
+                maxPWM =            wholeSheet[4][i+1].toDouble().toInt(),
+                step =              wholeSheet[5][i+1].toDouble().toInt(),
+                preferredColor =    wholeSheet[6][i+1],
+                frequency =         wholeSheet[7][i+1].toDouble().toInt(),
+                expectedTestValue = wholeSheet[8][i+1].toDouble().toInt(),
+                maxValue =          wholeSheet[9][i+1].toDouble().toInt()
             )
         )
     }
@@ -117,7 +117,7 @@ data class SolenoidHolder(
     val frequency : Int,
     val preferredColor : String,
     val expectedTestValue : Int,
-    val IsDC : Boolean
+    val maxValue : Int
 )
 data class PressuresHolder(
     val displayName : String,

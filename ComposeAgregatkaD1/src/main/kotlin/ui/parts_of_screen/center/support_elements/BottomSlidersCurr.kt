@@ -18,10 +18,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import map
 import parsing_excel.solenoids
+import utils.CURRENT_MAX_RAW
 import utils.DELAY_FOR_GET_DATA
 import utils.dataChunkCurrents
-import utils.dataChunkGauges
 
 @Composable
 fun currentPanelSetup(
@@ -30,15 +31,15 @@ fun currentPanelSetup(
 ) {
     var crctx = rememberCoroutineScope().coroutineContext
 
-    var position1SeekBar by remember { mutableStateOf(10) }
-    var position2SeekBar by remember { mutableStateOf(10) }
-    var position3SeekBar by remember { mutableStateOf(10) }
-    var position4SeekBar by remember { mutableStateOf(10) }
+    var position1SeekBar by remember { mutableStateOf(-1) }
+    var position2SeekBar by remember { mutableStateOf(-1) }
+    var position3SeekBar by remember { mutableStateOf(-1) }
+    var position4SeekBar by remember { mutableStateOf(-1) }
 
-    var position5SeekBar by remember { mutableStateOf(10) }
-    var position6SeekBar by remember { mutableStateOf(10) }
-    var position7SeekBar by remember { mutableStateOf(10) }
-    var position8SeekBar by remember { mutableStateOf(10) }
+    var position5SeekBar by remember { mutableStateOf(-1) }
+    var position6SeekBar by remember { mutableStateOf(-1) }
+    var position7SeekBar by remember { mutableStateOf(-1) }
+    var position8SeekBar by remember { mutableStateOf(-1) }
 //    if (solenoids.size<5){
 //        showMeSnackBar("Excel error",Color.Red)
 //    }else {
@@ -70,10 +71,10 @@ fun currentPanelSetup(
             .background(Color.White)
     ) {
 
-            justBar(solenoids[0].displayName, position1SeekBar, duration)
-            justBar(solenoids[1].displayName, position2SeekBar, duration)
-            justBar(solenoids[2].displayName, position3SeekBar, duration)
-            justBar(solenoids[3].displayName, position4SeekBar, duration)
+            justBar(solenoids[0].displayName, current = map(x=position1SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration)
+            justBar(solenoids[1].displayName, current = map(x=position2SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].maxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration)
+            justBar(solenoids[2].displayName, current = map(x=position3SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[2].maxValue), maxPWM = solenoids[2].maxPWM, step = solenoids[2].step, duration)
+            justBar(solenoids[3].displayName, current = map(x=position4SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[3].maxValue), maxPWM = solenoids[3].maxPWM, step = solenoids[3].step, duration)
 
 //            justBar(solenoids[4].displayName, position5SeekBar, duration)
 //            justBar(solenoids[5].displayName, position6SeekBar, duration)
@@ -87,10 +88,10 @@ fun currentPanelSetup(
             .height(IntrinsicSize.Min)
             .background(Color.White)
     ) {
-        justBar(solenoids[4].displayName,position5SeekBar,duration)
-        justBar(solenoids[5].displayName,position6SeekBar,duration)
-        justBar(solenoids[6].displayName,position7SeekBar,duration)
-        justBar(solenoids[7].displayName,position8SeekBar,duration)
+        justBar(solenoids[4].displayName, current = map(x=position5SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxPWM), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration)
+        justBar(solenoids[5].displayName, current = map(x=position6SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxPWM), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration)
+        justBar(solenoids[6].displayName, current = map(x=position7SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxPWM), maxPWM = solenoids[6].maxPWM, step = solenoids[6].step, duration)
+        justBar(solenoids[7].displayName, current = map(x=position8SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxPWM), maxPWM = solenoids[7].maxPWM, step = solenoids[7].step, duration)
 
     }
 
@@ -100,7 +101,7 @@ fun currentPanelSetup(
 
 
 @Composable
-fun justBar(channelName : String,pressure1: Int, duration: MutableStateFlow<Long>,) {
+fun justBar(channelName : String, current: Int, maxPWM: Int, step: Int,  duration: MutableStateFlow<Long>,) {
     Column(
         modifier = Modifier.padding(0.dp, 1.dp)
             .width(200.dp)
@@ -118,7 +119,7 @@ fun justBar(channelName : String,pressure1: Int, duration: MutableStateFlow<Long
         ) {
             Column {
                 Text("${channelName}     ", modifier = Modifier.padding(2.dp), fontSize = 8.sp)
-                Text(" Current: ${pressure1} \n PWN: 0", fontSize = 7.sp)
+                Text(" Current: ${current} \n PWN: ${maxPWM}", fontSize = 7.sp)
             }
 
             Spacer(modifier = Modifier.width(3.dp))

@@ -345,5 +345,6 @@ fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
 }
 
 fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
+    println("fun map ${x} ${in_min} $in_max $out_min $out_max ")
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 }

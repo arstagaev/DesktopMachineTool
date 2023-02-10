@@ -213,12 +213,10 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                 Text("▶", modifier = Modifier.size(20.dp))
             }
             Button(
-
                 onClick = {
                     stopSerialCommunication()
                     GLOBAL_STATE.value = State.STOP
                 },
-
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Gray,contentColor = Color.Black),
                 modifier = Modifier.weight(1f)
@@ -228,16 +226,17 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
 
 
             Button(
-
                 onClick = {
                     CoroutineScope(rmbcrtx).launch {
-                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        writeToSerialPort(byteArrayOf(0x78.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        delay(500)
+                        //serialPort.flushIOBuffers()
                         writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+
                         GLOBAL_STATE.value = State.STOP
                     }
-
                 },
-
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Gray,contentColor = Color.Black),
                 modifier = Modifier.weight(1f)
@@ -246,16 +245,11 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             }
 
             Button(
-
                 onClick = {
                     CoroutineScope(rmbcrtx).launch {
-                        writeToSerialPort(byteArrayOf(0x78.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
-                        delay(500)
-                        serialPort.flushIOBuffers()
-                        writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
-                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
-
-                        GLOBAL_STATE.value = State.STOP
+                        //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+//                        writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+//                        GLOBAL_STATE.value = State.STOP
                     }
 
                 },
@@ -268,6 +262,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
             }
             //initSerialCommunication("COM3")
         }
+        ///////////////////////////////////
         Text("Time: ${(timeOfMeasure.value/1000L).toInt()}s",
             modifier = Modifier.width(200.dp).height(60.dp).padding(4.dp),fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
 

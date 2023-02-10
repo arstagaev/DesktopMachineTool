@@ -7,7 +7,7 @@
 --java-options
 "'-Dcompose.application.resources.dir=$APPDIR\\resources'"
 --main-jar
-"C:\\Users\\ion8\\IdeaProjects\\DesktopMachineTool\\ComposeAgregatkaD1\\build\\compose\\tmp\\packageMsi\\libs\\ComposeAgregatkaD1-1.0-1468f38ad2aaf6febfec3daf704ef288.jar"
+"C:\\Users\\ion8\\IdeaProjects\\DesktopMachineTool\\ComposeAgregatkaD1\\build\\compose\\tmp\\packageMsi\\libs\\ComposeAgregatkaD1-1.0-197e32df0a23258749135d2b4b2dced.jar"
 --main-class
 "MainKt"
 --icon
