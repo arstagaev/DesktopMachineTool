@@ -30,12 +30,3 @@ fun main() = singleWindowApplication (
 //    System.out.println(properties.getProperty("version"))
 //    initSerialCommunication("COM3")
 }
-
-
-
-
-
-
-
-
-

@@ -104,7 +104,7 @@ private var arrPress = arrayListOf<ArrayList<Int>>()
 private var start_time = 0L
 private var incr = 0
 
-suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.Main) {
+suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
     var dch: DataChunkG? = null
     var dchCurr: DataChunkCurrent? = null
 
