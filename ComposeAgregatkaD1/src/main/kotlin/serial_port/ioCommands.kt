@@ -1,13 +1,7 @@
 package serial_port
 
-import androidx.compose.ui.graphics.Color
 import com.fazecast.jSerialComm.SerialPort
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import showMeSnackBar
-import ui.parts_of_screen.speedOfPort
+import kotlinx.coroutines.*
 import utils.COM_PORT
 import utils.getComPorts_Array
 import utils.toHexString
@@ -22,7 +16,7 @@ fun initSerialCommunication() {
         println(">>>Available Com ports:${getComPorts_Array().get(it).systemPortName} is Open: ${getComPorts_Array().get(it).isOpen}||${getComPorts_Array().get(it).descriptivePortName}")
     }
 
-    CoroutineScope(crtx2).launch {
+    CoroutineScope(Dispatchers.IO).launch {
 
         launchSerialCommunication()
 
@@ -47,10 +41,10 @@ fun launchSerialCommunication() {
     serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
     serialPort.openPort()
     serialPort.clearBreak()
-    showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
+    //showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
 }
 
-suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false) {
+suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 1000L) {
     repeat(1) {
 
         println("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
@@ -58,7 +52,7 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false) 
         if (withFlush) {
             serialPort.flushIOBuffers()
         }
-        delay(1000)
+        delay(delay)
         //println("goo " + sendBytes.size)
     }
 

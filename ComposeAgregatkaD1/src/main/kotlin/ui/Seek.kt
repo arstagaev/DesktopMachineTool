@@ -36,9 +36,9 @@ fun Seekbar(
     onNewProgress: (progress: Long) -> Unit,
     onDragStart: (progress: Long) -> Unit,
     onDragEnd: (progress: Long) -> Unit,
-    progressColor: Color = MaterialTheme.colors.primary,
+    progressColor: Color = Color.Green,
     backgroundColor: Color = Color.Gray,
-    sliderColor: Color = MaterialTheme.colors.primary,
+    sliderColor: Color = Color.LightGray,
     progressLineHeight: Dp = 4.dp,
     sliderWidth: Dp = 20.dp,
     sliderHeight: Dp = 12.dp

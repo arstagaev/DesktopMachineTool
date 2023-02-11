@@ -3,8 +3,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta5"
+    kotlin("jvm") version "1.8.0"
+    id("org.jetbrains.compose") version "1.3.0"
 }
 
 group = "me.agaev"
@@ -23,6 +23,10 @@ dependencies {
     implementation(compose.desktop.windows_x64)
     //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
     //implementation("com.fazecast:jSerialComm:2.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-test
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     implementation("com.fazecast:jSerialComm:2.9.3")
 
@@ -47,7 +51,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ComposeAgregatkaD1"
-            packageVersion = "1.1.3"
+            packageVersion = "1.1.4"
         }
     }
 }

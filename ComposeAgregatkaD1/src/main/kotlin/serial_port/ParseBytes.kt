@@ -61,7 +61,7 @@ fun parseBytesCallback() {
 
 
                 if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         event.serialPort.readBytes(updData, 16L)
                         //serialPort.readBytes(updData, 16)
 
@@ -140,7 +140,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
                 onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
                 onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
             )
-            println("CURR  ${updData.joinToString()}||${dchCurr.toString()}")
+            //println("CURR  ${updData.joinToString()}||${dchCurr.toString()}")
             CoroutineScope(crtx1).launch {
                 dataChunkCurrents.emit(dchCurr)
                 //firstGaugeData  .emit(dch.firstGaugeData)
@@ -179,7 +179,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
             )
 
             //logGarbage(">>> ${dch.toString()}")
-            println("PRES ${dch.toString()}")
+            //println("PRES ${dch.toString()}")
 
             CoroutineScope(crtx1).launch {
                 dataChunkGauges.emit(dch)

@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
-import ui.parts_of_screen.textDelay
+import ui.main_screen.textDelay
 import ui.styles.colorTrans60
 import utils.rndTo2deci
 import kotlin.math.PI
@@ -71,7 +71,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input_raw: Int, maxValue: Int, min
 
 
     LaunchedEffect(key1 = angle) {
-        scope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Default) {
             animatedPercentage.animateTo(
                 targetValue = angle.toFloat(),
                 animationSpec = tween(
@@ -345,6 +345,6 @@ fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
 }
 
 fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
-    println("fun map ${x} ${in_min} $in_max $out_min $out_max ")
+    //println("fun map ${x} ${in_min} $in_max $out_min $out_max ")
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 }

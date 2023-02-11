@@ -31,9 +31,11 @@ import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DatasetUtils
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
-import ui.parts_of_screen.center.centerPiece
-import ui.parts_of_screen.leftPiece
-import ui.parts_of_screen.rightPiece
+import ui.navigation.Screens
+import ui.main_screen.center.centerPiece
+import ui.main_screen.leftPiece
+import ui.main_screen.rightPiece
+import ui.starter_screen.StarterScreen
 import utils.longForChart
 import java.awt.Font
 import java.io.File
@@ -53,6 +55,7 @@ var visiMainScr = mutableStateOf(true)
 var showmeSnackBar = mutableStateOf(false)
 var textForSnackBar = mutableStateOf("Alert")
 var textForSnackBarColor = mutableStateOf(Color.Red)
+var screenNav = mutableStateOf<Screens>(Screens.MAIN)
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -60,7 +63,7 @@ var textForSnackBarColor = mutableStateOf(Color.Red)
 fun App() {
     var PRESSURE by remember { mutableStateOf(0) }
     var visibilityOfMainScreen by remember { visiMainScr }
-
+    val screenNavi = remember { screenNav }
 
     fixedRateTimer("timer", false, 5000L,2000) {
         PRESSURE = (0..90).random()
@@ -79,12 +82,25 @@ fun App() {
         }) {
             Row{
                 leftPiece(visibilityOfMainScreen)
-                AnimatedVisibility(visible = visibilityOfMainScreen) {
-                    centerPiece(PRESSURE,(PRESSURE*0.4).toInt(),1,1,11,23,1,1)
+
+                when(screenNavi.value) {
+                    Screens.STARTER -> {
+                        //Box(Modifier.fillMaxSize().background(Color.Red))
+                        StarterScreen()
+                    }
+                    Screens.MAIN -> {
+                        centerPiece()
+                    }
+                    Screens.CHART -> {
+                        chartX()
+                    }
                 }
-                AnimatedVisibility(visible = !visibilityOfMainScreen) {
-                    chartX()
-                }
+//                AnimatedVisibility(visible = visibilityOfMainScreen) {
+//                                    }
+//                AnimatedVisibility(visible = !visibilityOfMainScreen) {
+//
+//                }
+
                 rightPiece()
             }
 
@@ -271,7 +287,7 @@ fun chartX() {
 
     }
 
-    CoroutineScope(Dispatchers.Main).launch {
+    CoroutineScope(Dispatchers.IO).launch {
         delay(2000)
         print("pizdec!!")
         try {

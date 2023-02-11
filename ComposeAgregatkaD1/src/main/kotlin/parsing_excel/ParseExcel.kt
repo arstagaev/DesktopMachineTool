@@ -11,13 +11,13 @@ import java.io.FileInputStream
 import javax.swing.JFileChooser
 
 
-
 var wholeSheet = mutableListOf<MutableList<String>>()
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()
 
 fun readExcelFile() {
     val theDir = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool")
+
     if (!theDir.exists()) {
         theDir.mkdirs()
         logAct("Excel-config folder created: ${theDir.absoluteFile}")
@@ -84,7 +84,7 @@ fun readExcelFile() {
                 preferredColor =    wholeSheet[6][i+1],
                 frequency =         wholeSheet[7][i+1].toDouble().toInt(),
                 expectedTestValue = wholeSheet[8][i+1].toDouble().toInt(),
-                maxValue =          wholeSheet[9][i+1].toDouble().toInt()
+                currentMaxValue =          wholeSheet[9][i+1].toDouble().toInt()
             )
         )
     }
@@ -117,7 +117,7 @@ data class SolenoidHolder(
     val frequency : Int,
     val preferredColor : String,
     val expectedTestValue : Int,
-    val maxValue : Int
+    val currentMaxValue : Int
 )
 data class PressuresHolder(
     val displayName : String,
