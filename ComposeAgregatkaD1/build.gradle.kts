@@ -24,9 +24,9 @@ dependencies {
     //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
     //implementation("com.fazecast:jSerialComm:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-test
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+//    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+//    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-test
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     implementation("com.fazecast:jSerialComm:2.9.3")
 

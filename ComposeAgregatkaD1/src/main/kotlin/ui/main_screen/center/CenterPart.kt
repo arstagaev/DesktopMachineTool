@@ -9,12 +9,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import parsing_excel.pressures
+import ui.custom.GaugeX
 import ui.main_screen.center.support_elements.currentPanelSetup
 import ui.main_screen.textStateMin
 import utils.DELAY_FOR_GET_DATA
@@ -73,18 +76,31 @@ fun centerPiece(
                     sizeRow = coordinates.size.toSize()
                 }
         ) {
+
             Row {
-                GaugeView2(200,pressure1X, (pressures[0].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue), pressures[0].displayName, units = "Bar",comment = "In the above example, the value of the variable good is inserted at good in the templateGood string. Likewise, the value of the variable great is inserted at great in the templateGreat string.")
-                GaugeView2(200,pressure2X, (pressures[1].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue), pressures[1].displayName)
-                GaugeView2(200,pressure3X, (pressures[2].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue), pressures[2].displayName)
-                GaugeView2(200,pressure4X, (pressures[3].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue), pressures[3].displayName)
+                GaugeX(DpSize(200.dp,200.dp),pressure1X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue),(pressures[0].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure2X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue),(pressures[1].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure3X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue),(pressures[2].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure4X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue),(pressures[3].maxValue.toInt()),"Бар")
             }
             Row {
-                GaugeView2(200,pressure5X, (pressures[4].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue, pressures[4].displayName)
-                GaugeView2(200,pressure6X, (pressures[5].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue, pressures[5].displayName)
-                GaugeView2(200,pressure7X, (pressures[6].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue, pressures[6].displayName)
-                GaugeView2(200,pressure8X, (pressures[7].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue, pressures[7].displayName)
+                GaugeX(DpSize(200.dp,200.dp),pressure5X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue),(pressures[4].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure6X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue),(pressures[5].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure7X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue),(pressures[6].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure8X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue),(pressures[7].maxValue.toInt()),"Бар")
             }
+            //Row {
+            //    GaugeView2(200,pressure1X, (pressures[0].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue), pressures[0].displayName, units = "Bar",comment = "In the above example, the value of the variable good is inserted at good in the templateGood string. Likewise, the value of the variable great is inserted at great in the templateGreat string.")
+            //    GaugeView2(200,pressure2X, (pressures[1].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue), pressures[1].displayName)
+            //    GaugeView2(200,pressure3X, (pressures[2].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue), pressures[2].displayName)
+            //    GaugeView2(200,pressure4X, (pressures[3].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue), pressures[3].displayName)
+            //}
+//            Row {
+//                GaugeView2(200,pressure5X, (pressures[4].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue, pressures[4].displayName)
+//                GaugeView2(200,pressure6X, (pressures[5].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue, pressures[5].displayName)
+//                GaugeView2(200,pressure7X, (pressures[6].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue, pressures[6].displayName)
+//                GaugeView2(200,pressure8X, (pressures[7].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue, pressures[7].displayName)
+//            }
 
             currentPanelSetup(
                 sizeRow, duration

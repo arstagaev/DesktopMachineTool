@@ -13,3 +13,15 @@ fun rndTo2deci(num : Float) : Float{
 
 
 fun Int.to2ByteArray() : ByteArray = byteArrayOf(toByte(), shr(8).toByte())
+
+
+fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
+    //println("fun map ($x - $in_min) * ($out_max - $out_min) / ($in_max - $in_min) + $out_min")
+    var stable_X = 0
+    if (x !in in_min..in_max) {
+        stable_X = in_min
+        //throw Exception("ERROR RANGE!!! map()")
+    }
+    return (stable_X - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+
+}

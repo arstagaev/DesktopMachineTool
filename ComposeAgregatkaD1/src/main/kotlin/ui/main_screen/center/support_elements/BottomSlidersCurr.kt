@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import map
 import parsing_excel.solenoids
 import serial_port.writeToSerialPort
 import ui.styles.fontDigital
@@ -136,7 +135,18 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                 Box(
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
                         maxPWMremember.value = 0
-                        //pos.value = 0.0f
+                        //pos.value = 1.0f
+                        CoroutineScope(Dispatchers.IO).launch {
+                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            if (isChangedFirstFourth) {
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+
+                            }else {
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+
+                            }
+                            delay(100)
+                        }
                     }
                 ) {
                     Text(
@@ -155,9 +165,11 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
 
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
-                            writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
-                            delay(100)
-                            writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                            if (isChangedFirstFourth) {
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                            }else {
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                            }
                         }
                         //pos.value-= 0.1f
                     }
@@ -219,9 +231,14 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
 
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
-                            writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                            if (isChangedFirstFourth) {
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+
+                            }else {
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+
+                            }
                             delay(100)
-                            writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
                         }
                         //pos.value += 0.1f
                     }
@@ -237,6 +254,17 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
                         maxPWMremember.value = 255
                         //pos.value = 1.0f
+                        CoroutineScope(Dispatchers.IO).launch {
+                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            if (isChangedFirstFourth) {
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+
+                            }else {
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+
+                            }
+                            delay(100)
+                        }
                     }
                 ) {
                     Text(
@@ -260,8 +288,11 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
             }
         }
 }
+var isChangedFirstFourth = true
 
 private fun selector(chIndex: Int, byte: Byte) {
+    isChangedFirstFourth = chIndex in 1..4
+
     when(chIndex) {
         1 -> ch1 = byte
         2 -> ch2 = byte

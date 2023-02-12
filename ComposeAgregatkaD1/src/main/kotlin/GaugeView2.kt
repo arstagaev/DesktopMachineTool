@@ -10,12 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -28,6 +30,7 @@ import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
 import ui.main_screen.textDelay
 import ui.styles.colorTrans60
+import utils.map
 import utils.rndTo2deci
 import kotlin.math.PI
 import kotlin.math.cos
@@ -150,18 +153,26 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input_raw: Int, maxValue: Int, min
 //                topLeft = Offset(x = 0F, y = 0F),
 //                size = this.size
 //            )
+            drawArc(
+                Color.Black,
+                0f,
+                180f,
+                useCenter = true,
+                size = Size(300f, 300f),
+                topLeft = Offset(60f, 60f)
+            )
 
             SIZE_ALL = canvasWidth.toInt()
 
             drawCircle(
                 color = Color.Green,
                 radius = 8.dp.toPx(),
-                center = Offset(calcNumGaug(135f,SIZE_ALL).x,calcNumGaug(135f,SIZE_ALL).y)
+                center = Offset(calcNumGaug(135f, SIZE_ALL).x,calcNumGaug(135f,SIZE_ALL).y)
             )
             drawCircle( // small
                 color = Color.Green,
                 radius = 4.dp.toPx(),
-                center = Offset(calcNumGaug(157.5f,SIZE_ALL).x,calcNumGaug(157.5f,SIZE_ALL).y)
+                center = Offset(calcNumGaug(157.5f, SIZE_ALL).x,calcNumGaug(157.5f,SIZE_ALL).y)
             )
             drawCircle(
                 color = Color.Green,
@@ -344,7 +355,3 @@ fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
     return XY_DP(X.dp,Y.dp)
 }
 
-fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
-    //println("fun map ${x} ${in_min} $in_max $out_min $out_max ")
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-}
