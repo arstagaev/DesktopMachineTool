@@ -42,7 +42,7 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "15"
 }
 
 compose.desktop {
@@ -52,6 +52,13 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ComposeAgregatkaD1"
             packageVersion = "1.1.4"
+        }
+
+        buildTypes.release {
+            proguard {
+                //isEnabled.set(false)
+                configurationFiles.from("compose-desktop.pro")
+            }
         }
     }
 }

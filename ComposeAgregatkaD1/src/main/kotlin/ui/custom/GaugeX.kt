@@ -135,7 +135,10 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
                         center = canvasCenter
                     )
 
-
+                    Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
+                        //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                        , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                    )
 
                     rotate(degrees = animatedPercentage.value) {
                         drawLine(
@@ -207,12 +210,9 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
 
                 }
 
+
                 Column(modifier = Modifier.height(inputSize.height*0.4f).align(Alignment.BottomStart).padding(start = 20.dp, bottom = 20.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
-                    Text("[${type}]", modifier = Modifier
-                        .padding(0.dp)
-                        //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                        , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
-                    )
+
                     Text("${if (progress !in minType..maxType) minType else progress}", modifier = Modifier
                         .padding(0.dp)
                         //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
