@@ -1,40 +1,91 @@
 package serial_port
 
-import com.fazecast.jSerialComm.SerialPort
-import com.fazecast.jSerialComm.SerialPortDataListener
-import com.fazecast.jSerialComm.SerialPortEvent
+import com.fazecast.jSerialComm.*
 import kotlinx.coroutines.*
 import utils.*
-import kotlin.concurrent.fixedRateTimer
+
 
 var pressures = ByteArray(16)
 var currents  = ByteArray(16)
 
 private var newData = ByteArray(16)
 
-var COUNTER = 0L
 var prs4 = 0
 var cur1 = 0
 private val DEBUG_PARSING = false
 
 private val crtx1 = CoroutineName("main")
 
-fun startTimer() {
-    fixedRateTimer("timer_2", daemon = false, 0L,1L) {
 
-        //timeOfMeasure.value += 1
-        COUNTER++
-        //println("pip")
-    }
-}
 var startFlag = false
 var stopFlag = false
+
+
+class PacketListener : SerialPortPacketListener {
+    override fun getListeningEvents(): Int {
+        return SerialPort.LISTENING_EVENT_DATA_RECEIVED
+    }
+
+    override fun getPacketSize(): Int {
+        return 16
+    }
+
+    override fun serialEvent(event: SerialPortEvent) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val newData = event.receivedData
+            //println("Received data of size: " + newData.size)
+            //for (i in newData.indices) print(Char(newData[i].toUShort()))
+            println("${newData.toHexString()}")
+            coreParse(newData)
+        }
+
+    }
+}
 
 fun parseBytesCallback() {
     println("Initialize listener parseBytesCallback")
 
 
     CoroutineScope(Dispatchers.IO).launch {
+
+//        val inp: InputStream = serialPort.getInputStream()
+//        var btarr = byteArrayOf() //byteArrayOf(0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0)
+//        var lastByte: Byte = -1
+//
+//        var increment = 0
+//        try {
+//            while (true) {
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val byte = inp.read().toByte()
+//                    //println("M>>> "+inp.readNBytes(15).toHexString())
+//                    if (inp.read() != -1) {
+//                        //lastByte = byte
+//
+//                        if (btarr.size == 16) {
+//                            println("bytearr: ${btarr.toHexString()}")
+//                            btarr = byteArrayOf()
+//
+//                            btarr += byte
+//                            //btarr[btarr.size-1] = byte
+//                        } else {
+//                            btarr += byte
+//                            //btarr[btarr.size-1] = byte
+//                        }
+//
+//                    }
+//
+//
+//                }
+//
+//                //inp.available()
+//                //inp.readAllBytes()
+//            }
+//        } catch (e: Exception) {
+//            println("exception ${btarr.toHexString()}")
+//            inp.close()
+//            e.printStackTrace()
+//        }
+//        return@launch
         serialPort.addDataListener(object : SerialPortDataListener {
             override fun getListeningEvents(): Int {
                 return SerialPort.LISTENING_EVENT_DATA_AVAILABLE
@@ -62,8 +113,11 @@ fun parseBytesCallback() {
 
                 if (event.eventType == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        event.serialPort.readBytes(updData, 16L)
+                        serialPort.readBytes(updData, 16L)
+                        //serialPort.inputStream.
                         //serialPort.readBytes(updData, 16)
+
+
 
                         //serialPort.flushIOBuffers()
                         //serialPort
@@ -80,22 +134,18 @@ fun parseBytesCallback() {
 //                        ) {
 //
 //                        }
+                        //println(">>> ${updData.toHexString()}")
                         coreParse(updData)
                     }
-
-
-
                 }
-
-
             }
         })
     }
-
-
-    //timeOfMeasure.value = 0L
-    //startTimer()
 }
+
+
+
+
 private var arrCurrRaw  = arrayListOf<ByteArray>()
 private var arrPressRaw = arrayListOf<ByteArray>()
 
@@ -115,7 +165,8 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
     val delta = System.currentTimeMillis() - start_time
 
     if (delta >= 1000) {
-        println("> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms")
+        // measure number of packets:
+        //println("> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms")
         incr = 0
     }
 

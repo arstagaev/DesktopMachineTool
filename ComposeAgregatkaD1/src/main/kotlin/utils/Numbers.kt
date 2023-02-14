@@ -17,11 +17,15 @@ fun Int.to2ByteArray() : ByteArray = byteArrayOf(toByte(), shr(8).toByte())
 
 fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
     //println("fun map ($x - $in_min) * ($out_max - $out_min) / ($in_max - $in_min) + $out_min")
-    var stable_X = 0
-    if (x !in in_min..in_max) {
+    var stable_X = x
+
+    if (x < in_min) {
         stable_X = in_min
-        //throw Exception("ERROR RANGE!!! map()")
     }
+    if (x > in_max) {
+        stable_X = in_max
+    }
+
     return (stable_X - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 
 }

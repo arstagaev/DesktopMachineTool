@@ -8,8 +8,9 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
 import parsing_excel.readExcelFile
 import serial_port.initSerialCommunication
+import ui.main_screen.timeOfMeasure
 import utils.*
-
+import kotlin.concurrent.fixedRateTimer
 
 
 fun main() = singleWindowApplication (
@@ -30,4 +31,11 @@ fun main() = singleWindowApplication (
 //    properties.load(App::class.java.getResourceAsStream("/version.properties"))
 //    System.out.println(properties.getProperty("version"))
 //    initSerialCommunication("COM3")
+}
+
+fun startTimer() {
+    fixedRateTimer("timer_2", daemon = true, 0L,1000L) {
+
+        timeOfMeasure.value += 1
+    }
 }

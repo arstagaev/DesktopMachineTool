@@ -2,6 +2,7 @@ package serial_port
 
 import com.fazecast.jSerialComm.SerialPort
 import kotlinx.coroutines.*
+import startTimer
 import utils.COM_PORT
 import utils.getComPorts_Array
 import utils.toHexString
@@ -22,9 +23,10 @@ fun initSerialCommunication() {
 
         delay(3000)
         println("Run Callbacks::")
-
-        parseBytesCallback()
-        writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
+        val listener = PacketListener()
+        serialPort.addDataListener(listener)
+        //parseBytesCallback()
+        writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
 
     }
 }
@@ -37,14 +39,18 @@ fun launchSerialCommunication() {
 
     //serialPort.baudRate = speedOfPort.value.text.toInt()
 
-    serialPort.setComPortParameters(512000,8,1, SerialPort.NO_PARITY)
-    serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
+    serialPort.setComPortParameters(500000,8,1, SerialPort.NO_PARITY)
+    serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
     serialPort.openPort()
-    serialPort.clearBreak()
+    //serialPort.clearBreak()
+
     //showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
 }
 
 suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 1000L) {
+    if (sendBytes[0] == 0x74.toByte()) {
+        startTimer()
+    }
     repeat(1) {
 
         println("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")

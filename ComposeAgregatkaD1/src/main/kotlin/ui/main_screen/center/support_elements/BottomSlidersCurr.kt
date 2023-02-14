@@ -139,10 +139,10 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
 
                             }
                             delay(100)
@@ -166,9 +166,9 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
                             }
                         }
                         //pos.value-= 0.1f
@@ -232,10 +232,10 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
 
                             }
                             delay(100)
@@ -257,10 +257,10 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                         CoroutineScope(Dispatchers.IO).launch {
                             selector(index, maxPWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4),false, delay = 100L)
+                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8),false, delay = 0L)
+                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
 
                             }
                             delay(100)

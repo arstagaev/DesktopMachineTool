@@ -78,16 +78,16 @@ fun centerPiece(
         ) {
 
             Row {
-                GaugeX(DpSize(200.dp,200.dp),pressure1X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue),(pressures[0].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure2X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue),(pressures[1].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure3X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue),(pressures[2].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure4X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue),(pressures[3].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure1X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue),(pressures[0].maxValue.toInt()),type ="Бар",displayName = pressures[0].displayName, comment = pressures[0].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure2X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue),(pressures[1].maxValue.toInt()),type ="Бар",displayName = pressures[1].displayName, comment = pressures[1].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure3X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue),(pressures[2].maxValue.toInt()),type ="Бар",displayName = pressures[2].displayName, comment = pressures[2].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure4X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue),(pressures[3].maxValue.toInt()),type ="Бар",displayName = pressures[3].displayName, comment = pressures[3].commentString)
             }
             Row {
-                GaugeX(DpSize(200.dp,200.dp),pressure5X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue),(pressures[4].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure6X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue),(pressures[5].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure7X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue),(pressures[6].maxValue.toInt()),"Бар")
-                GaugeX(DpSize(200.dp,200.dp),pressure8X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue),(pressures[7].maxValue.toInt()),"Бар")
+                GaugeX(DpSize(200.dp,200.dp),pressure5X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue),(pressures[4].maxValue.toInt()),type = "Бар",displayName = pressures[4].displayName, comment = pressures[4].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure6X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue),(pressures[5].maxValue.toInt()),type = "Бар",displayName = pressures[5].displayName, comment = pressures[5].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure7X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue),(pressures[6].maxValue.toInt()),type = "Бар",displayName = pressures[6].displayName, comment = pressures[6].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure8X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue),(pressures[7].maxValue.toInt()),type = "Бар",displayName = pressures[7].displayName, comment = pressures[7].commentString)
             }
             //Row {
             //    GaugeView2(200,pressure1X, (pressures[0].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue), pressures[0].displayName, units = "Bar",comment = "In the above example, the value of the variable good is inserted at good in the templateGood string. Likewise, the value of the variable great is inserted at great in the templateGreat string.")

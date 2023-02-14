@@ -21,10 +21,8 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontSynthesis.Companion.Style
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.skia.Font
@@ -33,6 +31,7 @@ import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.TextLine
 import ui.main_screen.textDelay
 import ui.styles.colorTrans60
+import ui.styles.fontDigital
 import utils.map
 import kotlin.math.PI
 import kotlin.math.cos
@@ -46,12 +45,17 @@ private fun createBasePaint() {
     mBasePaint?.color = (Color.Red)
     //mBasePaint.style = (Paint.style)
 }
+
+
 // progress from 0 to 100
 // raw progress 0 to 240 degree
 @Composable
-fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type: String = "", comment: String = "") {
-    println("well $progress ${minType} $maxType $type ~> ${checkInterval(map(progress, minType, maxType,0,240))}")
-    var angle = checkInterval(map(progress, minType, maxType,0,240))
+fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type: String = "",displayName: String = "", comment: String = "") {
+    //println("well $progress ${minType} $maxType $type ~> ${checkInterval(map(progress, minType, maxType,0,240))}")
+
+    //val signValue = map(progress, minType, maxType,0,240)
+    val angle = checkInterval(map(progress, minType, maxType,0,240))
+
     val scope = rememberCoroutineScope()
     val animatedPercentage = remember { Animatable(angle.toFloat(), Float.VectorConverter) }
     val rememberShowComm = remember { mutableStateOf(false) }
@@ -76,9 +80,10 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             rememberShowComm.value = !rememberShowComm.value
         }) {
             Box(modifier = Modifier.fillMaxSize().weight(6f)) {
-
-
-
+                Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
+                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                    , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
                 Canvas(modifier = Modifier
                     .fillMaxSize()
                     .padding(0.dp)
@@ -119,7 +124,7 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
                                 color = Color.White,
                                 start = start,
                                 end = end,
-                                strokeWidth = 8f
+                                strokeWidth = 3f
                             )
                         }
                     }
@@ -129,16 +134,13 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
                     drawCircle(
                         color = Color.White,
                         style = Stroke(
-                            width = 10f
+                            width = 5f
                         ),
                         radius = radius,
                         center = canvasCenter
                     )
 
-                    Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
-                        //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                        , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
-                    )
+
 
                     rotate(degrees = animatedPercentage.value) {
                         drawLine(
@@ -211,18 +213,29 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
                 }
 
 
-                Column(modifier = Modifier.height(inputSize.height*0.4f).align(Alignment.BottomStart).padding(start = 20.dp, bottom = 20.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
+                Column(modifier = Modifier.height(inputSize.height*0.3f).align(Alignment.BottomStart).padding(start = 10.dp, bottom = 10.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
 
-                    Text("${if (progress !in minType..maxType) minType else progress}", modifier = Modifier
-                        .padding(0.dp)
+                    Text("${
+                        progress
+                        //checkSignInterval(progress, minType, maxType)
+                    }", modifier = Modifier.padding(0.dp)
                         //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                        , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                        , fontFamily = fontDigital, fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
 
                 }
             }
             Box(modifier = Modifier.fillMaxSize().weight(1f).background(Color.Gray)) {
-
+//                Text(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(horizontal = 4.dp), text = txt,
+//                    fontSize = TextUnit(10f, TextUnitType.Sp), color = Color.Black
+//                )
+                Text("${displayName}", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center
+                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                    , fontFamily = FontFamily.Monospace, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Medium, color = Color.White
+                )
             }
 
 
@@ -244,13 +257,26 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
 }
 
 fun checkInterval(inputProgress: Int): Int {
-    println(">>> ${inputProgress}")
+    //println(">>> ${inputProgress}")
     if (inputProgress >= 240) {
         return 240
     } else {
         return inputProgress
     }
 }
+
+fun checkSignInterval(inp : Int, min: Int, max: Int): Int {
+
+    if (inp > max) {
+        return max
+    }
+    if (inp < min) {
+        return min
+    }
+    return inp
+
+}
+
 
 
 //private data class XY(var x : Float, var y : Float)

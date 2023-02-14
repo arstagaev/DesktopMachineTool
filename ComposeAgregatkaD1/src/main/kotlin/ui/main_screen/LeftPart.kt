@@ -164,7 +164,7 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
 
                         CoroutineScope(rmbcrtx).launch {
                             //writeToSerialPort(byteArrayOf(0x78.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
-                            writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
+                            writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
                             delay(500)
                             //initSerialCommunication()
                         }
@@ -228,13 +228,13 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
                 onClick = {
                     CoroutineScope(rmbcrtx).launch {
 
-                        writeToSerialPort(byteArrayOf(0x71,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
-                        writeToSerialPort(byteArrayOf(0x51,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
+                        writeToSerialPort(byteArrayOf(0x71,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
+                        writeToSerialPort(byteArrayOf(0x51,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
 
-                        writeToSerialPort(byteArrayOf(0x78.toByte(), 0x8A.toByte(), 0x02.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        writeToSerialPort(byteArrayOf(0x78, 0x8A.toByte(), 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),withFlush = false)
                         delay(500)
                         //serialPort.flushIOBuffers()
-                        writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
+                        writeToSerialPort(byteArrayOf(0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),withFlush = false)
                         //writeToSerialPort(byteArrayOf(0x54.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00, 0x00, 0x00),withFlush = false)
 
                         GLOBAL_STATE.value = State.STOP
@@ -253,11 +253,11 @@ fun leftPiece(visibilityOfMainScreen: Boolean) {
 
         LazyColumn(Modifier.fillMaxWidth()) {
             item {
-                Text("Time: ${(timeOfMeasure.value/1000L).toInt()}s",
+                Text("Time: ${(timeOfMeasure.value).toInt()}s",
                     modifier = Modifier.width(200.dp).height(60.dp).padding(4.dp),fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
             }
             item {
-                Text("Установить Min и Max: ${(timeOfMeasure.value/1000L).toInt()}s",
+                Text("Установить Min и Max:",
                     modifier = Modifier.width(200.dp).height(60.dp).padding(4.dp).clickable {
                         openDialog.value = true
                     },fontSize = 14.sp, fontFamily = FontFamily.Monospace, )
