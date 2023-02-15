@@ -19,13 +19,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import parsing_excel.solenoids
 import serial_port.writeToSerialPort
 import ui.styles.fontDigital
 import utils.*
 
 @Composable
-fun currentPanelSetup(
+fun solenoidsPanel(
     sizeRow: Size,
     duration: MutableStateFlow<Long>
 ) {
@@ -68,7 +67,7 @@ fun currentPanelSetup(
         modifier = Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
-            .background(Color.White)
+            .background(Color.Black)
     ) {
 
             justBar(index = 1,solenoids[0].displayName, current = map(x=position1SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration)
@@ -86,7 +85,7 @@ fun currentPanelSetup(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
             .width(sizeRow.width.dp)
             .height(IntrinsicSize.Min)
-            .background(Color.White)
+            .background(Color.Black)
     ) {
         justBar(index = 5,solenoids[4].displayName, current = map(x=position5SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration)
         justBar(index = 6,solenoids[5].displayName, current = map(x=position6SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration)

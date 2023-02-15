@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.TextLine
-import ui.main_screen.textDelay
 import ui.styles.colorTrans60
 import utils.map
 import utils.rndTo2deci
@@ -78,7 +77,7 @@ fun GaugeView2(input_SIZE_ALL : Int, PRESSURE_Input_raw: Int, maxValue: Int, min
             animatedPercentage.animateTo(
                 targetValue = angle.toFloat(),
                 animationSpec = tween(
-                    durationMillis = textDelay.value.text.toInt(),
+                    durationMillis = 200,
                     easing = FastOutLinearInEasing
 //                    easing = {
 //                        BounceInterpolator().getInterpolation(it)

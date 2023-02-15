@@ -29,7 +29,6 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.TextLine
-import ui.main_screen.textDelay
 import ui.styles.colorTrans60
 import ui.styles.fontDigital
 import utils.map
@@ -53,8 +52,8 @@ private fun createBasePaint() {
 fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type: String = "",displayName: String = "", comment: String = "") {
     //println("well $progress ${minType} $maxType $type ~> ${checkInterval(map(progress, minType, maxType,0,240))}")
 
-    //val signValue = map(progress, minType, maxType,0,240)
-    val angle = checkInterval(map(progress, minType, maxType,0,240))
+    val signValue = map(checkSignInterval(progress,0,4095) , 0,4095, minType, maxType)
+    val angle = map(signValue, minType, maxType,0,240)//checkInterval()
 
     val scope = rememberCoroutineScope()
     val animatedPercentage = remember { Animatable(angle.toFloat(), Float.VectorConverter) }
@@ -67,7 +66,7 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             animatedPercentage.animateTo(
                 targetValue = angle.toFloat(),//(if (angle >= 225) 225 else angle).toFloat(),
                 animationSpec = tween(
-                    durationMillis = textDelay.value.text.toInt(),
+                    durationMillis = 200,
                     easing = FastOutLinearInEasing
                 )
             )
@@ -80,10 +79,7 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             rememberShowComm.value = !rememberShowComm.value
         }) {
             Box(modifier = Modifier.fillMaxSize().weight(6f)) {
-                Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
-                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                    , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
-                )
+
                 Canvas(modifier = Modifier
                     .fillMaxSize()
                     .padding(0.dp)
@@ -212,11 +208,16 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
 
                 }
 
+                Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
+                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                    , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
 
                 Column(modifier = Modifier.height(inputSize.height*0.3f).align(Alignment.BottomStart).padding(start = 10.dp, bottom = 10.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
 
                     Text("${
-                        progress
+                        signValue
+                        
                         //checkSignInterval(progress, minType, maxType)
                     }", modifier = Modifier.padding(0.dp)
                         //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
@@ -224,6 +225,8 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
                     )
 
                 }
+
+
             }
             Box(modifier = Modifier.fillMaxSize().weight(1f).background(Color.Gray)) {
 //                Text(

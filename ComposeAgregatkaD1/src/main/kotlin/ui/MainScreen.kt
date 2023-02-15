@@ -33,8 +33,6 @@ import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import ui.navigation.Screens
 import ui.main_screen.center.centerPiece
-import ui.main_screen.leftPiece
-import ui.main_screen.rightPiece
 import ui.starter_screen.StarterScreen
 import utils.longForChart
 import java.awt.Font
@@ -55,33 +53,17 @@ var visiMainScr = mutableStateOf(true)
 var showmeSnackBar = mutableStateOf(false)
 var textForSnackBar = mutableStateOf("Alert")
 var textForSnackBarColor = mutableStateOf(Color.Red)
-var screenNav = mutableStateOf<Screens>(Screens.MAIN)
+var screenNav = mutableStateOf<Screens>(Screens.STARTER)
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 @Preview
 fun App() {
-    var PRESSURE by remember { mutableStateOf(0) }
-    var visibilityOfMainScreen by remember { visiMainScr }
     val screenNavi = remember { screenNav }
-
-    fixedRateTimer("timer", false, 5000L,2000) {
-        PRESSURE = (0..90).random()
-        //print("well ${PRESSURE}")
-        //visibilityOfToast = !visibilityOfToast
-
-    }
-
-    var Height = 0
-    var Width = 0
     MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize().onGloballyPositioned {
-            Height = it.size.height
-            Width = it.size.width
-            //println("W:${Width} H:${Height}")
-        }) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Row{
-                leftPiece(visibilityOfMainScreen)
+                //leftPiece(visibilityOfMainScreen)
 
                 when(screenNavi.value) {
                     Screens.STARTER -> {
@@ -95,22 +77,11 @@ fun App() {
                         chartX()
                     }
                 }
-//                AnimatedVisibility(visible = visibilityOfMainScreen) {
-//                                    }
-//                AnimatedVisibility(visible = !visibilityOfMainScreen) {
-//
-//                }
-
-                rightPiece()
             }
-
-            snackBarShow()
-
-
+            //snackBarShow()
         }
-
     }
-    showMeSnackBar("Приветствую!",Color.White)
+    //showMeSnackBar("Приветствую!",Color.White)
 }
 
 fun showMeSnackBar(msg : String,color: Color) {
@@ -383,68 +354,3 @@ private fun createChart(dataset: CategoryDataset): JFreeChart? {
 
     return chart
 }
-
-
-//
-//private fun initSerialCommunication() {
-//    println(">>>serial communication has been started")
-//    serialPort.baudRate = 115200
-//    serialPort.setComPortParameters(115200, 8, 1, SerialPort.NO_PARITY)
-//    serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
-//    serialPort.openPort()
-//
-//    var a = 0
-//    val bb = byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-//    try {
-//        Thread.sleep(2000)
-//    } catch (e: InterruptedException) {
-//        e.printStackTrace()
-//    }
-//    while (a < 10) {
-//        serialPort.writeBytes(bb, 1)
-//        //            try {
-//        println("goo " + bb.size)
-//        //                serialPort.getOutputStream().write(bb);
-////                //serialPort.getOutputStream().flush();
-////            } catch (IOException e) {
-////                System.out.println("pizdec "+e.getMessage());
-////                e.printStackTrace();
-////            }
-//        a++
-//    }
-//
-//    serialPort.addDataListener(object : SerialPortDataListener {
-//        override fun getListeningEvents(): Int {
-//            return SerialPort.LISTENING_EVENT_DATA_AVAILABLE
-//        }
-//
-//        override fun serialEvent(event: SerialPortEvent) {
-//            if (event.eventType != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-//                sound(-1)
-//                return
-//            }
-//            newData = ByteArray(serialPort.bytesAvailable())
-//            val numRead = serialPort.readBytes(newData, newData.size.toLong())
-//            //var nnn = uintArrayOf(newData)
-//            //nnn =
-//
-//            println("conv " + (newData.toUByteArray()).joinToString() + "[[ ${newData.size}")
-//            //curPoint =
-//            firstAnalog( filterKalman( onesAndTens(newData[0],newData[1])))
-//            secondAnalog(onesAndTens(newData[2],newData[3]))
-//            thirdAnalog( onesAndTens(newData[4],newData[5]))
-//            fourthAnalog(onesAndTens(newData[6],newData[7]))
-//
-//            fiveAnalog( onesAndTens(newData[8],newData[9]))
-//            sixAnalog(  onesAndTens(newData[10],newData[11]))
-//            sevenAnalog(onesAndTens(newData[12],newData[13]))
-//            eightAnalog(onesAndTens(newData[14],newData[15]))
-//            z++
-//        }
-//    })
-//}
-//
-//fun stopSerialCommunication(){
-//    serialPort.removeDataListener()
-//    serialPort.closePort()
-//}

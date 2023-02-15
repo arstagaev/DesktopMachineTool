@@ -17,7 +17,7 @@ fun getComPorts_JustString() : String{
     return output_comport
 }
 
-fun getComPorts_Array() = SerialPort.getCommPorts().toMutableList()
+fun getComPorts_Array(): Array<out SerialPort>? = SerialPort.getCommPorts()
 
 fun onesAndTens(onesRAW : UInt, tensRAW : UInt) : Int {
     val ones = onesRAW//.toInt()

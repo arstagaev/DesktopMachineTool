@@ -1,27 +1,37 @@
 package ui.main_screen.center
 
-import GaugeView2
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import parsing_excel.pressures
+import screenNav
+import serial_port.pauseSerialComm
+import serial_port.startReceiveFullData
+import storage.openPicker
 import ui.custom.GaugeX
-import ui.main_screen.center.support_elements.currentPanelSetup
-import ui.main_screen.textStateMin
+import ui.main_screen.center.support_elements.solenoidsPanel
+import ui.navigation.Screens
 import utils.DELAY_FOR_GET_DATA
+import utils.Dir3Scenarios
 import utils.dataChunkGauges
+import utils.pressures
 
 
 @Composable
@@ -37,6 +47,10 @@ fun centerPiece(
     var pressure7X by remember { mutableStateOf(0) }
     var pressure8X by remember { mutableStateOf(0) }
     val duration = MutableStateFlow(100L)
+
+    val ctxScope = CoroutineScope(Dispatchers.IO)
+
+
     GlobalScope.launch {
 //        firstGaugeData.collect { value ->
 //            delay(DELAY_FOR_GET_DATA)
@@ -70,54 +84,81 @@ fun centerPiece(
             modifier = Modifier //.padding(10.dp)
                 .width(IntrinsicSize.Max)
                 .height(IntrinsicSize.Max)
-                .background(Color.White)
+                .background(Color.Black)
                 .layoutId("r")
                 .onGloballyPositioned { coordinates ->
                     sizeRow = coordinates.size.toSize()
                 }
         ) {
+            Row() {
+//                Box(Modifier.size(40.dp)) {
+//                    Image(painterResource("/trs.jpg"),"")
+//                }
 
+                Text("ATRS.RU", modifier = Modifier.padding(top = (10).dp,start = 20.dp).clickable {
+                          screenNav.value = Screens.STARTER
+                }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Blue
+                )
+                Text("Scenario:", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
+                Box(Modifier.clickable {
+                    // launch provider
+                    openPicker(Dir3Scenarios)
+                }) {
+                    Text("▶", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green
+                    )
+                }
+                Box(Modifier.clickable {
+                    //stop scenario
+                }) {
+                    Text("⏸", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    )
+                }
+
+                Text("Data Live:", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
+                Box(Modifier.clickable {
+                    ctxScope.launch {
+                        startReceiveFullData()
+                    }
+
+                }) {
+                    Text("▶", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green
+                    )
+                }
+                Box(Modifier.clickable {
+                    ctxScope.launch {
+                        pauseSerialComm()
+                    }
+
+                }) {
+                    Text("⏸", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    )
+                }
+            }
+            Spacer(Modifier.fillMaxWidth().height(10.dp))
             Row {
-                GaugeX(DpSize(200.dp,200.dp),pressure1X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue),(pressures[0].maxValue.toInt()),type ="Бар",displayName = pressures[0].displayName, comment = pressures[0].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure2X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue),(pressures[1].maxValue.toInt()),type ="Бар",displayName = pressures[1].displayName, comment = pressures[1].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure3X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue),(pressures[2].maxValue.toInt()),type ="Бар",displayName = pressures[2].displayName, comment = pressures[2].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure4X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue),(pressures[3].maxValue.toInt()),type ="Бар",displayName = pressures[3].displayName, comment = pressures[3].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure1X, ( pressures[0].minValue),(pressures[0].maxValue.toInt()),type ="Бар",displayName = pressures[0].displayName, comment = pressures[0].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure2X, ( pressures[1].minValue),(pressures[1].maxValue.toInt()),type ="Бар",displayName = pressures[1].displayName, comment = pressures[1].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure3X, ( pressures[2].minValue),(pressures[2].maxValue.toInt()),type ="Бар",displayName = pressures[2].displayName, comment = pressures[2].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure4X, ( pressures[3].minValue),(pressures[3].maxValue.toInt()),type ="Бар",displayName = pressures[3].displayName, comment = pressures[3].commentString)
             }
             Row {
-                GaugeX(DpSize(200.dp,200.dp),pressure5X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue),(pressures[4].maxValue.toInt()),type = "Бар",displayName = pressures[4].displayName, comment = pressures[4].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure6X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue),(pressures[5].maxValue.toInt()),type = "Бар",displayName = pressures[5].displayName, comment = pressures[5].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure7X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue),(pressures[6].maxValue.toInt()),type = "Бар",displayName = pressures[6].displayName, comment = pressures[6].commentString)
-                GaugeX(DpSize(200.dp,200.dp),pressure8X, (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue),(pressures[7].maxValue.toInt()),type = "Бар",displayName = pressures[7].displayName, comment = pressures[7].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure5X, ( pressures[4].minValue),(pressures[4].maxValue.toInt()),type = "Бар",displayName = pressures[4].displayName, comment = pressures[4].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure6X, ( pressures[5].minValue),(pressures[5].maxValue.toInt()),type = "Бар",displayName = pressures[5].displayName, comment = pressures[5].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure7X, ( pressures[6].minValue),(pressures[6].maxValue.toInt()),type = "Бар",displayName = pressures[6].displayName, comment = pressures[6].commentString)
+                GaugeX(DpSize(200.dp,200.dp),pressure8X, ( pressures[7].minValue),(pressures[7].maxValue.toInt()),type = "Бар",displayName = pressures[7].displayName, comment = pressures[7].commentString)
             }
-            //Row {
-            //    GaugeView2(200,pressure1X, (pressures[0].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[0].minValue), pressures[0].displayName, units = "Bar",comment = "In the above example, the value of the variable good is inserted at good in the templateGood string. Likewise, the value of the variable great is inserted at great in the templateGreat string.")
-            //    GaugeView2(200,pressure2X, (pressures[1].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[1].minValue), pressures[1].displayName)
-            //    GaugeView2(200,pressure3X, (pressures[2].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[2].minValue), pressures[2].displayName)
-            //    GaugeView2(200,pressure4X, (pressures[3].maxValue.toInt()), (if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[3].minValue), pressures[3].displayName)
-            //}
-//            Row {
-//                GaugeView2(200,pressure5X, (pressures[4].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[4].minValue, pressures[4].displayName)
-//                GaugeView2(200,pressure6X, (pressures[5].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[5].minValue, pressures[5].displayName)
-//                GaugeView2(200,pressure7X, (pressures[6].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[6].minValue, pressures[6].displayName)
-//                GaugeView2(200,pressure8X, (pressures[7].maxValue.toInt()), if (textStateMin.value.text.toInt() >= 0) { textStateMin.value.text.toInt() } else pressures[7].minValue, pressures[7].displayName)
-//            }
-
-            currentPanelSetup(
+            solenoidsPanel(
                 sizeRow, duration
             )
 
         }
     }
 }
-
-fun sclble() {
-
-}
-
-//fun cnvrtMin(raw: Int): Int {
-//
-//}
-//
-//fun cnvrtMax(raw: Int): Int {
-//
-//}

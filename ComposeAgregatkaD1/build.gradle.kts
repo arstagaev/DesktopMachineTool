@@ -5,9 +5,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.compose") version "1.3.0"
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
-group = "me.agaev"
+group = "me.tagaev"
 version = "1.0"
 
 repositories {
@@ -38,6 +39,7 @@ dependencies {
 
     implementation("org.jfree:jcommon:1.0.24")
     implementation("org.jfree:jfreechart:1.5.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
 }
 
