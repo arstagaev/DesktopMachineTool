@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+import androidx.compose.material.Text
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
@@ -16,8 +16,6 @@ import storage.createNeededFolders
 import storage.createDemoConfigFile
 import storage.readParameters
 import utils.*
-import java.io.File
-import javax.swing.JFileChooser
 import kotlin.concurrent.fixedRateTimer
 
 
@@ -27,14 +25,25 @@ fun main() = singleWindowApplication (
     visible = true
 ) {
     var crtxscp = rememberCoroutineScope().coroutineContext
+
     //COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
     //readExcelFile()
 
     //var initParameters = readParameters(Dir4MainConfig)
 
 
-    createNeededFolders()
     initialize(readParameters(Dir4MainConfig))
+
+    var isHaveConn = false
+    getComPorts_Array()?.forEach {
+        if (it.systemPortName == COM_PORT) {
+            isHaveConn = true
+        }
+    }
+    if (!isHaveConn) {
+        showMeSnackBar("NO Connect to ${COM_PORT} !!", Color.Red)
+    }
+
     CoroutineScope(crtxscp).launch {
         targetParseScenario(createDemoConfigFile())
     }

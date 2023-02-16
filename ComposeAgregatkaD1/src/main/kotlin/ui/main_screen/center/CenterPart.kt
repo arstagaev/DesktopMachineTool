@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -28,10 +29,7 @@ import storage.openPicker
 import ui.custom.GaugeX
 import ui.main_screen.center.support_elements.solenoidsPanel
 import ui.navigation.Screens
-import utils.DELAY_FOR_GET_DATA
-import utils.Dir3Scenarios
-import utils.dataChunkGauges
-import utils.pressures
+import utils.*
 
 
 @Composable
@@ -141,6 +139,9 @@ fun centerPiece(
                         , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
                 }
+                Text("${COM_PORT},${BAUD_RATE}", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
+                )
             }
             Spacer(Modifier.fillMaxWidth().height(10.dp))
             Row {

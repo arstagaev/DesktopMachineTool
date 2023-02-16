@@ -33,8 +33,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.poi/poi
     implementation("org.apache.poi:poi:5.0.0")
-    //implementation("com.github.tehras:charts:beta-01")
-    //implementation("io.github.bytebeats:compose-charts:0.1.0")
+    //implementation("com.github.tehras:ui.charts:beta-01")
+    //implementation("io.github.bytebeats:compose-ui.charts:0.1.0")
     // https://mvnrepository.com/artifact/jfree/jfreechart
 
     implementation("org.jfree:jcommon:1.0.24")

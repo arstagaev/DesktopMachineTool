@@ -12,18 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fazecast.jSerialComm.SerialPort
 import kotlinx.coroutines.delay
 import screenNav
-import storage.loadOperators
-import storage.readParameters
 import storage.refreshParametersJson
 import ui.navigation.Screens
-import ui.styles.colorEarlGray
 import utils.*
 
 
@@ -103,20 +99,34 @@ fun StarterScreen() {
         Row(modifier = Modifier.fillMaxSize().weight(3f).padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
-                    //refreshParametersJson()
-                    screenNav.value = Screens.MAIN
+                    refreshParametersJson()
+                    screenNav.value = Screens.CHART
 
                 }) {
-                Text("Open",
+                Text("Open Scenario",
                     modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
             }
+
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
-                .clickable { visibilitySettings.value = !visibilitySettings.value }) {
+                .clickable {
+
+                }) {
+                Text("Open Chart",
+                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+            }
+
+            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+                .clickable {
+                    visibilitySettings.value = !visibilitySettings.value
+                }) {
                 Text("Settings",
                     modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
             }
+
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
-                .clickable {  }) {
+                .clickable {
+
+                }) {
                 Text("Quick",
                     modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
             }
