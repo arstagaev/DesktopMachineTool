@@ -2,6 +2,7 @@ package ui.charts
 
 import showMeSnackBar
 import utils.Dir2Reports
+import utils.OPERATOR_ID
 import utils.generateTimestampLastUpdate
 import java.io.BufferedReader
 import java.io.File
@@ -16,7 +17,7 @@ fun generateToChartFile(
     arr2: ArrayList<Pointer>? = null,
     arr3: ArrayList<Pointer>? = null,
 ) {
-    val fl = File(Dir2Reports,"\\${generateTimestampLastUpdate()}.txt")
+    val fl = File(Dir2Reports,"\\${OPERATOR_ID} ${generateTimestampLastUpdate()}.txt")
     fl.createNewFile()
     val bw = fl.bufferedWriter()
 
@@ -26,7 +27,7 @@ fun generateToChartFile(
             bw.write("${arr1[it].x};${arr1[it].y}}\n")
         }
         bw.close()
-    }catch (e: Exception){
+    } catch (e: Exception) {
         showMeSnackBar("Error! ${e.message}")
     }
 

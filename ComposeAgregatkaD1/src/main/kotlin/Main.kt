@@ -43,7 +43,7 @@ fun main() = singleWindowApplication (
 
     App()
     if (doOpenNewWindowInternal.value && isAlreadyReceivedBytesForChart.value) {
-        ChartWindowNew().chartWindow()
+        ChartWindowNew(withStandard = true).chartWindow()
         //chartWindow()
     }
 

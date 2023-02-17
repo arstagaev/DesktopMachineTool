@@ -59,7 +59,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
 
     if (delta >= 1000) {
         // measure number of packets:
-        //println("> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms")
+        println("> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms")
         incr = 0
     }
 

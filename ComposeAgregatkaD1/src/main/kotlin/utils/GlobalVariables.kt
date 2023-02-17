@@ -1,5 +1,6 @@
 package utils
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.fazecast.jSerialComm.SerialPort
 import enums.StateExperiments
@@ -29,8 +30,8 @@ val Dir4MainConfig_Txt = File(Dir1Configs,"\\config.txt")
 val Dir5Operators = File(Dir1Configs,"\\operator_ids.txt")
 
 val Dir6 = File(Dir2Reports,"\\demo.txt")
-val Dir7 = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\reports\\standard")
-val Dir8 = File(Dir7,"\\stndrd.txt")
+val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\reports\\standard")
+val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
 
 
 var solenoids = mutableListOf<SolenoidHolder>()
@@ -63,7 +64,8 @@ var limitTime = 4500
 var isAlreadyReceivedBytesForChart = mutableStateOf(false)
 var doOpen_First_ChartWindow = mutableStateOf(false)
 
-var chartFileAfterExperiment: File = File(Dir2Reports,"demo.txt")
+var chartFileAfterExperiment: File = File(Dir2Reports,"demo2.txt")
+var chartFileStandard = mutableStateOf( File(Dir7ReportsStandard,"17_02_2023 12_04_04_chart.txt") )
 
 data class DataChunkG(
     var firstGaugeData:   Int,

@@ -24,6 +24,7 @@ import screenNav
 import showMeSnackBar
 import storage.openPicker
 import storage.refreshParametersJson
+import ui.charts.ChartWindowNew
 import ui.navigation.Screens
 import utils.*
 
@@ -112,8 +113,10 @@ fun StarterScreen() {
                         if (!targetParseScenario(openPicker(Dir3Scenarios))) {
                             showMeSnackBar("Ошибка при парсинге xls",Color.Red)
                         }else {
-                            //doOpen_First_ChartWindow.value = true
-                            screenNav.value = Screens.MAIN
+
+                            doOpen_First_ChartWindow.value = true
+                            isAlreadyReceivedBytesForChart.value = true
+                            //screenNav.value = Screens.MAIN
                         }
                     }
 

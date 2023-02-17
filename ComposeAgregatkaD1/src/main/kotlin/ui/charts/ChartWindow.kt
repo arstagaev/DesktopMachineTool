@@ -1,15 +1,25 @@
 package ui.charts
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import enums.StateExperiments
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.axis.NumberAxis
@@ -19,14 +29,45 @@ import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import showMeSnackBar
+import storage.PickTarget
+import storage.openPicker
+import ui.navigation.Screens
+import ui.styles.colorTrans60
 import utils.*
 import java.awt.BasicStroke
 import java.io.*
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 
-class ChartWindowNew(var isStandard: Boolean = false) {
+class ChartWindowNew(var withStandard: Boolean = false) {
+    val dataset = XYSeriesCollection()
 
+    private val series1 = XYSeries("Давление 1")
+    private val series2 = XYSeries("Давление 2")
+    private val series3 = XYSeries("Давление 3")
+    private val series4 = XYSeries("Давление 4")
+    private val series5 = XYSeries("Давление 5")
+    private val series6 = XYSeries("Давление 6")
+    private val series7 = XYSeries("Давление 7")
+    private val series8 = XYSeries("Давление 8")
+
+
+    private val series9 =  XYSeries("Давление 1"+(" [Стандарт]"))
+    private val series10 = XYSeries("Давление 2"+(" [Стандарт]"))
+    private val series11 = XYSeries("Давление 3"+(" [Стандарт]"))
+    private val series12 = XYSeries("Давление 4"+(" [Стандарт]"))
+    private val series13 = XYSeries("Давление 5"+(" [Стандарт]"))
+    private val series14 = XYSeries("Давление 6"+(" [Стандарт]"))
+    private val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
+    private val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
+
+    var chartPanel: JPanel? = null
+    var isLoading = mutableStateOf(false)
+
+    init {
+        fillUp()
+    }
     @Composable
     fun chartWindow() {
         STATE_CHART.value = StateExperiments.PREPARE_CHART
@@ -38,69 +79,79 @@ class ChartWindowNew(var isStandard: Boolean = false) {
             },
         ) {
             ChartSecond()
-            //ChartField()
         }
     }
 
-    @Composable
-    fun ChartSecond() {
-        val dataset = XYSeriesCollection()
+    fun fillUp() {
+        CoroutineScope(Dispatchers.Default).launch {
+            //experiment:
+            try {
+                val br = BufferedReader(FileReader(chartFileAfterExperiment))
+                var line: String?
+                //var countOfLine = 0
+                while (br.readLine().also { line = it } != null) {
+                    if(line != ""|| line != " ") {
+                        val items = line?.split(";","|")?.toTypedArray()
+                        if (items != null ) {
+                            series1.add(items[0].toInt(),items[1].toInt())
 
-        val series1 = XYSeries("Давление 1"+(if(isStandard) " [Стандарт]" else ""))
-        val series2 = XYSeries("Давление 2"+(if(isStandard) " [Стандарт]" else ""))
-        val series3 = XYSeries("Давление 3"+(if(isStandard) " [Стандарт]" else ""))
-        val series4 = XYSeries("Давление 4"+(if(isStandard) " [Стандарт]" else ""))
-        val series5 = XYSeries("Давление 5"+(if(isStandard) " [Стандарт]" else ""))
-        val series6 = XYSeries("Давление 6"+(if(isStandard) " [Стандарт]" else ""))
-        val series7 = XYSeries("Давление 7"+(if(isStandard) " [Стандарт]" else ""))
-        val series8 = XYSeries("Давление 8"+(if(isStandard) " [Стандарт]" else ""))
-
-        //experiment:
-        try {
-            val br = BufferedReader(FileReader(chartFileAfterExperiment))
-            var line: String?
-            var countOfLine = 0
-            while (br.readLine().also { line = it } != null) {
-                if(line != ""|| line != " ") {
-                    val items = line?.split(";","|")?.toTypedArray()
-                    if (items != null ) {
-                        series1.add(items[0].toInt(),items[1].toInt())
-
-                        series2.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
-                        series3.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
-                        series4.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
-                        series5.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
-                        series6.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
-                        series7.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
-                        series8.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                            series2.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
+                            series3.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
+                            series4.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
+                            series5.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
+                            series6.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
+                            series7.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
+                            series8.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                        }
                     }
+                    //countOfLine++
                 }
-                countOfLine++
+                br.close()
+            } catch (e: Exception) {
+                logError("error +${e.message}")
             }
-            br.close()
-        } catch (e: Exception) {
-            logError("error +${e.message}")
+
+            //standard:
+            if (withStandard) {
+                try {
+                    //val series9 =  XYSeries("Давление 1"+(" [Стандарт]"))
+                    //val series10 = XYSeries("Давление 2"+(" [Стандарт]"))
+                    //val series11 = XYSeries("Давление 3"+(" [Стандарт]"))
+                    //val series12 = XYSeries("Давление 4"+(" [Стандарт]"))
+                    //val series13 = XYSeries("Давление 5"+(" [Стандарт]"))
+                    //val series14 = XYSeries("Давление 6"+(" [Стандарт]"))
+                    //val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
+                    //val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
+
+                    val br = BufferedReader(FileReader(chartFileStandard.value))
+                    var line: String?
+                    //var countOfLine = 0
+                    while (br.readLine().also { line = it } != null) {
+                        if(line != ""|| line != " ") {
+                            val items = line?.split(";","|")?.toTypedArray()
+                            if (items != null ) {
+                                series9 .add(items[0].toInt(),items[1].toInt())
+                                series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
+                                series11.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
+                                series12.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
+                                series13.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
+                                series14.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
+                                series15.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
+                                series16.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                            }
+                        }
+                        //countOfLine++
+                    }
+                    br.close()
+                } catch (e: Exception) {
+                    logError("error +${e.message}")
+                    showMeSnackBar("Error Chart:  ${e.message}",Color.Red)
+                }
+
+
+            }
         }
 
-        //standard:
-        getChartFromFile(Dir8).forEachIndexed { index, pointer ->
-            series2.add(pointer.x,pointer.y)
-        }
-
-        if (series1.isEmpty) {
-//        repeat(100) {
-//            series1.add((0..100).random(),it)
-//        }
-//        repeat(100) {
-//            series2.add( (0..100).random(),it)
-//        }
-            repeat(100) {
-                series3.add((0..100).random(),it)
-            }
-            repeat(100) {
-                series4.add((0..100).random(),it, )
-            }
-        }
 
         dataset.addSeries(series1)
         dataset.addSeries(series2)
@@ -110,6 +161,15 @@ class ChartWindowNew(var isStandard: Boolean = false) {
         dataset.addSeries(series6)
         dataset.addSeries(series7)
         dataset.addSeries(series8)
+
+        dataset.addSeries(series9 )
+        dataset.addSeries(series10)
+        dataset.addSeries(series11)
+        dataset.addSeries(series12)
+        dataset.addSeries(series13)
+        dataset.addSeries(series14)
+        dataset.addSeries(series15)
+        dataset.addSeries(series16)
 
         val xAxis = NumberAxis("time (ms)")
         xAxis.autoRangeIncludesZero = false
@@ -131,14 +191,22 @@ class ChartWindowNew(var isStandard: Boolean = false) {
 
         repeat(8) {
             renderer. setSeriesPaint(it, arrClr[it])
-            renderer.setSeriesStroke(it, BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+            renderer.setSeriesStroke(it, BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
+        }
+
+        if (withStandard) {
+            repeat(8) {
+                renderer. setSeriesPaint(it+8, arrClr[it])
+                renderer.setSeriesStroke(it+8, BasicStroke(1f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f))
+                renderer.sha
+            }
         }
 
 
         plot.setRenderer(renderer)
         val chart = JFreeChart(
-            "Сравнение с эталоном [${generateTimestampLastUpdate()},${OPERATOR_ID}]", JFreeChart.DEFAULT_TITLE_FONT,
+            "Текущие измерения: [${generateTimestampLastUpdate()},${OPERATOR_ID}]", JFreeChart.DEFAULT_TITLE_FONT,
             plot,true
         )
         STATE_CHART.value = StateExperiments.NONE
@@ -148,15 +216,31 @@ class ChartWindowNew(var isStandard: Boolean = false) {
 //        PlotOrientation.VERTICAL, true, true, false
 //    )
 
-        val chartPanel: JPanel = ChartPanel(chart)
+        chartPanel = ChartPanel(chart)
+    }
+    @Composable
+    fun ChartSecond() {
+        val standardFile = remember { chartFileStandard }
+        val loader = remember { isLoading }
+        Box {
+            Column(
+                modifier = Modifier.fillMaxSize()//fillMaxWidth().height(800.dp)
+            ) {
+                Box(Modifier.fillMaxWidth().height(20.dp).background(Color.Yellow).clickable {
+                    openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let { if(it != null) chartFileStandard.value = it }
 
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Row(modifier = Modifier.fillMaxWidth().height(800.dp)) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        fillStandard(isRefresh = true)
+                    }
+
+                }){
+                    Text("Эталон: ${standardFile.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                        fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                    )
+                }
                 SwingPanel(
-                    background = Color.White,
-                    modifier = Modifier.size(width = 1000.dp, height =  600.dp),
+                    background = Color.DarkGray,
+                    modifier = Modifier.fillMaxSize(),//.size(width = 1000.dp, height =  600.dp),
                     factory = {
                         JPanel().apply {
                             setLayout(BoxLayout(this, BoxLayout.Y_AXIS))
@@ -166,6 +250,89 @@ class ChartWindowNew(var isStandard: Boolean = false) {
                     }
                 )
             }
+            if (loader.value) {
+                Box(Modifier.fillMaxSize().background(colorTrans60)){
+                    Text("Загрузка...", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                        fontFamily = FontFamily.Default, fontSize = 40.sp, fontWeight = FontWeight.Medium, color = Color.Blue
+                    )
+                }
+            }
+
         }
+
+    }
+
+    private suspend fun fillStandard(isRefresh: Boolean = false) {
+        isLoading.value = true
+        logAct("fillStandard !!!")
+        try {
+            series9.clear()
+            series10.clear()
+            series11.clear()
+            series12.clear()
+            series13.clear()
+            series14.clear()
+            series15.clear()
+            series16.clear()
+
+            //val series9 =  XYSeries("Давление 1"+(" [Стандарт]"))
+            //val series10 = XYSeries("Давление 2"+(" [Стандарт]"))
+            //val series11 = XYSeries("Давление 3"+(" [Стандарт]"))
+            //val series12 = XYSeries("Давление 4"+(" [Стандарт]"))
+            //val series13 = XYSeries("Давление 5"+(" [Стандарт]"))
+            //val series14 = XYSeries("Давление 6"+(" [Стандарт]"))
+            //val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
+            //val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
+
+            val br = BufferedReader(FileReader(chartFileStandard.value))
+            var line: String?
+            //var countOfLine = 0
+            while (br.readLine().also { line = it } != null) {
+                if(line != ""|| line != " ") {
+                    val items = line?.split(";","|")?.toTypedArray()
+                    if (items != null ) {
+                        series9 .add(items[0].toInt(),items[1].toInt())
+                        series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
+                        series11.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
+                        series12.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
+                        series13.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
+                        series14.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
+                        series15.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
+                        series16.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                    }
+                }
+                //countOfLine++
+            }
+            br.close()
+        } catch (e: Exception) {
+            logError("error +${e.message}")
+            showMeSnackBar("Error Chart:  ${e.message}",Color.Red)
+        }
+
+
+        if (!isRefresh) {
+
+        }
+
+        //dataset.notify = true
+        series9.notify = true
+        series10.notify = true
+        series11.notify = true
+        series12.notify = true
+        series13.notify = true
+        series14.notify = true
+        series15.notify = true
+        series16.notify = true
+
+
+
+        if (withStandard) {
+
+        }
+        isLoading.value = false
+    }
+
+    fun refreshSeries() {
+
     }
 }

@@ -14,11 +14,29 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 //https://mkyong.com/swing/java-swing-jfilechooser-example/
 
-fun openPicker(targetDir: File): File? {
+fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO): File? {
     val chooser = JFileChooser(targetDir)
-    val filter = FileNameExtensionFilter(
+    var filter = FileNameExtensionFilter(
         "Config", "xls","xlsx"
     )
+    when(picker) {
+        PickTarget.PICK_SCENARIO -> {
+            filter = FileNameExtensionFilter(
+                "Config", "xls","xlsx"
+            )
+        }
+        PickTarget.PICK_STANDARD_CHART -> {
+            filter = FileNameExtensionFilter(
+                "Chart", "txt","agregatka"
+            )
+        }
+        PickTarget.PICK_CHART -> {
+            filter = FileNameExtensionFilter(
+                "Chart", "xls","agregatka"
+            )
+        }
+    }
+
     chooser.fileFilter = filter
     val returnVal = chooser.showOpenDialog(null)
     if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -34,3 +52,5 @@ fun openPicker(targetDir: File): File? {
     }
     return null
 }
+
+enum class PickTarget { PICK_SCENARIO, PICK_CHART, PICK_STANDARD_CHART }
