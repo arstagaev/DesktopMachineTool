@@ -1,5 +1,5 @@
 package enums
 
-enum class State {
+enum class StateParseBytes {
     INIT, PLAY, WAIT, STOP
 }

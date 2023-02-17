@@ -1,20 +1,15 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.material.Text
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import parsing_excel.targetParseScenario
-import serial_port.initSerialCommunication
-import serial_port.startReceiveFullData
-import storage.createNeededFolders
-import storage.createDemoConfigFile
+import kotlinx.coroutines.flow.MutableSharedFlow
 import storage.readParameters
+import ui.charts.ChartWindowNew
+import ui.windows.WindowTypes
 import utils.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -25,14 +20,15 @@ fun main() = singleWindowApplication (
     visible = true
 ) {
     var crtxscp = rememberCoroutineScope().coroutineContext
-
+    val windowFocusRequestSharedFlow = remember { MutableSharedFlow<WindowTypes>() }
+    val doOpenNewWindowInternal = remember { doOpen_First_ChartWindow }
     //COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
     //readExcelFile()
 
     //var initParameters = readParameters(Dir4MainConfig)
 
 
-    initialize(readParameters(Dir4MainConfig))
+    initialize(readParameters(Dir4MainConfig_Json))
 
     var isHaveConn = false
     getComPorts_Array()?.forEach {
@@ -44,16 +40,11 @@ fun main() = singleWindowApplication (
         showMeSnackBar("NO Connect to ${COM_PORT} !!", Color.Red)
     }
 
-    CoroutineScope(crtxscp).launch {
-        targetParseScenario(createDemoConfigFile())
-    }
 
     App()
-
-    CoroutineScope(Dispatchers.IO).launch {
-
-        initSerialCommunication()
-        startReceiveFullData()
+    if (doOpenNewWindowInternal.value && isAlreadyReceivedBytesForChart.value) {
+        ChartWindowNew().chartWindow()
+        //chartWindow()
     }
 
 //    val properties: Properties = Properties()

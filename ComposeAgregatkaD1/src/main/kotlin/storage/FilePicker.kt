@@ -14,7 +14,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 //https://mkyong.com/swing/java-swing-jfilechooser-example/
 
-fun openPicker(targetDir: File) {
+fun openPicker(targetDir: File): File? {
     val chooser = JFileChooser(targetDir)
     val filter = FileNameExtensionFilter(
         "Config", "xls","xlsx"
@@ -26,11 +26,11 @@ fun openPicker(targetDir: File) {
             "You chose to open this file: " +
                     chooser.selectedFile.name
         )
-        CoroutineScope(Dispatchers.IO).launch {
-            comparatorForLaunchScenario(chooser.selectedFile)
-            targetParseScenario(chooser.selectedFile)
-        }
-
-
+//        CoroutineScope(Dispatchers.IO).launch {
+//            comparatorForLaunchScenario(chooser.selectedFile)
+//            targetParseScenario(chooser.selectedFile)
+//        }
+        return chooser.selectedFile
     }
+    return null
 }

@@ -16,8 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fazecast.jSerialComm.SerialPort
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import parsing_excel.targetParseScenario
 import screenNav
+import showMeSnackBar
+import storage.openPicker
 import storage.refreshParametersJson
 import ui.navigation.Screens
 import utils.*
@@ -34,6 +39,8 @@ fun StarterScreen() {
     var choosenBaud = remember { mutableStateOf(BAUD_RATE) }
     val textState = remember { mutableStateOf(OPERATOR_ID) }
     var listOfOperators = mutableListOf<String>()//loadOperators()
+
+    var crtxscp = rememberCoroutineScope().coroutineContext
 
     //var remarrayports = remember { arrayOfComPorts }
     LaunchedEffect(true) {
@@ -60,7 +67,6 @@ fun StarterScreen() {
                 contentDescription = null
             )
             Column(Modifier.padding(16.dp)) {
-
 
                 TextField(colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White,
@@ -90,17 +96,28 @@ fun StarterScreen() {
                         repeat(listOfOperators.size) {
                             Text("${listOfOperators[it]}", fontSize=18.sp, modifier = Modifier.fillMaxSize().padding(10.dp).clickable(onClick={}))
                         }
-
                     }
                 }
-
             }
         }
         Row(modifier = Modifier.fillMaxSize().weight(3f).padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
                     refreshParametersJson()
-                    screenNav.value = Screens.CHART
+                    isAlreadyReceivedBytesForChart.value = false
+                    CoroutineScope(crtxscp).launch {
+                        //openPicker(Dir3Scenarios)
+                        //targetParseScenario(createDemoConfigFile())
+
+                        if (!targetParseScenario(openPicker(Dir3Scenarios))) {
+                            showMeSnackBar("Ошибка при парсинге xls",Color.Red)
+                        }else {
+                            //doOpen_First_ChartWindow.value = true
+                            screenNav.value = Screens.MAIN
+                        }
+                    }
+
+
 
                 }) {
                 Text("Open Scenario",
@@ -172,9 +189,10 @@ fun StarterScreen() {
                                 ) {
                                     repeat(arrayOfComPorts.size-1) {
                                         Text("${arrayOfComPorts[it].descriptivePortName}", fontSize=18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
-                                            .clickable(onClick={
+                                            .clickable(onClick= {
                                                 choosenCOM.value = it
-                                                COM_PORT = arrayOfComPorts[choosenCOM.value].systemPortName
+                                                COM_PORT = arrayOfComPorts[it].systemPortName
+                                                logAct("DropdownMenu click ${COM_PORT}")
                                             }))
 
                                     }

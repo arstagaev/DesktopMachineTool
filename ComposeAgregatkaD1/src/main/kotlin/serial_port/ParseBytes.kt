@@ -1,7 +1,10 @@
 package serial_port
 
 import com.fazecast.jSerialComm.*
+import enums.StateExperiments
 import kotlinx.coroutines.*
+import storage.createMeasureExperiment
+import ui.charts.Pointer
 import utils.*
 
 
@@ -38,6 +41,11 @@ private var arrCurr =  arrayListOf<ArrayList<Int>>()
 private var arrPress = arrayListOf<ArrayList<Int>>()
 private var start_time = 0L
 private var incr = 0
+
+
+// recording:
+var test_time = 0
+var last_X = 0
 
 suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
     var dch: DataChunkG? = null
@@ -111,6 +119,9 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
                 onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()),
                 onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt())
             )
+
+
+
 
             //logGarbage(">>> ${dch.toString()}")
             //println("PRES ${dch.toString()}")

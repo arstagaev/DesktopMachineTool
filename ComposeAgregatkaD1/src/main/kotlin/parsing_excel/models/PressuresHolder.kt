@@ -8,5 +8,6 @@ data class PressuresHolder(
     val tolerance : Int,
     val unit : String,
     val commentString : String,
-    val prefferedColor : String
+    val prefferedColor : String,
+    var isVisible : Boolean
 )

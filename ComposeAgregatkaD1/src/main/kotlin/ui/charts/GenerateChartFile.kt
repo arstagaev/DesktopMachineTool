@@ -7,7 +7,9 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
-data class Pointer(val x: Float, val y: Float)
+data class Pointer(val x: Int, val y: Int)
+
+data class SaverChart(var arr: ArrayList<Pointer>, var isStandard: Boolean = false)
 
 fun generateToChartFile(
     arr1: ArrayList<Pointer>,
@@ -48,7 +50,7 @@ fun getChartFromFile(file: File): ArrayList<Pointer> {
 
                 if (items != null) {
 
-                    parsedArray.add(Pointer(x = items[0].toFloat(),y = items[1].toFloat()))
+                    parsedArray.add(Pointer(x = items[0].toInt(),y = items[1].toInt()))
 
                 }
             }

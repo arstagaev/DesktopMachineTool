@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Row
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
+import utils.limitTime
 import utils.pressures
 import utils.scenario
 import utils.solenoids
@@ -14,8 +15,10 @@ import java.io.File
 import java.io.FileInputStream
 
 var wholeSheet = mutableListOf<MutableList<String>>()
-suspend fun targetParseScenario(inputScenario: File) : Boolean {
+suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 
+    if (inputScenario == null)
+        return false
 
     val file = FileInputStream(inputScenario)
     //creating workbook instance that refers to .xls file
@@ -58,6 +61,11 @@ suspend fun targetParseScenario(inputScenario: File) : Boolean {
     if ( wholeSheet.size < 22 || wholeSheet[2].size < 2)
         return false
 
+    // clear all in iteration:
+    solenoids.clear()
+    pressures.clear()
+    scenario.clear()
+
     repeat(8) {
 //        var asd = arrayListOf<String>(
 //            wholeSheet[2][it+1],
@@ -80,7 +88,8 @@ suspend fun targetParseScenario(inputScenario: File) : Boolean {
                 tolerance =    wholeSheet[6][it+1].toFloat().toInt(),
                 unit =         wholeSheet[7][it+1],
                 commentString =wholeSheet[8][it+1],
-                prefferedColor=wholeSheet[9][it+1]
+                prefferedColor=wholeSheet[9][it+1],
+                isVisible = true
             )
         )
 
@@ -109,13 +118,15 @@ suspend fun targetParseScenario(inputScenario: File) : Boolean {
                 preferredColor =    wholeSheet[18][it+1],
                 frequency =         wholeSheet[19][it+1].toDouble().toInt(),
                 expectedTestValue = wholeSheet[20][it+1].toDouble().toInt(),
-                currentMaxValue =   wholeSheet[21][it+1].toDouble().toInt()
+                currentMaxValue =   wholeSheet[21][it+1].toDouble().toInt(),
+                isVisible = true
             )
         )
     }
 
 
 
+    limitTime = 0
 
     for ( i in (27) until wholeSheet.size) {
         var valueSteps = arrayListOf<Int>()
@@ -127,9 +138,13 @@ suspend fun targetParseScenario(inputScenario: File) : Boolean {
 
         println("<>>> ${valueSteps.joinToString()}")
 
+        val newTime = wholeSheet[i][0].toDouble().toInt()
+
+        limitTime += newTime
+
         scenario.add(
             ScenarioStep(
-                time = wholeSheet[i][0].toDouble().toInt(),
+                time = newTime,
                 values = valueSteps,
                 text = wholeSheet[i][9],
                 comment = if (wholeSheet[i].size != 11) "" else wholeSheet[i][10]
@@ -137,8 +152,11 @@ suspend fun targetParseScenario(inputScenario: File) : Boolean {
         )
     }
 
+
+
     println("scenario steps: ${scenario.joinToString()}")
 
     file.close()
+    wholeSheet.clear()
     return true
 }

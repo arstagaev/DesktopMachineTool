@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ui.charts.chartWindow
 import kotlinx.coroutines.*
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.JFreeChart
@@ -44,9 +43,9 @@ var screenNav = mutableStateOf<Screens>(Screens.STARTER)
 @Preview
 fun App() {
     val screenNavi = remember { screenNav }
-    if (screenNavi.value == Screens.CHART){
-        chartWindow()
-    }
+//    if (screenNavi.value == Screens.CHART){
+//        chartWindow()
+//    }
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             Row{

@@ -1395,7 +1395,7 @@
             <param name="sessionHandle">Integer handle to the installer session.</param>
             <param name="entryPoint">Name of the custom action entrypoint. This must
             either map to an entrypoint definition in the <c>customActions</c>
-            storage section, or be an explicit entrypoint of the form:
+            config section, or be an explicit entrypoint of the form:
             &quot;AssemblyName!Namespace.Class.Method&quot;</param>
             <param name="remotingDelegatePtr">Pointer to a delegate used to
             make remote API calls, if this custom action is running out-of-proc.</param>
@@ -1412,11 +1412,11 @@
         </member>
         <member name="M:Microsoft.Deployment.WindowsInstaller.CustomActionProxy.FindEntryPoint(Microsoft.Deployment.WindowsInstaller.Session,System.String,System.String@,System.String@,System.String@)">
             <summary>
-                Locates and parses an entrypoint mapping in CustomAction.storage.
+            Locates and parses an entrypoint mapping in CustomAction.config.
             </summary>
             <param name="session">Installer session handle, just used for logging.</param>
             <param name="entryPoint">Custom action entrypoint name: the key value
-            in an item in the <c>customActions</c> section of the storage file.</param>
+            in an item in the <c>customActions</c> section of the config file.</param>
             <param name="assemblyName">Returned display name of the assembly from
             the entrypoint mapping.</param>
             <param name="className">Returned class name of the entrypoint mapping.</param>

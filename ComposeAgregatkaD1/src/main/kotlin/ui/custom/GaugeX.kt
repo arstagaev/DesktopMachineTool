@@ -49,10 +49,10 @@ private fun createBasePaint() {
 // progress from 0 to 100
 // raw progress 0 to 240 degree
 @Composable
-fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type: String = "",displayName: String = "", comment: String = "") {
+fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type: String = "",displayName: String = "", comment: String = "",withoutSingMap: Boolean = true) {
     //println("well $progress ${minType} $maxType $type ~> ${checkInterval(map(progress, minType, maxType,0,240))}")
 
-    val signValue = map(checkSignInterval(progress,0,4095) , 0,4095, minType, maxType)
+    val signValue = if (withoutSingMap) progress else map(checkSignInterval(progress,0,4095) , 0,4095, minType, maxType)
     val angle = map(signValue, minType, maxType,0,240)//checkInterval()
 
     val scope = rememberCoroutineScope()
@@ -254,10 +254,8 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             }
         }
     }
-
-
-
 }
+
 
 fun checkInterval(inputProgress: Int): Int {
     //println(">>> ${inputProgress}")

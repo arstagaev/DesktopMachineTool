@@ -9,5 +9,6 @@ data class SolenoidHolder(
     val frequency : Int,
     val preferredColor : String,
     val expectedTestValue : Int,
-    val currentMaxValue : Int
+    val currentMaxValue : Int,
+    var isVisible : Boolean
 )

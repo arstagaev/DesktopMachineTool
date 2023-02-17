@@ -2,7 +2,7 @@ package utils
 
 import storage.models.ParameterCommon
 
-fun initialize(params: MutableList<ParameterCommon>) {
+fun initialize(params: List<ParameterCommon>) {
     logAct("initialize params")
     params.forEachIndexed { index, parameterCommon ->
         when(parameterCommon.name) {

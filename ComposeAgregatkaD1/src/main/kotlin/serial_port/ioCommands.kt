@@ -8,7 +8,7 @@ import utils.arrayOfComPorts
 import utils.getComPorts_Array
 import utils.toHexString
 
-var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
+private var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
 private val crtx2 = CoroutineName("main")
 
 suspend fun initSerialCommunication() {
@@ -20,7 +20,7 @@ suspend fun initSerialCommunication() {
     //serialPort.clearBreak()
     arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
 
-    delay(3000)
+    delay(2000)
     println("Run Callbacks::")
     val listener = PacketListener()
     serialPort.addDataListener(listener)

@@ -83,7 +83,7 @@
                             The application which will load this assembly.
                             For DLL assemblies which are loaded via reflection, this attribute should
                             be set to indicate the application which will load this assembly.
-                            The configuration of the application (usually specified via an exe.storage file) will be used
+                            The configuration of the application (usually specified via an exe.config file) will be used
                             to determine how to resolve dependencies for this assembly.
                         </html:p>
                         <html:p>
