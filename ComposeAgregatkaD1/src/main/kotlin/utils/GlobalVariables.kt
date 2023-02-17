@@ -63,8 +63,9 @@ var limitTime = 4500
 
 var isAlreadyReceivedBytesForChart = mutableStateOf(false)
 var doOpen_First_ChartWindow = mutableStateOf(false)
+var doOpen_Second_ChartWindow = mutableStateOf(false)
 
-var chartFileAfterExperiment: File = File(Dir2Reports,"demo2.txt")
+var chartFileAfterExperiment = mutableStateOf( File(Dir2Reports,"demo2.txt") )
 var chartFileStandard = mutableStateOf( File(Dir7ReportsStandard,"17_02_2023 12_04_04_chart.txt") )
 
 data class DataChunkG(

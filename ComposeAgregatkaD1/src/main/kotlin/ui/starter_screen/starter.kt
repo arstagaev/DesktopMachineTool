@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import parsing_excel.targetParseScenario
 import screenNav
 import showMeSnackBar
+import storage.PickTarget
 import storage.openPicker
 import storage.refreshParametersJson
 import ui.charts.ChartWindowNew
@@ -114,9 +115,9 @@ fun StarterScreen() {
                             showMeSnackBar("Ошибка при парсинге xls",Color.Red)
                         }else {
 
-                            doOpen_First_ChartWindow.value = true
-                            isAlreadyReceivedBytesForChart.value = true
-                            //screenNav.value = Screens.MAIN
+                            //doOpen_First_ChartWindow.value = true
+                            //isAlreadyReceivedBytesForChart.value = true
+                            screenNav.value = Screens.MAIN
                         }
                     }
 
@@ -129,6 +130,13 @@ fun StarterScreen() {
 
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
+                    CoroutineScope(crtxscp).launch {
+                        openPicker(Dir2Reports,PickTarget.PICK_CHART)?.let { chartFileAfterExperiment.value = it }
+
+
+
+
+                    }
 
                 }) {
                 Text("Open Chart",

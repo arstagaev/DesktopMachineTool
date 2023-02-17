@@ -6,6 +6,8 @@ import kotlinx.coroutines.launch
 import parsing_excel.targetParseScenario
 import serial_port.comparatorForLaunchScenario
 import utils.Dir3Scenarios
+import utils.chartFileAfterExperiment
+import utils.doOpen_Second_ChartWindow
 import java.io.File
 import javax.swing.JFileChooser
 
@@ -32,7 +34,7 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO): 
         }
         PickTarget.PICK_CHART -> {
             filter = FileNameExtensionFilter(
-                "Chart", "xls","agregatka"
+                "Chart", "txt","agregatka"
             )
         }
     }
@@ -48,6 +50,14 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO): 
 //            comparatorForLaunchScenario(chooser.selectedFile)
 //            targetParseScenario(chooser.selectedFile)
 //        }
+
+        when {
+            picker == PickTarget.PICK_CHART -> {
+                chartFileAfterExperiment.value = chooser.selectedFile
+                doOpen_Second_ChartWindow.value = true
+
+            }
+        }
         return chooser.selectedFile
     }
     return null

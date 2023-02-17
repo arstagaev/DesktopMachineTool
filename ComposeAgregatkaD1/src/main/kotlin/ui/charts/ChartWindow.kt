@@ -83,16 +83,19 @@ class ChartWindowNew(var withStandard: Boolean = false) {
     }
 
     fun fillUp() {
+        logAct("fillUp chart ${chartFileAfterExperiment.value.name}  ${chartFileStandard.value.name}")
         CoroutineScope(Dispatchers.Default).launch {
             //experiment:
             try {
-                val br = BufferedReader(FileReader(chartFileAfterExperiment))
+                val br = BufferedReader(FileReader(chartFileAfterExperiment.value))
                 var line: String?
                 //var countOfLine = 0
                 while (br.readLine().also { line = it } != null) {
                     if(line != ""|| line != " ") {
                         val items = line?.split(";","|")?.toTypedArray()
+                        println("exp >>>> ${items?.joinToString()}")
                         if (items != null ) {
+
                             series1.add(items[0].toInt(),items[1].toInt())
 
                             series2.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
@@ -114,14 +117,6 @@ class ChartWindowNew(var withStandard: Boolean = false) {
             //standard:
             if (withStandard) {
                 try {
-                    //val series9 =  XYSeries("Давление 1"+(" [Стандарт]"))
-                    //val series10 = XYSeries("Давление 2"+(" [Стандарт]"))
-                    //val series11 = XYSeries("Давление 3"+(" [Стандарт]"))
-                    //val series12 = XYSeries("Давление 4"+(" [Стандарт]"))
-                    //val series13 = XYSeries("Давление 5"+(" [Стандарт]"))
-                    //val series14 = XYSeries("Давление 6"+(" [Стандарт]"))
-                    //val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
-                    //val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
 
                     val br = BufferedReader(FileReader(chartFileStandard.value))
                     var line: String?
@@ -129,6 +124,7 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                     while (br.readLine().also { line = it } != null) {
                         if(line != ""|| line != " ") {
                             val items = line?.split(";","|")?.toTypedArray()
+                            println("withStandard >>>> ${items?.joinToString()}")
                             if (items != null ) {
                                 series9 .add(items[0].toInt(),items[1].toInt())
                                 series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
@@ -162,14 +158,17 @@ class ChartWindowNew(var withStandard: Boolean = false) {
         dataset.addSeries(series7)
         dataset.addSeries(series8)
 
-        dataset.addSeries(series9 )
-        dataset.addSeries(series10)
-        dataset.addSeries(series11)
-        dataset.addSeries(series12)
-        dataset.addSeries(series13)
-        dataset.addSeries(series14)
-        dataset.addSeries(series15)
-        dataset.addSeries(series16)
+        if (withStandard) {
+            //logInfo("chart series16 ${series16.maximumItemCount} ${series16}")
+            dataset.addSeries(series9)
+            dataset.addSeries(series10)
+            dataset.addSeries(series11)
+            dataset.addSeries(series12)
+            dataset.addSeries(series13)
+            dataset.addSeries(series14)
+            dataset.addSeries(series15)
+            dataset.addSeries(series16)
+        }
 
         val xAxis = NumberAxis("time (ms)")
         xAxis.autoRangeIncludesZero = false
@@ -199,14 +198,14 @@ class ChartWindowNew(var withStandard: Boolean = false) {
             repeat(8) {
                 renderer. setSeriesPaint(it+8, arrClr[it])
                 renderer.setSeriesStroke(it+8, BasicStroke(1f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f))
-                renderer.sha
+                //renderer.sha
             }
         }
 
 
         plot.setRenderer(renderer)
         val chart = JFreeChart(
-            "Текущие измерения: [${generateTimestampLastUpdate()},${OPERATOR_ID}]", JFreeChart.DEFAULT_TITLE_FONT,
+            "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
             plot,true
         )
         STATE_CHART.value = StateExperiments.NONE
@@ -226,7 +225,34 @@ class ChartWindowNew(var withStandard: Boolean = false) {
             Column(
                 modifier = Modifier.fillMaxSize()//fillMaxWidth().height(800.dp)
             ) {
-                Box(Modifier.fillMaxWidth().height(20.dp).background(Color.Yellow).clickable {
+                Row(Modifier.fillMaxWidth().height(20.dp).background(Color.Yellow)) {
+
+                    Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
+                        openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let { if(it != null) chartFileStandard.value = it }
+
+                        CoroutineScope(Dispatchers.Default).launch {
+                            fillStandard(isRefresh = true)
+                        }
+
+                    }){
+                        Text("Эталон: ${standardFile.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                            fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                        )
+                    }
+                    Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
+                        openPicker(Dir2Reports, PickTarget.PICK_CHART).let { if(it != null) chartFileAfterExperiment.value = it }
+
+                        CoroutineScope(Dispatchers.Default).launch {
+                            fillExperiment(isRefresh = true)
+                        }
+
+                    }){
+                        Text("Эксперимент: ${chartFileAfterExperiment.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                            fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                        )
+                    }
+                }
+                Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
                     openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let { if(it != null) chartFileStandard.value = it }
 
                     CoroutineScope(Dispatchers.Default).launch {
@@ -323,6 +349,73 @@ class ChartWindowNew(var withStandard: Boolean = false) {
         series14.notify = true
         series15.notify = true
         series16.notify = true
+
+
+
+        if (withStandard) {
+
+        }
+        isLoading.value = false
+    }
+
+    private suspend fun fillExperiment(isRefresh: Boolean = false) {
+        isLoading.value = true
+        logAct("fillExperiment !!!")
+        try {
+            series1.clear()
+            series2.clear()
+            series3.clear()
+            series4.clear()
+            series5.clear()
+            series6.clear()
+            series7.clear()
+            series8.clear()
+
+            //val series9 =  XYSeries("Давление 1"+(" [Стандарт]"))
+            //val series10 = XYSeries("Давление 2"+(" [Стандарт]"))
+            //val series11 = XYSeries("Давление 3"+(" [Стандарт]"))
+            //val series12 = XYSeries("Давление 4"+(" [Стандарт]"))
+            //val series13 = XYSeries("Давление 5"+(" [Стандарт]"))
+            //val series14 = XYSeries("Давление 6"+(" [Стандарт]"))
+            //val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
+            //val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
+
+            val br = BufferedReader(FileReader(chartFileAfterExperiment.value))
+            var line: String?
+            //var countOfLine = 0
+            while (br.readLine().also { line = it } != null) {
+                if(line != ""|| line != " ") {
+                    val items = line?.split(";","|")?.toTypedArray()
+                    if (items != null ) {
+                        series1.add(items[0].toInt(),items[1].toInt())
+
+                        series2.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
+                        series3.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
+                        series4.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
+                        series5.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
+                        series6.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
+                        series7.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
+                        series8.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                    }
+                }
+                //countOfLine++
+            }
+            br.close()
+        } catch (e: Exception) {
+            logError("error +${e.message}")
+            showMeSnackBar("Error Chart:  ${e.message}",Color.Red)
+        }
+
+
+        //dataset.notify = true
+        series1.notify = true
+        series2.notify = true
+        series3.notify = true
+        series4.notify = true
+        series5.notify = true
+        series6.notify = true
+        series7.notify = true
+        series8.notify = true
 
 
 

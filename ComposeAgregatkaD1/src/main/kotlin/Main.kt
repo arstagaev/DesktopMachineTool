@@ -22,6 +22,7 @@ fun main() = singleWindowApplication (
     var crtxscp = rememberCoroutineScope().coroutineContext
     val windowFocusRequestSharedFlow = remember { MutableSharedFlow<WindowTypes>() }
     val doOpenNewWindowInternal = remember { doOpen_First_ChartWindow }
+    val doOpenNewWindowInternal2 = remember { doOpen_Second_ChartWindow }
     //COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
     //readExcelFile()
 
@@ -43,6 +44,10 @@ fun main() = singleWindowApplication (
 
     App()
     if (doOpenNewWindowInternal.value && isAlreadyReceivedBytesForChart.value) {
+        ChartWindowNew(withStandard = true).chartWindow()
+        //chartWindow()
+    }
+    if (doOpenNewWindowInternal2.value) {
         ChartWindowNew(withStandard = true).chartWindow()
         //chartWindow()
     }

@@ -128,7 +128,7 @@ fun createMeasureExperiment() {
     if (arr1Measure.isEmpty())
         return
 
-    val fl = File(Dir2Reports, generateTimestampLastUpdate()+"_chart.txt")
+    val fl = File(Dir2Reports, generateTimestampLastUpdate()+"_${OPERATOR_ID}"+"_chart.txt")
     CoroutineScope(Dispatchers.Default).launch {
         logInfo("createMeasureExperiment ${arr8Measure.joinToString()}")
 
@@ -166,7 +166,7 @@ fun createMeasureExperiment() {
             showMeSnackBar("Error! ${e.message}")
         }
     }
-    chartFileAfterExperiment = fl
+    chartFileAfterExperiment.value = fl
     doOpen_First_ChartWindow.value = true
 }
 
