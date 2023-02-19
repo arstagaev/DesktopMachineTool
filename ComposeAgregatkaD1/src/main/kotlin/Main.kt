@@ -29,7 +29,7 @@ fun main() = singleWindowApplication (
     //var initParameters = readParameters(Dir4MainConfig)
 
 
-    initialize(readParameters(Dir4MainConfig_Json))
+    initialize(readParameters(Dir4MainConfig_Txt))
 
     var isHaveConn = false
     getComPorts_Array()?.forEach {

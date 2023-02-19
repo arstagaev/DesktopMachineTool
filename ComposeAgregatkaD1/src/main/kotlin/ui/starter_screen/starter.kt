@@ -23,6 +23,7 @@ import parsing_excel.targetParseScenario
 import screenNav
 import showMeSnackBar
 import storage.PickTarget
+import storage.createParameters
 import storage.openPicker
 import storage.refreshParametersJson
 import ui.charts.ChartWindowNew
@@ -78,6 +79,9 @@ fun StarterScreen() {
                     value = textState.value,
                     onValueChange = {
                         textState.value = it
+                        OPERATOR_ID = it
+                        createParameters()
+                        //refreshParametersJson()
                         // work json
                         //OPERATOR_ID = it
                     },

@@ -32,7 +32,6 @@ import org.jfree.data.xy.XYSeriesCollection
 import showMeSnackBar
 import storage.PickTarget
 import storage.openPicker
-import ui.navigation.Screens
 import ui.styles.colorTrans60
 import utils.*
 import java.awt.BasicStroke
@@ -68,15 +67,14 @@ class ChartWindowNew(var withStandard: Boolean = false) {
     init {
         fillUp()
     }
+
     @Composable
     fun chartWindow() {
         STATE_CHART.value = StateExperiments.PREPARE_CHART
         Window(
             title = "Compare with Standard ",
             state = WindowState(size = DpSize(1000.dp, 800.dp)),
-            onCloseRequest = {
-
-            },
+            onCloseRequest = {  },
         ) {
             ChartSecond()
         }
@@ -174,30 +172,48 @@ class ChartWindowNew(var withStandard: Boolean = false) {
         xAxis.autoRangeIncludesZero = false
         val yAxis = NumberAxis("Bar")
         val renderer: XYItemRenderer = XYLineAndShapeRenderer(true, false)
+
         val plot = XYPlot(dataset, xAxis, yAxis, renderer)
         plot.setOrientation(PlotOrientation.VERTICAL)
 
-        val arrClr = arrayOf(
+        val arrClrExperiment = arrayOf(
             java.awt.Color.RED,
             java.awt.Color.ORANGE,
-            java.awt.Color.PINK,
             java.awt.Color.YELLOW,
             java.awt.Color.GREEN,
             java.awt.Color.BLUE,
             java.awt.Color.CYAN,
-            java.awt.Color.MAGENTA
+            java.awt.Color.MAGENTA,
+            java.awt.Color.BLACK
+        )
+
+        val arrClrStandard = arrayOf(
+            java.awt.Color(255,145,145),
+            java.awt.Color(255, 200, 50),
+            java.awt.Color(255, 255, 150),
+            java.awt.Color(147, 255, 100),
+            java.awt.Color(147, 147, 255),
+            java.awt.Color(147, 255, 255),
+            java.awt.Color(255, 147, 255),
+            java.awt.Color(128,128,128)
         )
 
         repeat(8) {
-            renderer. setSeriesPaint(it, arrClr[it])
+            //renderer
+            renderer. setSeriesPaint(it, arrClrExperiment[it])
             renderer.setSeriesStroke(it, BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-
+            //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(0f))
         }
 
         if (withStandard) {
             repeat(8) {
-                renderer. setSeriesPaint(it+8, arrClr[it])
-                renderer.setSeriesStroke(it+8, BasicStroke(1f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f))
+
+                //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(6f))
+                renderer.setSeriesPaint(it+8, arrClrStandard[it])
+                renderer.setSeriesStroke(it+8,
+                    //ShapeUtilities.createDiamond(6f)
+                    BasicStroke(1f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f)
+                )
                 //renderer.sha
             }
         }

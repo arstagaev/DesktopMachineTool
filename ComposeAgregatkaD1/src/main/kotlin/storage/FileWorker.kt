@@ -1,17 +1,15 @@
 package storage
 
-import enums.StateExperiments
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import showMeSnackBar
-import storage.models.ParamComm
 import storage.models.ParameterCommon
+import storage.models.ParameterCommonJson
 import utils.*
 import java.io.BufferedReader
 import java.io.File
@@ -53,14 +51,42 @@ fun readParameters(file: File) : List<ParameterCommon> {
         createParameters()
     }
 
-    val PCListSerializer: KSerializer<List<ParameterCommon>> = ListSerializer(ParameterCommon.serializer())
-
-    val obj = Json.decodeFromString(PCListSerializer, file.readText(Charsets.UTF_8))
+    //val PCListSerializer: KSerializer<List<ParameterCommonJson>> = ListSerializer(ParameterCommonJson.serializer())
+//
+    //val obj = Json.decodeFromString(PCListSerializer, file.readText(Charsets.UTF_8))
 
     //Json.decodeFromString<ArrayList<ParameterCommon>>()
+    var listParams = mutableListOf<ParameterCommon>()
+    try {
+        val br = BufferedReader(FileReader(file))
+        var line: String?
+        var countOfLine = 0
+        while (br.readLine().also { line = it } != null) {
+            if(line != ""|| line != " "){
+                val items = line?.split("=")?.toTypedArray()
+                if (items != null ) {
+                    when(items[0]) {
+                        "comport" -> {
+                            listParams.add(ParameterCommon(name = "comport", value = items[1]))
+                        }
+                        "baudrate" -> {
+                            listParams.add(ParameterCommon(name = "baudrate", value = items[1]))
+                        }
+                        "last_operator_id" -> {
+                            listParams.add(ParameterCommon(name = "last_operator_id", value = items[1]))
+                        }
+                    }
+                }
+            }
+            countOfLine++
+        }
+        br.close()
+    } catch (e: Exception) {
+        logError("error +${e.message}")
+    }
 
 
-    return obj
+    return listParams
 }
 
 fun createParameters() {
@@ -69,55 +95,71 @@ fun createParameters() {
     //"baudrate" -> BAUD
     ////"is_demo" ->
     //"last_operator_id"
-    var newParameters = arrayListOf<ParameterCommon>(
-        ParameterCommon("comport","COM10"),
-        ParameterCommon("baudrate","COM10"),
-        ParameterCommon("last_operator_id","Жималбек Аббас Гамлядиндов Оглы"),
+//    var newParameters = arrayListOf<ParameterCommonJson>(
+//        ParameterCommonJson("comport","COM10"),
+//        ParameterCommonJson("baudrate","COM10"),
+//        ParameterCommonJson("last_operator_id","Жималбек Аббас Гамлядиндов Оглы"),
+//    )
+
+    var newParameters = arrayListOf(
+        ParameterCommon("comport","${COM_PORT}"),
+        ParameterCommon("baudrate","${BAUD_RATE}"),
+        ParameterCommon("last_operator_id","${OPERATOR_ID}"),
     )
 
-
     //files:
-//    val fl = Dir4MainConfig_Txt
-//    fl.createNewFile()
-//    val bw = fl.bufferedWriter()
-//
-//    try {
-//        // read lines in txt by Bufferreader
-//        repeat(newParameters.size) {
-//            bw.write("${newParameters[it].name}=${newParameters[it].value}\n")
-//        }
-//        bw.close()
-//    }catch (e: Exception){
-//        showMeSnackBar("Error! ${e.message}")
-//    }
-
-    val PCListSerializer: KSerializer<List<ParameterCommon>> = ListSerializer(ParameterCommon.serializer())
-
-    // json:
-    val json = Json.encodeToString(PCListSerializer, newParameters)
-
-    var newFileJson = Dir4MainConfig_Json
-    newFileJson.writeText(json)
-
-    if (!newFileJson.exists()) {
-        newFileJson.createNewFile()
+    val fl = Dir4MainConfig_Txt
+    if (!fl.exists()) {
+        fl.createNewFile()
+        newParameters = arrayListOf(
+            ParameterCommon("comport","COM10"),
+            ParameterCommon("baudrate","115200"),
+            ParameterCommon("last_operator_id","Гаджилы Жималбек Али оглы"),
+        )
     }
+
+    val bw = fl.bufferedWriter()
+
+    try {
+        // read lines in txt by Bufferreader
+        repeat(newParameters.size) {
+            bw.write("${newParameters[it].name}=${newParameters[it].value}\n")
+        }
+        bw.close()
+    }catch (e: Exception){
+        showMeSnackBar("Error! ${e.message}")
+    }
+
+//    val PCListSerializer: KSerializer<List<ParameterCommonJson>> = ListSerializer(ParameterCommonJson.serializer())
+//
+//    // json:
+//    val json = Json.encodeToString(PCListSerializer, newParameters)
+//
+//    var newFileJson = Dir4MainConfig_Json
+//    newFileJson.writeText(json)
+//
+//    if (!newFileJson.exists()) {
+//        newFileJson.createNewFile()
+//    }
 
 }
 
 fun refreshParametersJson() {
     logAct("refreshParametersJson -> ${COM_PORT}  ${BAUD_RATE}")
-    val json = Json.encodeToString(arrayListOf<ParameterCommon>(
-        ParameterCommon("comport", COM_PORT),
-        ParameterCommon("baudrate", BAUD_RATE.toString()),
-        ParameterCommon("last_operator_id", OPERATOR_ID),
-    )
+    val json = Json.encodeToString(
+        arrayListOf<ParameterCommonJson>(
+            ParameterCommonJson("comport", COM_PORT),
+            ParameterCommonJson("baudrate", BAUD_RATE.toString()),
+            ParameterCommonJson("last_operator_id", OPERATOR_ID),
+        )
     )
 
-    var newFileJson = Dir4MainConfig_Json
+    var newFileJson = Dir4MainConfig_Txt //Dir4MainConfig_Json
+    if (!newFileJson.exists()) {
+        newFileJson.createNewFile()
+    }
     newFileJson.writeText(json)
 
-    newFileJson.createNewFile()
 }
 
 fun loadOperators() : MutableList<String> {
