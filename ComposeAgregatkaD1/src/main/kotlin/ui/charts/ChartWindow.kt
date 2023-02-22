@@ -40,7 +40,7 @@ import java.io.*
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 
-class ChartWindowNew(var withStandard: Boolean = false) {
+class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolean = false) {
     val dataset = XYSeriesCollection()
 
     private val series1 = XYSeries("Давление 1")
@@ -64,46 +64,91 @@ class ChartWindowNew(var withStandard: Boolean = false) {
 
     var chartPanel: JPanel? = null
     var isLoading = mutableStateOf(false)
+    val crtx = CoroutineScope(Dispatchers.Default)
+
+    private var renderer: XYItemRenderer = XYLineAndShapeRenderer(true, false)
+    private val xAxis = NumberAxis("time (ms)")
+    private val yAxis = NumberAxis("Bar")
+    private var plot = XYPlot(dataset, xAxis, yAxis, renderer)
+    var chart = JFreeChart(
+        "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
+        plot,true
+    )
 
     init {
-        fillUp()
+        crtx.launch {
+            fillUp()
+        }.invokeOnCompletion {
+            chart = JFreeChart(
+                "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
+                plot,true
+            )
+            logGarbage(">>>8 ${it?.message}")
+        }
+
+
+        chartPanel = ChartPanel(chart)
     }
 
     @Composable
     fun chartWindow() {
-        STATE_CHART.value = StateExperiments.PREPARE_CHART
+
         Window(
             title = "Compare with Standard",
             state = WindowState(size = DpSize(1000.dp, 800.dp)),
-            onCloseRequest = { doOpen_First_ChartWindow.value = false },
+            onCloseRequest = {
+                if (isViewerOnly) {
+                    doOpen_Second_ChartWindow.value = false
+                } else {
+                    doOpen_First_ChartWindow.value = false
+                }
+
+                             },
         ) {
-            ChartSecond()
+            val chrt = remember { STATE_CHART }
+
+            if (chrt.value == StateExperiments.NONE) {
+                ChartSecond()
+            }else {
+                Box(Modifier.fillMaxSize().background(Color.Black)) {
+                    Text("Loading...",
+                        modifier = Modifier.padding(top = (10).dp,start = 20.dp),
+                        fontFamily = FontFamily.Default, fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold, color = Color.White
+                    )
+                }
+            }
+
         }
     }
 
-    fun fillUp() {
+
+    private suspend fun fillUp() {
+        STATE_CHART.value = StateExperiments.PREPARE_CHART
         logAct("fillUp chart ${chartFileAfterExperiment.value.name}  ${chartFileStandard.value.name}")
-        CoroutineScope(Dispatchers.Default).launch {
+
+        logGarbage(">>>1")
+        //CoroutineScope(Dispatchers.Default).launch {
             //experiment:
             try {
                 val br = BufferedReader(FileReader(chartFileAfterExperiment.value))
                 var line: String?
                 //var countOfLine = 0
                 while (br.readLine().also { line = it } != null) {
-                    if(line != ""|| line != " ") {
-                        val items = line?.split(";","|")?.toTypedArray()
+                    if (line != "" || line != " ") {
+                        val items = line?.split(";", "|")?.toTypedArray()
                         //println("exp >>>> ${items?.joinToString()}")
-                        if (items != null ) {
+                        if (items != null) {
 
-                            series1.add(items[0].toInt(),items[1].toInt())
+                            series1.add(items[0].toInt(), items[1].toInt())
 
-                            series2.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
-                            series3.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
-                            series4.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
-                            series5.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
-                            series6.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
-                            series7.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
-                            series8.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                            series2.add(items[2].toInt(), items[3].toInt()).takeIf { items.size > 2 }
+                            series3.add(items[4].toInt(), items[5].toInt()).takeIf { items.size > 4 }
+                            series4.add(items[6].toInt(), items[7].toInt()).takeIf { items.size > 6 }
+                            series5.add(items[8].toInt(), items[9].toInt()).takeIf { items.size > 8 }
+                            series6.add(items[10].toInt(), items[11].toInt()).takeIf { items.size > 10 }
+                            series7.add(items[12].toInt(), items[13].toInt()).takeIf { items.size > 12 }
+                            series8.add(items[14].toInt(), items[15].toInt()).takeIf { items.size > 14 }
                         }
                     }
                     //countOfLine++
@@ -112,7 +157,7 @@ class ChartWindowNew(var withStandard: Boolean = false) {
             } catch (e: Exception) {
                 logError("error +${e.message}")
             }
-
+            logGarbage(">>>2")
             //standard:
             if (withStandard) {
                 try {
@@ -121,18 +166,18 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                     var line: String?
                     //var countOfLine = 0
                     while (br.readLine().also { line = it } != null) {
-                        if(line != ""|| line != " ") {
-                            val items = line?.split(";","|")?.toTypedArray()
+                        if (line != "" || line != " ") {
+                            val items = line?.split(";", "|")?.toTypedArray()
                             println("withStandard >>>> ${items?.joinToString()}")
-                            if (items != null ) {
-                                series9 .add(items[0].toInt(),items[1].toInt())
-                                series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
-                                series11.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
-                                series12.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
-                                series13.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
-                                series14.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
-                                series15.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
-                                series16.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                            if (items != null) {
+                                series9.add(items[0].toInt(), items[1].toInt())
+                                series10.add(items[2].toInt(), items[3].toInt()).takeIf { items.size > 2 }
+                                series11.add(items[4].toInt(), items[5].toInt()).takeIf { items.size > 4 }
+                                series12.add(items[6].toInt(), items[7].toInt()).takeIf { items.size > 6 }
+                                series13.add(items[8].toInt(), items[9].toInt()).takeIf { items.size > 8 }
+                                series14.add(items[10].toInt(), items[11].toInt()).takeIf { items.size > 10 }
+                                series15.add(items[12].toInt(), items[13].toInt()).takeIf { items.size > 12 }
+                                series16.add(items[14].toInt(), items[15].toInt()).takeIf { items.size > 14 }
                             }
                         }
                         //countOfLine++
@@ -140,100 +185,91 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                     br.close()
                 } catch (e: Exception) {
                     logError("error +${e.message}")
-                    showMeSnackBar("Error Chart:  ${e.message}",Color.Red)
+                    showMeSnackBar("Error Chart:  ${e.message}", Color.Red)
                 }
 
 
             }
-        }
+        //}
 
+        logGarbage(">>>3")
+            dataset.addSeries(series1)
+            dataset.addSeries(series2)
+            dataset.addSeries(series3)
+            dataset.addSeries(series4)
+            dataset.addSeries(series5)
+            dataset.addSeries(series6)
+            dataset.addSeries(series7)
+            dataset.addSeries(series8)
 
-        dataset.addSeries(series1)
-        dataset.addSeries(series2)
-        dataset.addSeries(series3)
-        dataset.addSeries(series4)
-        dataset.addSeries(series5)
-        dataset.addSeries(series6)
-        dataset.addSeries(series7)
-        dataset.addSeries(series8)
-
-        if (withStandard) {
-            //logInfo("chart series16 ${series16.maximumItemCount} ${series16}")
-            dataset.addSeries(series9)
-            dataset.addSeries(series10)
-            dataset.addSeries(series11)
-            dataset.addSeries(series12)
-            dataset.addSeries(series13)
-            dataset.addSeries(series14)
-            dataset.addSeries(series15)
-            dataset.addSeries(series16)
-        }
-
-        val xAxis = NumberAxis("time (ms)")
-        xAxis.autoRangeIncludesZero = false
-        val yAxis = NumberAxis("Bar")
-        val renderer: XYItemRenderer = XYLineAndShapeRenderer(true, false)
-
-        val plot = XYPlot(dataset, xAxis, yAxis, renderer)
-        plot.setOrientation(PlotOrientation.VERTICAL)
-
-        val arrClrExperiment = arrayOf(
-            java.awt.Color.RED,
-            java.awt.Color.ORANGE,
-            java.awt.Color.YELLOW,
-            java.awt.Color.GREEN,
-            java.awt.Color.BLUE,
-            java.awt.Color.CYAN,
-            java.awt.Color.MAGENTA,
-            java.awt.Color.BLACK
-        )
-
-        val arrClrStandard = arrayOf(
-            java.awt.Color(255,145,145),
-            java.awt.Color(255, 200, 50),
-            java.awt.Color(255, 255, 150),
-            java.awt.Color(147, 255, 100),
-            java.awt.Color(147, 147, 255),
-            java.awt.Color(147, 255, 255),
-            java.awt.Color(255, 147, 255),
-            java.awt.Color(128,128,128)
-        )
-
-        repeat(8) {
-            //renderer
-            renderer. setSeriesPaint(it, arrClrExperiment[it])
-            renderer.setSeriesStroke(it, BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-            //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(0f))
-        }
-
-        if (withStandard) {
-            repeat(8) {
-
-                //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(6f))
-                renderer.setSeriesPaint(it+8, arrClrStandard[it])
-                renderer.setSeriesStroke(it+8,
-                    //ShapeUtilities.createDiamond(6f)
-                    BasicStroke(1f, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f)
-                )
-                //renderer.sha
+            if (withStandard) {
+                //logInfo("chart series16 ${series16.maximumItemCount} ${series16}")
+                dataset.addSeries(series9)
+                dataset.addSeries(series10)
+                dataset.addSeries(series11)
+                dataset.addSeries(series12)
+                dataset.addSeries(series13)
+                dataset.addSeries(series14)
+                dataset.addSeries(series15)
+                dataset.addSeries(series16)
             }
-        }
 
 
-        plot.setRenderer(renderer)
-        val chart = JFreeChart(
-            "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
-            plot,true
-        )
+            xAxis.autoRangeIncludesZero = false
+
+        logGarbage(">>>4")
+            val arrClrExperiment = arrayOf(
+                java.awt.Color.RED,
+                java.awt.Color.ORANGE,
+                java.awt.Color.YELLOW,
+                java.awt.Color.GREEN,
+                java.awt.Color.BLUE,
+                java.awt.Color.CYAN,
+                java.awt.Color.MAGENTA,
+                java.awt.Color.BLACK
+            )
+
+            val arrClrStandard = arrayOf(
+                java.awt.Color(255, 145, 145),
+                java.awt.Color(255, 200, 50),
+                java.awt.Color(255, 255, 150),
+                java.awt.Color(147, 255, 100),
+                java.awt.Color(147, 147, 255),
+                java.awt.Color(147, 255, 255),
+                java.awt.Color(255, 147, 255),
+                java.awt.Color(128, 128, 128)
+            )
+        logGarbage(">>>5")
+            repeat(8) {
+                //renderer
+                renderer.setSeriesPaint(it, arrClrExperiment[it])
+                renderer.setSeriesStroke(it, BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+                //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(0f))
+            }
+
+            if (withStandard) {
+                repeat(8) {
+
+                    //renderer.setSeriesShape(it+8,ShapeUtilities.createDiamond(6f))
+                    renderer.setSeriesPaint(it + 8, arrClrStandard[it])
+                    renderer.setSeriesStroke(
+                        it + 8,
+                        //ShapeUtilities.createDiamond(6f)
+                        BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 1f, floatArrayOf(10f), 0.5f)
+                    )
+                    //renderer.sha
+                }
+            }
+
         STATE_CHART.value = StateExperiments.NONE
-//    val chart: JFreeChart = ChartFactory.createXYLineChart(
-//        "Сравнение с эталоном [${generateTimestampLastUpdate()},${OPERATOR_ID}] ",
-//        "time (ms)", "Bar", dataset,
-//        PlotOrientation.VERTICAL, true, true, false
-//    )
+        logGarbage(">>>6")
+        plot = XYPlot(dataset, xAxis, yAxis, renderer)
+        plot.setOrientation(PlotOrientation.VERTICAL)
+        logGarbage(">>>7")
+        plot.setRenderer(renderer)
 
-        chartPanel = ChartPanel(chart)
     }
+
     @Composable
     fun ChartSecond() {
         val standardFile = remember { chartFileStandard }
@@ -375,11 +411,6 @@ class ChartWindowNew(var withStandard: Boolean = false) {
         series15.notify = true
         series16.notify = true
 
-
-
-        if (withStandard) {
-
-        }
         isLoading.value = false
     }
 

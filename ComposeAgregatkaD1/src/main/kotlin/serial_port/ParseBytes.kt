@@ -11,9 +11,6 @@ import utils.*
 
 private val DEBUG_PARSING = false
 
-private val crtx1 = CoroutineName("main")
-
-
 
 
 class PacketListener : SerialPortPacketListener {
@@ -44,9 +41,7 @@ private var start_time = 0L
 private var incr = 0
 
 
-// recording:
-var test_time = 0
-var last_X = 0
+
 
 suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
     var dch: DataChunkG? = null
@@ -84,10 +79,8 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
                 onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
             )
             //println("CURR  ${updData.joinToString()}||${dchCurr.toString()}")
-            CoroutineScope(crtx1).launch {
-                dataChunkCurrents.emit(dchCurr)
-                //firstGaugeData  .emit(dch.firstGaugeData)
-            }
+            dataChunkCurrents.emit(dchCurr)
+
             if (DEBUG_PARSING) {
                 arrCurrRaw.add(updData)
 
@@ -127,10 +120,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
             //logGarbage(">>> ${dch.toString()}")
             //println("PRES ${dch.toString()}")
 
-            CoroutineScope(crtx1).launch {
-                dataChunkGauges.emit(dch)
-                //firstGaugeData  .emit(dch.firstGaugeData)
-            }
+            dataChunkGauges.emit(dch)
 
             if (DEBUG_PARSING) {
                 arrPressRaw.add(updData)
@@ -178,5 +168,9 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
                 println(arrPress[it])
             }
         }
+        arrCurr.clear()
+        arrPress.clear()
+        arrCurrRaw.clear()
+        arrPressRaw.clear()
     }
 }

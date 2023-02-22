@@ -20,8 +20,7 @@ fun main() = singleWindowApplication (
     state = WindowState(size = DpSize(1000.dp, 800.dp)),
     visible = true
 ) {
-    var crtxscp = rememberCoroutineScope().coroutineContext
-    val windowFocusRequestSharedFlow = remember { MutableSharedFlow<WindowTypes>() }
+
     val doOpenNewWindowInternal = remember { doOpen_First_ChartWindow }
     val doOpenNewWindowInternal2 = remember { doOpen_Second_ChartWindow }
     //COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName

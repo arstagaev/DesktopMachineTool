@@ -28,7 +28,7 @@ fun solenoidsPanel(
     sizeRow: Size,
     duration: MutableStateFlow<Long>
 ) {
-    var crctx = rememberCoroutineScope().coroutineContext
+    val crctx = rememberCoroutineScope().coroutineContext
 
     var current1 by remember { mutableStateOf(-1) }
     var current2 by remember { mutableStateOf(-1) }
@@ -55,24 +55,24 @@ fun solenoidsPanel(
 //    }else {
 //        showMeSnackBar("Excel config parse success",Color.White)
 //    }
-    CoroutineScope(Dispatchers.IO).launch {
-        dataChunkCurrents.collect {
-            delay(DELAY_FOR_GET_DATA)
-            //println("|currrr [${it.firstCurrentData}]")
-            //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
-            //longForChart.add(pressure1X)
+    LaunchedEffect(true) {
+        CoroutineScope(Dispatchers.IO+crctx).launch {
+            dataChunkCurrents.collect {
+                delay(DELAY_FOR_GET_DATA)
 
-            current1 = it.firstCurrentData
-            current2 = it.secondCurrentData
-            current3 = it.thirdCurrentData
-            current4 = it.fourthCurrentData
+                current1 = it.firstCurrentData
+                current2 = it.secondCurrentData
+                current3 = it.thirdCurrentData
+                current4 = it.fourthCurrentData
 
-            current5 = it.fifthCurrentData
-            current6 = it.sixthCurrentData
-            current7 = it.seventhCurrentData
-            current8 = it.eighthCurrentData
+                current5 = it.fifthCurrentData
+                current6 = it.sixthCurrentData
+                current7 = it.seventhCurrentData
+                current8 = it.eighthCurrentData
+            }
         }
     }
+
 
     Row(
         modifier = Modifier //.padding(10.dp)
@@ -231,7 +231,7 @@ fun justBar(
                         color = Color.White
                     )
                     Text(
-                        "${((PWMremember.value.toFloat() * 100f) / 255f).toInt()}",
+                        "${map(PWMremember.value,0,255,0,100)}",
                         modifier = Modifier.fillMaxSize().weight(1f),
                         fontFamily = fontDigital,
                         fontSize = 12.sp,

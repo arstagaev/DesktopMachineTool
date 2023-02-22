@@ -53,20 +53,23 @@ fun CenterPiece(
     val explMode = remember { EXPLORER_MODE }
     val expandedCom = remember { mutableStateOf(false) }
 
+    // recording:
+    var test_time = 0
+    indexOfScenario.value = 0
+    var indexScenario = 0
+    var num = scenario[indexScenario].time
+
     val txt = remember { txtOfScenario }
 
-    val ctxScope = CoroutineScope(Dispatchers.IO)
+    val ctxScope = CoroutineScope(Dispatchers.IO) + rememberCoroutineScope().coroutineContext
 
     LaunchedEffect(true) {
-        CoroutineScope(Dispatchers.IO).launch {
+        ctxScope.launch {
             reInitSolenoids()
-            indexOfScenario.value = 0
-            var indexScenario = 0
-            var num = scenario[indexScenario].time
 
             dataChunkGauges.collect {
                 delay(DELAY_FOR_GET_DATA)
-                logGarbage("Exp> ${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
+                logGarbage("Exp>  ${STATE_CHART.value.name}||${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
 
                 //println("|<<<<<<<<<<<<<<<<<<< [${it.firstGaugeData}]")
                 //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
@@ -83,6 +86,7 @@ fun CenterPiece(
 
                 when(EXPLORER_MODE.value) {
                     ExplorerMode.AUTO -> {
+                        logGarbage("$limitTime >= $test_time")
                         if ( limitTime >= test_time) {
                             STATE_CHART.value = StateExperiments.PREP_DATA
                             arr1Measure.add(Pointer(x = test_time, y = pressure1X))//it.firstGaugeData, ))
@@ -95,6 +99,7 @@ fun CenterPiece(
                             arr8Measure.add(Pointer(x = test_time, y = pressure8X))//it.eighthGaugeData, ))
 
                             if (num > 0 ) {
+                                // 2 - is recieve data every 2ms
                                 num -= 2
                             } else {
                                 indexScenario++
@@ -119,14 +124,6 @@ fun CenterPiece(
             }
         }
     }
-//    GlobalScope.launch {
-////        firstGaugeData.collect { value ->
-////            delay(DELAY_FOR_GET_DATA)
-////            //println("|<<<<<<<<<<<<<<<<<<< [${value}]")
-////            pressure1X = value
-////        }
-//
-//    }
 
     Row(
         modifier = Modifier
@@ -148,9 +145,8 @@ fun CenterPiece(
 //                Box(Modifier.size(40.dp)) {
 //                    Image(painterResource("/trs.jpg"),"")
 //                }
-                AnimatedVisibility(stateChart.value == StateExperiments.PREP_DATA || stateChart.value == StateExperiments.PREPARE_CHART) {
+                if(stateChart.value == StateExperiments.PREP_DATA || stateChart.value == StateExperiments.PREPARE_CHART) {
                     Text("Rec...", modifier = Modifier.padding(top = (10).dp,start = 20.dp).clickable {
-
                     }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Red
                     )
                 }
@@ -189,10 +185,20 @@ fun CenterPiece(
                     CoroutineScope(Dispatchers.IO).launch {
 
                         if(explMode.value == ExplorerMode.AUTO) {
-                            if (GLOBAL_STATE.value == StateParseBytes.STOP || GLOBAL_STATE.value == StateParseBytes.INIT || GLOBAL_STATE.value == StateParseBytes.WAIT) {
+                            if (STATE_CHART.value == StateExperiments.NONE || GLOBAL_STATE.value == StateParseBytes.STOP || GLOBAL_STATE.value == StateParseBytes.INIT || GLOBAL_STATE.value == StateParseBytes.WAIT) {
+                                if (GLOBAL_STATE.value != StateParseBytes.PLAY) {
+                                    initSerialCommunication()
+                                }
+
                                 GLOBAL_STATE.value = StateParseBytes.PLAY
                                 sound_On()
-                                initSerialCommunication()
+
+                                test_time = 0
+                                indexOfScenario.value = 0
+                                indexScenario = 0
+                                num = scenario[indexScenario].time
+                                isAlreadyReceivedBytesForChart.value = false
+
                                 startReceiveFullData()
                             } else {
                                 sound_Error()

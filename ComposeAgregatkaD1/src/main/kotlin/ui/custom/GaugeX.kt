@@ -215,13 +215,10 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
 
                 Column(modifier = Modifier.height(inputSize.height*0.3f).align(Alignment.BottomStart).padding(start = 10.dp, bottom = 10.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
 
-                    Text("${
-                        signValue
-                        
-                        //checkSignInterval(progress, minType, maxType)
-                    }", modifier = Modifier.padding(0.dp)
-                        //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                        , fontFamily = fontDigital, fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                    Text("${signValue}",
+                        modifier = Modifier.padding(0.dp),
+                        fontFamily = fontDigital,
+                        fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
 
                 }
@@ -277,36 +274,3 @@ fun checkSignInterval(inp : Int, min: Int, max: Int): Int {
     return inp
 
 }
-
-
-
-//private data class XY(var x : Float, var y : Float)
-//
-//private fun calcNumGaug(angle : Float, size : Int) : XY {
-//
-//    //        cx cy              R (has been 0.4f for mac i guess)
-//    var X = (size / 2f  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
-//    var Y = (size / 2f  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
-//
-//    //println(" >> ${size}  x:${X} y:${Y} ")
-//    return XY(X,Y)
-//}
-
-
-
-
-//data class XY_DP(var x : Dp, var y : Dp)
-//fun calcNumGaugTEST(angle : Float, size : Int) : XY_DP {
-//
-//    //        cx cy              R (has been 0.4f for mac i guess)
-//    var X = (size / 2f  + size * (0.4f) * cos( angle *( PI / 180f ) ) ).toFloat()
-//    var Y = (size / 2f  + size * (0.4f) * sin( angle *( PI / 180f ) ) ).toFloat()
-//
-//    println(" >> ${size}  x:${X} y:${Y} ")
-//    return XY_DP(X.dp,Y.dp)
-//}
-//
-//fun map(x: Int, in_min: Int, in_max: Int, out_min: Int, out_max: Int): Int {
-//    //println("fun map ${x} ${in_min} $in_max $out_min $out_max ")
-//    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-//}
