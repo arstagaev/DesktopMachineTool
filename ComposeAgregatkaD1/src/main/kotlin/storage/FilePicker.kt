@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import parsing_excel.targetParseScenario
-import serial_port.comparatorForLaunchScenario
 import utils.Dir3Scenarios
 import utils.chartFileAfterExperiment
 import utils.doOpen_Second_ChartWindow
@@ -16,7 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 //https://mkyong.com/swing/java-swing-jfilechooser-example/
 
-fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO): File? {
+fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO,isOnlyViewer: Boolean = false): File? {
     val chooser = JFileChooser(targetDir)
     var filter = FileNameExtensionFilter(
         "Config", "xls","xlsx"
@@ -54,7 +53,10 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO): 
         when {
             picker == PickTarget.PICK_CHART -> {
                 chartFileAfterExperiment.value = chooser.selectedFile
-                doOpen_Second_ChartWindow.value = true
+                if (isOnlyViewer) {
+                    doOpen_Second_ChartWindow.value = true
+                }
+
 
             }
         }

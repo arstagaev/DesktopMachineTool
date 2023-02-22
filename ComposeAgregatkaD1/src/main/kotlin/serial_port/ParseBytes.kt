@@ -3,6 +3,7 @@ package serial_port
 import com.fazecast.jSerialComm.*
 import enums.StateExperiments
 import kotlinx.coroutines.*
+import showMeSnackBar
 import storage.createMeasureExperiment
 import ui.charts.Pointer
 import utils.*
@@ -148,6 +149,8 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
         }
         else -> {
             // if not valid numbers - refresh connection
+            logError("not valid numbers - refresh connection !!!")
+            showMeSnackBar("not valid numbers - refresh connection")
             startReceiveFullData()
         }
 

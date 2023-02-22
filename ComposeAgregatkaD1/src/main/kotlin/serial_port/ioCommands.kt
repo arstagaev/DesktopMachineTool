@@ -3,18 +3,16 @@ package serial_port
 import com.fazecast.jSerialComm.SerialPort
 import kotlinx.coroutines.*
 import startTimer
-import utils.COM_PORT
-import utils.arrayOfComPorts
-import utils.getComPorts_Array
-import utils.toHexString
+import ui.main_screen.center.support_elements.*
+import utils.*
 
 private var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
 private val crtx2 = CoroutineName("main")
 
 suspend fun initSerialCommunication() {
-    println(">>>serial communication has been started, COM_PORT:$COM_PORT")
+    println(">>>serial communication has been started, COM_PORT:$COM_PORT ${BAUD_RATE}")
     serialPort = SerialPort.getCommPort(COM_PORT)
-    serialPort.setComPortParameters(500000,8,1, SerialPort.NO_PARITY)
+    serialPort.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
     serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
     serialPort.openPort()
     //serialPort.clearBreak()
@@ -33,7 +31,9 @@ suspend fun startReceiveFullData() {
 //    ) {
 //        println(">>>Available Com ports:${getComPorts_Array().get(it).systemPortName} is Open: ${getComPorts_Array().get(it).isOpen}||${getComPorts_Array().get(it).descriptivePortName}")
 //    }
-
+    if (!serialPort.isOpen) {
+        initSerialCommunication()
+    }
     writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
 
 }
@@ -42,7 +42,7 @@ fun stopSerialCommunication() {
     serialPort.removeDataListener()
     serialPort.closePort()
 
-    println(">< STOP SERIAL PORT // is Open:${serialPort.isOpen}")
+    println(">< STOP SERIAL PORT // is Open:${serialPort.isOpen} ${BAUD_RATE}")
 }
 
 suspend fun pauseSerialComm() {
@@ -56,7 +56,7 @@ suspend fun pauseSerialComm() {
 
 }
 
-suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 1000L) {
+suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 0L) {
 //    if (sendBytes[0] == 0x74.toByte()) {
 //        //startTimer()
 //    }
@@ -73,3 +73,65 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, 
 
 }
 
+// increment and decrement steps of scenario
+suspend fun comparatorToSolenoid(newIndex: Int) {
+    //var btary = muta()
+    //val size = scenario[newIndex].values.size
+
+    val idx = checkIntervalScenarios(newIndex)
+
+
+//    val btry = byteArrayOf(
+//        scenario[idx].values[0].toByte(),
+//        scenario[idx].values[1].toByte(),
+//        scenario[idx].values[2].toByte(),
+//        scenario[idx].values[3].toByte(),
+//
+//        scenario[idx].values[4].toByte(),
+//        scenario[idx].values[5].toByte(),
+//        scenario[idx].values[6].toByte(),
+//        scenario[idx].values[7].toByte(),
+//    )
+
+    pwm1SeekBar.value = scenario[idx].values[0].takeIf { it <= solenoids[0].maxPWM } ?: solenoids[0].maxPWM // [from 0 to 255]
+    pwm2SeekBar.value = scenario[idx].values[1].takeIf { it <= solenoids[1].maxPWM } ?: solenoids[1].maxPWM
+    pwm3SeekBar.value = scenario[idx].values[2].takeIf { it <= solenoids[2].maxPWM } ?: solenoids[2].maxPWM
+    pwm4SeekBar.value = scenario[idx].values[3].takeIf { it <= solenoids[3].maxPWM } ?: solenoids[3].maxPWM
+    pwm5SeekBar.value = scenario[idx].values[4].takeIf { it <= solenoids[4].maxPWM } ?: solenoids[4].maxPWM
+    pwm6SeekBar.value = scenario[idx].values[5].takeIf { it <= solenoids[5].maxPWM } ?: solenoids[5].maxPWM
+    pwm7SeekBar.value = scenario[idx].values[6].takeIf { it <= solenoids[6].maxPWM } ?: solenoids[6].maxPWM
+    pwm8SeekBar.value = scenario[idx].values[7].takeIf { it <= solenoids[7].maxPWM } ?: solenoids[7].maxPWM
+
+    //logGarbage("pwm1SeekBar -> ${pwm1SeekBar.value}  ${pwm2SeekBar.value}  ${pwm3SeekBar.value}")
+
+    ch1 = pwm1SeekBar.value.toByte() //(rawPreByte0).toByte() // from 0 to 0xFF
+    ch2 = pwm2SeekBar.value.toByte() //(rawPreByte1).toByte()
+    ch3 = pwm3SeekBar.value.toByte() //(rawPreByte2).toByte()
+    ch4 = pwm4SeekBar.value.toByte() //(rawPreByte3).toByte()
+    ch5 = pwm5SeekBar.value.toByte() //(rawPreByte4).toByte()
+    ch6 = pwm6SeekBar.value.toByte() //(rawPreByte5).toByte()
+    ch7 = pwm7SeekBar.value.toByte() //(rawPreByte6).toByte()
+    ch8 = pwm8SeekBar.value.toByte() //(rawPreByte7).toByte()
+
+    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L)
+
+    writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L)
+
+//    pwm1SeekBar.value = map( rawPreByte0,0,255,0,100 )
+//    pwm2SeekBar.value = map( rawPreByte1,0,255,0,100 )
+//    pwm3SeekBar.value = map( rawPreByte2,0,255,0,100 )
+//    pwm4SeekBar.value = map( rawPreByte3,0,255,0,100 )
+//    pwm5SeekBar.value = map( rawPreByte4,0,255,0,100 )
+//    pwm6SeekBar.value = map( rawPreByte5,0,255,0,100 )
+//    pwm7SeekBar.value = map( rawPreByte6,0,255,0,100 )
+//    pwm8SeekBar.value = map( rawPreByte7,0,255,0,100 )
+
+
+//    repeat(size-1) {
+//        btry += byteArrayOf(scenario[newIndex].values[it].toByte())
+//    }
+
+    //writeToSerialPort(btry)
+    txtOfScenario.value = scenario[idx].text
+    //commentOfScenario.value = scenario[idx].comment
+}

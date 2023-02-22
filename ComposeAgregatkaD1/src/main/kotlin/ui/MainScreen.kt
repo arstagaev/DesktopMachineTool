@@ -24,7 +24,7 @@ import org.jfree.data.general.DatasetUtils
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import ui.navigation.Screens
-import ui.main_screen.center.centerPiece
+import ui.main_screen.center.CenterPiece
 import ui.starter_screen.StarterScreen
 import java.awt.Font
 
@@ -57,10 +57,10 @@ fun App() {
                         StarterScreen()
                     }
                     Screens.MAIN -> {
-                        centerPiece()
+                        CenterPiece()
                     }
                     else -> {
-                        centerPiece()
+                        CenterPiece()
                     }
                 }
             }

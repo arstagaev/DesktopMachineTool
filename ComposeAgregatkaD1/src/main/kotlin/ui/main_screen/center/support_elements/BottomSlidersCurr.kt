@@ -30,36 +30,47 @@ fun solenoidsPanel(
 ) {
     var crctx = rememberCoroutineScope().coroutineContext
 
-    var position1SeekBar by remember { mutableStateOf(-1) }
-    var position2SeekBar by remember { mutableStateOf(-1) }
-    var position3SeekBar by remember { mutableStateOf(-1) }
-    var position4SeekBar by remember { mutableStateOf(-1) }
+    var current1 by remember { mutableStateOf(-1) }
+    var current2 by remember { mutableStateOf(-1) }
+    var current3 by remember { mutableStateOf(-1) }
+    var current4 by remember { mutableStateOf(-1) }
+    var current5 by remember { mutableStateOf(-1) }
+    var current6 by remember { mutableStateOf(-1) }
+    var current7 by remember { mutableStateOf(-1) }
+    var current8 by remember { mutableStateOf(-1) }
 
-    var position5SeekBar by remember { mutableStateOf(-1) }
-    var position6SeekBar by remember { mutableStateOf(-1) }
-    var position7SeekBar by remember { mutableStateOf(-1) }
-    var position8SeekBar by remember { mutableStateOf(-1) }
+    //var internalIndexOfScenario = remember { indexOfScenario }
+//    var pwm1 by remember { pwm1SeekBar }
+//    var pwm2 by remember { pwm2SeekBar }
+//    var pwm3 by remember { pwm3SeekBar }
+//    var pwm4 by remember { pwm4SeekBar }
+//
+//    var pwm5 by remember { mutableStateOf(-1) }
+//    var pwm6 by remember { mutableStateOf(-1) }
+//    var pwm7 by remember { mutableStateOf(-1) }
+//    var pwm8 by remember { mutableStateOf(-1) }
+
 //    if (solenoids.size<5){
 //        showMeSnackBar("Excel error",Color.Red)
 //    }else {
 //        showMeSnackBar("Excel config parse success",Color.White)
 //    }
-    CoroutineScope(crctx).launch {
+    CoroutineScope(Dispatchers.IO).launch {
         dataChunkCurrents.collect {
             delay(DELAY_FOR_GET_DATA)
             //println("|currrr [${it.firstCurrentData}]")
             //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
             //longForChart.add(pressure1X)
 
-            position1SeekBar = it.firstCurrentData
-            position2SeekBar = it.secondCurrentData
-            position3SeekBar = it.thirdCurrentData
-            position4SeekBar = it.fourthCurrentData
+            current1 = it.firstCurrentData
+            current2 = it.secondCurrentData
+            current3 = it.thirdCurrentData
+            current4 = it.fourthCurrentData
 
-            position5SeekBar = it.fifthCurrentData
-            position6SeekBar = it.sixthCurrentData
-            position7SeekBar = it.seventhCurrentData
-            position8SeekBar = it.eighthCurrentData
+            current5 = it.fifthCurrentData
+            current6 = it.sixthCurrentData
+            current7 = it.seventhCurrentData
+            current8 = it.eighthCurrentData
         }
     }
 
@@ -70,16 +81,10 @@ fun solenoidsPanel(
             .background(Color.Black)
     ) {
 
-            justBar(index = 1,solenoids[0].displayName, current = map(x=position1SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration)
-            justBar(index = 2,solenoids[1].displayName, current = map(x=position2SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].currentMaxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration)
-            justBar(index = 3,solenoids[2].displayName, current = map(x=position3SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[2].currentMaxValue), maxPWM = solenoids[2].maxPWM, step = solenoids[2].step, duration)
-            justBar(index = 4,solenoids[3].displayName, current = map(x=position4SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[3].currentMaxValue), maxPWM = solenoids[3].maxPWM, step = solenoids[3].step, duration)
-
-//            justBar(solenoids[4].displayName, position5SeekBar, duration)
-//            justBar(solenoids[5].displayName, position6SeekBar, duration)
-//            justBar(solenoids[6].displayName, position7SeekBar, duration)
-//            justBar(solenoids[7].displayName, position8SeekBar, duration)
-
+         justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+         justBar(index = 2,solenoids[1].displayName, current = map(x=current2,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].currentMaxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration = duration)
+         justBar(index = 3,solenoids[2].displayName, current = map(x=current3,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[2].currentMaxValue), maxPWM = solenoids[2].maxPWM, step = solenoids[2].step, duration = duration)
+         justBar(index = 4,solenoids[3].displayName, current = map(x=current4,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[3].currentMaxValue), maxPWM = solenoids[3].maxPWM, step = solenoids[3].step, duration = duration)
     }
     Row(
         modifier = androidx.compose.ui.Modifier //.padding(10.dp)
@@ -87,19 +92,12 @@ fun solenoidsPanel(
             .height(IntrinsicSize.Min)
             .background(Color.Black)
     ) {
-        justBar(index = 5,solenoids[4].displayName, current = map(x=position5SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration)
-        justBar(index = 6,solenoids[5].displayName, current = map(x=position6SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration)
-        justBar(index = 7,solenoids[6].displayName, current = map(x=position7SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[6].maxPWM, step = solenoids[6].step, duration)
-        justBar(index = 8,solenoids[7].displayName, current = map(x=position8SeekBar,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].maxPWM), maxPWM = solenoids[7].maxPWM, step = solenoids[7].step, duration)
-
+        justBar(index = 5, solenoids[4].displayName, current = map(x=current5,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration = duration)
+        justBar(index = 6, solenoids[5].displayName, current = map(x=current6,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration = duration)
+        justBar(index = 7, solenoids[6].displayName, current = map(x=current7,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[6].maxPWM, step = solenoids[6].step, duration = duration)
+        justBar(index = 8, solenoids[7].displayName, current = map(x=current8,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[7].maxPWM, step = solenoids[7].step, duration = duration)
     }
-
-
-
 }
-
-var asd1 = mutableStateOf(byteArrayOf(0x71,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
-var asd2 = mutableStateOf(byteArrayOf(0x51,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
 
 var ch1 = 0x00.toByte()
 var ch2 = 0x00.toByte()
@@ -112,10 +110,33 @@ var ch7 = 0x00.toByte()
 var ch8 = 0x00.toByte()
 
 @Composable
-fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: Int,  duration: MutableStateFlow<Long>,) {
-    var pos = remember { mutableStateOf(0.5f) }
-    var increment = remember { mutableStateOf(0)}
-    var maxPWMremember = remember { mutableStateOf(maxPWM) }
+fun justBar(
+    index: Int,
+    channelName: String,
+    current: Int,
+    maxPWM: Int,
+    step: Int,
+    duration: MutableStateFlow<Long>,
+    //PWM: Int
+    ) {
+
+    // PWM [from 0 to 255]
+    val PWMremember = remember {
+        when(index) {
+            1 -> pwm1SeekBar
+            2 -> pwm2SeekBar
+            3 -> pwm3SeekBar
+            4 -> pwm4SeekBar
+
+            5 -> pwm5SeekBar
+            6 -> pwm6SeekBar
+            7 -> pwm7SeekBar
+            8 -> pwm8SeekBar
+            else -> pwm1SeekBar
+        }
+    }
+
+
         Column(
             modifier = Modifier.padding(0.dp, 1.dp)
                 .width(200.dp)
@@ -124,7 +145,6 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                 .padding(5.dp)
             //.fillMaxWidth()
         ) {
-            var position1SeekBar by remember { mutableStateOf(10) }
 
             Row(
                 modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.Black),
@@ -133,10 +153,11 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
-                        maxPWMremember.value = 0
+                        PWMremember.value = 0
                         //pos.value = 1.0f
                         CoroutineScope(Dispatchers.IO).launch {
-                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            selectorForChannels(index, PWMremember.value.toByte())
+                            //selectorForChannels(index, PWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
                                 writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
@@ -157,13 +178,14 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                 }
                 Box(
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(2f).clickable {
-                        maxPWMremember.value = maxPWMremember.value - step
-                        if (maxPWMremember.value < 0) {
-                            maxPWMremember.value = 0
+                        PWMremember.value = PWMremember.value - step
+                        if (PWMremember.value < 0) {
+                            PWMremember.value = 0
                         }
 
                         CoroutineScope(Dispatchers.IO).launch {
-                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            selectorForChannels(index, PWMremember.value.toByte())
+                            //selectorForChannels(index, PWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
                                 writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
                             }else {
@@ -202,14 +224,14 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                 }
                 Column(Modifier.fillMaxSize().weight(5f)) {
                     Text(
-                        "PWM",
+                        "PWM (%)",
                         modifier = Modifier.fillMaxSize().weight(1f),
                         fontSize = 8.sp,
                         textAlign = TextAlign.Center,
                         color = Color.White
                     )
                     Text(
-                        "${((maxPWMremember.value.toFloat() * 100f) / 255f).toInt()}",
+                        "${((PWMremember.value.toFloat() * 100f) / 255f).toInt()}",
                         modifier = Modifier.fillMaxSize().weight(1f),
                         fontFamily = fontDigital,
                         fontSize = 12.sp,
@@ -222,14 +244,17 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
 
                 Box(
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(2f).clickable {
-                        maxPWMremember.value = maxPWMremember.value + step
-                        if (maxPWMremember.value > 255) {
-                            maxPWMremember.value = 255
+                        PWMremember.value = PWMremember.value + step
+                        if (PWMremember.value > maxPWM) {
+                            PWMremember.value = maxPWM
                         }
-                        println("WELL ${(maxPWMremember.value.toFloat() * 100f) / 255f}")
+                        if (PWMremember.value > 255) {
+                            PWMremember.value = 255
+                        }
+                        println("WELL ${(PWMremember.value.toFloat())}")
 
                         CoroutineScope(Dispatchers.IO).launch {
-                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            selectorForChannels(index, PWMremember.value.toByte())
                             if (isChangedFirstFourth) {
                                 writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
@@ -251,10 +276,13 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                 }
                 Box(
                     modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
-                        maxPWMremember.value = 255
+                        PWMremember.value = 255
+                        if (PWMremember.value > maxPWM) {
+                            PWMremember.value = maxPWM
+                        }
                         //pos.value = 1.0f
                         CoroutineScope(Dispatchers.IO).launch {
-                            selector(index, maxPWMremember.value.to2ByteArray()[0])
+                            selectorForChannels(index, PWMremember.value.toByte())
                             if (isChangedFirstFourth) {
                                 writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L)
 
@@ -282,14 +310,14 @@ fun justBar(index: Int, channelName : String, current: Int, maxPWM: Int, step: I
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp),
-                    progress = ((maxPWMremember.value.toFloat() * 100f) / 255f)/100f //rndTo2deci(pos.value)
+                    progress = (map(PWMremember.value,0,255,0,100)/100f).toFloat() //((PWMremember.value.toFloat() * 100f) / 255f)/100f //rndTo2deci(pos.value)
                 )
             }
         }
 }
 var isChangedFirstFourth = true
 
-private fun selector(chIndex: Int, byte: Byte) {
+fun selectorForChannels(chIndex: Int, byte: Byte) {
     isChangedFirstFourth = chIndex in 1..4
 
     when(chIndex) {

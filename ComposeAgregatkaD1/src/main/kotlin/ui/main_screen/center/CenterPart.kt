@@ -1,10 +1,10 @@
 package ui.main_screen.center
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
@@ -14,25 +14,20 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import enums.ExplorerMode
 import enums.StateExperiments
+import enums.StateParseBytes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import parsing_excel.targetParseScenario
 import screenNav
-import serial_port.initSerialCommunication
-import serial_port.pauseSerialComm
-import serial_port.startReceiveFullData
-import serial_port.test_time
-import showMeSnackBar
+import serial_port.*
 import storage.createMeasureExperiment
-import storage.openPicker
 import ui.charts.Pointer
 import ui.custom.GaugeX
 import ui.main_screen.center.support_elements.solenoidsPanel
@@ -41,7 +36,7 @@ import utils.*
 
 
 @Composable
-fun centerPiece(
+fun CenterPiece(
 ) {
     var sizeRow by remember { mutableStateOf(Size.Zero) }
     var pressure1X by remember { mutableStateOf(0) }
@@ -55,13 +50,24 @@ fun centerPiece(
     val duration = MutableStateFlow(100L)
 
     val stateChart = remember { STATE_CHART }
+    val explMode = remember { EXPLORER_MODE }
+    val expandedCom = remember { mutableStateOf(false) }
+
+    val txt = remember { txtOfScenario }
 
     val ctxScope = CoroutineScope(Dispatchers.IO)
 
     LaunchedEffect(true) {
         CoroutineScope(Dispatchers.IO).launch {
+            reInitSolenoids()
+            indexOfScenario.value = 0
+            var indexScenario = 0
+            var num = scenario[indexScenario].time
+
             dataChunkGauges.collect {
                 delay(DELAY_FOR_GET_DATA)
+                logGarbage("Exp> ${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
+
                 //println("|<<<<<<<<<<<<<<<<<<< [${it.firstGaugeData}]")
                 //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
                 //longForChart.add(pressure1X)
@@ -75,25 +81,41 @@ fun centerPiece(
                 pressure7X = map(it.seventhGaugeData,0,4095,( pressures[6].minValue),(pressures[6].maxValue),)
                 pressure8X = map(it.eighthGaugeData, 0,4095,( pressures[7].minValue),(pressures[7].maxValue),)
 
-                if ( limitTime >= test_time) {
-                    STATE_CHART.value = StateExperiments.PREP_DATA
-                    arr1Measure.add(Pointer(x = test_time, y = pressure1X))//it.firstGaugeData, ))
-                    arr2Measure.add(Pointer(x = test_time, y = pressure2X))//it.secondGaugeData,))
-                    arr3Measure.add(Pointer(x = test_time, y = pressure3X))//it.thirdGaugeData, ))
-                    arr4Measure.add(Pointer(x = test_time, y = pressure4X))//it.fourthGaugeData,))
-                    arr5Measure.add(Pointer(x = test_time, y = pressure5X))//it.fifthGaugeData, ))
-                    arr6Measure.add(Pointer(x = test_time, y = pressure6X))//it.sixthGaugeData, ))
-                    arr7Measure.add(Pointer(x = test_time, y = pressure7X))//it.seventhGaugeData))
-                    arr8Measure.add(Pointer(x = test_time, y = pressure8X))//it.eighthGaugeData, ))
+                when(EXPLORER_MODE.value) {
+                    ExplorerMode.AUTO -> {
+                        if ( limitTime >= test_time) {
+                            STATE_CHART.value = StateExperiments.PREP_DATA
+                            arr1Measure.add(Pointer(x = test_time, y = pressure1X))//it.firstGaugeData, ))
+                            arr2Measure.add(Pointer(x = test_time, y = pressure2X))//it.secondGaugeData,))
+                            arr3Measure.add(Pointer(x = test_time, y = pressure3X))//it.thirdGaugeData, ))
+                            arr4Measure.add(Pointer(x = test_time, y = pressure4X))//it.fourthGaugeData,))
+                            arr5Measure.add(Pointer(x = test_time, y = pressure5X))//it.fifthGaugeData, ))
+                            arr6Measure.add(Pointer(x = test_time, y = pressure6X))//it.sixthGaugeData, ))
+                            arr7Measure.add(Pointer(x = test_time, y = pressure7X))//it.seventhGaugeData))
+                            arr8Measure.add(Pointer(x = test_time, y = pressure8X))//it.eighthGaugeData, ))
 
-                    test_time += 2
-                } else {
-                    if (!isAlreadyReceivedBytesForChart.value) {
-                        isAlreadyReceivedBytesForChart.value = true
-                        createMeasureExperiment()
+                            if (num > 0 ) {
+                                num -= 2
+                            } else {
+                                indexScenario++
+                                num = scenario[indexScenario].time
+                                txt.value = scenario[indexScenario].text
+                            }
+
+                            test_time += 2
+                        } else {
+                            if (!isAlreadyReceivedBytesForChart.value) {
+                                isAlreadyReceivedBytesForChart.value = true
+                                createMeasureExperiment()
+                            }
+
+                        }
                     }
-
+                    ExplorerMode.MANUAL -> {
+                        // without recording
+                    }
                 }
+
             }
         }
     }
@@ -127,49 +149,104 @@ fun centerPiece(
 //                    Image(painterResource("/trs.jpg"),"")
 //                }
                 AnimatedVisibility(stateChart.value == StateExperiments.PREP_DATA || stateChart.value == StateExperiments.PREPARE_CHART) {
-                    Text("Loading...", modifier = Modifier.padding(top = (10).dp,start = 20.dp).clickable {
+                    Text("Rec...", modifier = Modifier.padding(top = (10).dp,start = 20.dp).clickable {
 
-                    }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green
+                    }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Red
                     )
                 }
-                Text("ATRS.RU", modifier = Modifier.padding(top = (10).dp,start = 20.dp).clickable {
-                          screenNav.value = Screens.STARTER
+                Text("${txt.value}", modifier = Modifier.width(90.dp).padding(top = (10).dp,start = 20.dp).clickable {
+                          //screenNav.value = Screens.STARTER
                 }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Blue
                 )
-                Text("Scenario:", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
-                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                )
+                Box(Modifier.clickable {
+                    expandedCom.value = !expandedCom.value
+                }) {
+                    Text("Mode: ${explMode.value.name}",
+                        modifier = Modifier.padding(top = (10).dp,start = 20.dp),
+                        fontFamily = FontFamily.Default, fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold, color = Color.White
+                    )
+
+                    DropdownMenu(
+                        modifier = Modifier.background(Color.White),
+                        expanded = expandedCom.value,
+                        onDismissRequest = { expandedCom.value = false },
+                    ) {
+                        Text("AUTO", fontSize=18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                            .clickable(onClick= {
+                                EXPLORER_MODE.value = ExplorerMode.AUTO
+                            }), color = Color.Black)
+                        Text("MANUAL", fontSize=18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                            .clickable(onClick= {
+                                EXPLORER_MODE.value = ExplorerMode.MANUAL
+                            }), color = Color.Black)
+                    }
+                }
+
                 Box(Modifier.clickable {
                     // launch
+
                     CoroutineScope(Dispatchers.IO).launch {
 
-                        initSerialCommunication()
-                        startReceiveFullData()
-
-
-
+                        if(explMode.value == ExplorerMode.AUTO) {
+                            if (GLOBAL_STATE.value == StateParseBytes.STOP || GLOBAL_STATE.value == StateParseBytes.INIT || GLOBAL_STATE.value == StateParseBytes.WAIT) {
+                                GLOBAL_STATE.value = StateParseBytes.PLAY
+                                sound_On()
+                                initSerialCommunication()
+                                startReceiveFullData()
+                            } else {
+                                sound_Error()
+                            }
+                        } else if (explMode.value == ExplorerMode.MANUAL) {
+                            indexOfScenario.value--
+                            comparatorToSolenoid(indexOfScenario.value)
+                            txtOfScenario.value = scenario[indexOfScenario.value].text
+                        }
                     }
 
 
                 }) {
-                    Text("▶", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
-                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green
+                    Text(if(explMode.value == ExplorerMode.AUTO) "▶" else "⏪", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
                 }
                 Box(Modifier.clickable {
                     //stop scenario
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if(explMode.value == ExplorerMode.AUTO) {
+                            reInitSolenoids()
+                            GLOBAL_STATE.value = StateParseBytes.WAIT
+//                            initSerialCommunication()
+//                            startReceiveFullData()
+                        } else if (explMode.value == ExplorerMode.MANUAL) {
+                            indexOfScenario.value++
+                            comparatorToSolenoid(indexOfScenario.value)
+                            txtOfScenario.value = scenario[indexOfScenario.value].text
+                        }
+                    }
                 }) {
-                    Text("⏸", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
+                    Text(if(explMode.value == ExplorerMode.AUTO) "⏸" else "⏩", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
                         , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
                     )
                 }
-
+                /**
+                 *  DATA LIVE HERE:
+                 */
                 Text("Data Live:", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
                     , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
                 )
                 Box(Modifier.clickable {
                     ctxScope.launch {
-                        startReceiveFullData()
+                        if (GLOBAL_STATE.value == StateParseBytes.STOP || GLOBAL_STATE.value == StateParseBytes.INIT || GLOBAL_STATE.value == StateParseBytes.WAIT) {
+                            GLOBAL_STATE.value = StateParseBytes.PLAY
+                            sound_On()
+                            reInitSolenoids()
+                            startReceiveFullData()
+                        } else {
+                            sound_Error()
+                        }
+
                     }
 
                 }) {
@@ -179,6 +256,7 @@ fun centerPiece(
                 }
                 Box(Modifier.clickable {
                     ctxScope.launch {
+                        GLOBAL_STATE.value = StateParseBytes.WAIT
                         pauseSerialComm()
                     }
 

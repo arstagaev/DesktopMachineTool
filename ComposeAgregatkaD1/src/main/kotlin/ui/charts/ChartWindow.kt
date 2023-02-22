@@ -29,6 +29,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import parsing_excel.writeToExcel
 import showMeSnackBar
 import storage.PickTarget
 import storage.openPicker
@@ -72,9 +73,9 @@ class ChartWindowNew(var withStandard: Boolean = false) {
     fun chartWindow() {
         STATE_CHART.value = StateExperiments.PREPARE_CHART
         Window(
-            title = "Compare with Standard ",
+            title = "Compare with Standard",
             state = WindowState(size = DpSize(1000.dp, 800.dp)),
-            onCloseRequest = {  },
+            onCloseRequest = { doOpen_First_ChartWindow.value = false },
         ) {
             ChartSecond()
         }
@@ -91,7 +92,7 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                 while (br.readLine().also { line = it } != null) {
                     if(line != ""|| line != " ") {
                         val items = line?.split(";","|")?.toTypedArray()
-                        println("exp >>>> ${items?.joinToString()}")
+                        //println("exp >>>> ${items?.joinToString()}")
                         if (items != null ) {
 
                             series1.add(items[0].toInt(),items[1].toInt())
@@ -236,7 +237,7 @@ class ChartWindowNew(var withStandard: Boolean = false) {
     @Composable
     fun ChartSecond() {
         val standardFile = remember { chartFileStandard }
-        val loader = remember { isLoading }
+        //val loader = remember { isLoading }
         Box {
             Column(
                 modifier = Modifier.fillMaxSize()//fillMaxWidth().height(800.dp)
@@ -244,7 +245,15 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                 Row(Modifier.fillMaxWidth().height(20.dp).background(Color.Yellow)) {
 
                     Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
-                        openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let { if(it != null) chartFileStandard.value = it }
+                        openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let {
+                            if(it != null) {
+                                chartFileStandard.value = it
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    writeToExcel(0,0, chartFileStandard.value.name)
+                                }
+
+                            }
+                        }
 
                         CoroutineScope(Dispatchers.Default).launch {
                             fillStandard(isRefresh = true)
@@ -292,13 +301,13 @@ class ChartWindowNew(var withStandard: Boolean = false) {
                     }
                 )
             }
-            if (loader.value) {
-                Box(Modifier.fillMaxSize().background(colorTrans60)){
-                    Text("Загрузка...", modifier = Modifier.padding(0.dp).align(Alignment.Center),
-                        fontFamily = FontFamily.Default, fontSize = 40.sp, fontWeight = FontWeight.Medium, color = Color.Blue
-                    )
-                }
-            }
+//            if (loader.value) {
+//                Box(Modifier.fillMaxSize().background(colorTrans60)){
+//                    Text("Загрузка...", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+//                        fontFamily = FontFamily.Default, fontSize = 40.sp, fontWeight = FontWeight.Medium, color = Color.Blue
+//                    )
+//                }
+//            }
 
         }
 

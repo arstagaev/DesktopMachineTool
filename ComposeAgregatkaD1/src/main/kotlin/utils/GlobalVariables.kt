@@ -1,8 +1,8 @@
 package utils
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.fazecast.jSerialComm.SerialPort
+import enums.ExplorerMode
 import enums.StateExperiments
 import enums.StateParseBytes
 import kotlinx.coroutines.channels.BufferOverflow
@@ -15,8 +15,8 @@ import ui.charts.SaverChart
 import java.io.File
 import javax.swing.JFileChooser
 
-var COM_PORT = "COM3"
-var BAUD_RATE = 115200
+var COM_PORT = "COM0"
+var BAUD_RATE = 500000
 var OPERATOR_ID = "no name"
 var DELAY_FOR_GET_DATA = 0L
 var arrayOfComPorts = arrayOf<SerialPort>()
@@ -32,16 +32,16 @@ val Dir5Operators = File(Dir1Configs,"\\operator_ids.txt")
 val Dir6 = File(Dir2Reports,"\\demo.txt")
 val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\reports\\standard")
 val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
+val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()
-var scenario = mutableListOf<ScenarioStep>()
+var scenario  = mutableListOf<ScenarioStep>()
 
 var GLOBAL_STATE = mutableStateOf(StateParseBytes.INIT)
 var STATE_CHART = mutableStateOf(StateExperiments.NONE)
-
-var recordData = arrayListOf<SaverChart>()
+var EXPLORER_MODE = mutableStateOf(ExplorerMode.AUTO)
 
 
 var dataChunkGauges   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
@@ -59,7 +59,21 @@ var arr6Measure = arrayListOf<Pointer>()
 var arr7Measure = arrayListOf<Pointer>()
 var arr8Measure = arrayListOf<Pointer>()
 
+var pwm1SeekBar = mutableStateOf<Int>(-1)
+var pwm2SeekBar = mutableStateOf<Int>(-1)
+var pwm3SeekBar = mutableStateOf<Int>(-1)
+var pwm4SeekBar = mutableStateOf<Int>(-1)
+var pwm5SeekBar = mutableStateOf<Int>(-1)
+var pwm6SeekBar = mutableStateOf<Int>(-1)
+var pwm7SeekBar = mutableStateOf<Int>(-1)
+var pwm8SeekBar = mutableStateOf<Int>(-1)
+
 var limitTime = 4500
+var indexOfScenario = mutableStateOf(0)
+var txtOfScenario = mutableStateOf("")
+var commentOfScenario = mutableStateOf("")
+
+
 
 var isAlreadyReceivedBytesForChart = mutableStateOf(false)
 var doOpen_First_ChartWindow = mutableStateOf(false)

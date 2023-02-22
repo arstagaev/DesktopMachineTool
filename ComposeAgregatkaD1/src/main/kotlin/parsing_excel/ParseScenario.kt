@@ -7,10 +7,8 @@ import org.apache.poi.ss.usermodel.Row
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
-import utils.limitTime
-import utils.pressures
-import utils.scenario
-import utils.solenoids
+import ui.main_screen.center.support_elements.selectorForChannels
+import utils.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -19,6 +17,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 
     if (inputScenario == null)
         return false
+    var needReWriteStandard = false
 
     val file = FileInputStream(inputScenario)
     //creating workbook instance that refers to .xls file
@@ -66,6 +65,15 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
     pressures.clear()
     scenario.clear()
 
+    // Fill file address to Standard
+    val standard = File(Dir7ReportsStandard, wholeSheet[0][0])
+    if ( !standard.name.endsWith("txt") ) {
+        needReWriteStandard = true
+    } else {
+        chartFileStandard.value = File(Dir7ReportsStandard, standard.name)
+    }
+
+
     repeat(8) {
 //        var asd = arrayListOf<String>(
 //            wholeSheet[2][it+1],
@@ -96,6 +104,8 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 
     }
 
+    var maxPWMs = arrayListOf<Int>()
+
     repeat(8) {
 //        var asd = arrayListOf<String>(
 //            wholeSheet[14][it+1],
@@ -122,6 +132,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
                 isVisible = true
             )
         )
+        maxPWMs.add(wholeSheet[16][it+1].toDouble().toInt())
     }
 
 
@@ -132,7 +143,30 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
         var valueSteps = arrayListOf<Int>()
 
         repeat(8) {
-            valueSteps.add(wholeSheet[i][it+1].toDouble().toInt())
+            var newPWM = wholeSheet[i][it+1].toDouble().toInt()
+
+            // check limits maxPWM, for not burn out
+            if (newPWM > maxPWMs[it]) {
+                newPWM = maxPWMs[it]
+            }else if (newPWM < 0) {
+                newPWM = 0
+            }
+
+            valueSteps.add(newPWM)
+
+//            selectorForChannels(it+1,wholeSheet[i][it+1].toDouble().toInt().toByte())
+//            when(it) {
+//                0 -> pwm1SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                1 -> pwm2SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                2 -> pwm3SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                3 -> pwm4SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                4 -> pwm5SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                5 -> pwm6SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                6 -> pwm7SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//                7 -> pwm8SeekBar.value = wholeSheet[i][it+1].toDouble().toInt()
+//
+//                else -> pwm1SeekBar
+//            }
 
         }
 
@@ -158,5 +192,8 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 
     file.close()
     wholeSheet.clear()
+    if (needReWriteStandard) {
+        writeToExcel(0,0, chartFileStandard.value.name)
+    }
     return true
 }

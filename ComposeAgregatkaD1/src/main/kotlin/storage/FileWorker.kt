@@ -3,13 +3,8 @@ package storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import showMeSnackBar
 import storage.models.ParameterCommon
-import storage.models.ParameterCommonJson
 import utils.*
 import java.io.BufferedReader
 import java.io.File
@@ -48,7 +43,7 @@ fun createDemoConfigFile() : File {
 fun readParameters(file: File) : List<ParameterCommon> {
     logAct("readParameters")
     if (!file.exists()) {
-        createParameters()
+        refreshParameters()
     }
 
     //val PCListSerializer: KSerializer<List<ParameterCommonJson>> = ListSerializer(ParameterCommonJson.serializer())
@@ -89,7 +84,7 @@ fun readParameters(file: File) : List<ParameterCommon> {
     return listParams
 }
 
-fun createParameters() {
+fun refreshParameters() {
     logAct("createParameters")
     //"comport" -> COM_P
     //"baudrate" -> BAUD
@@ -146,19 +141,19 @@ fun createParameters() {
 
 fun refreshParametersJson() {
     logAct("refreshParametersJson -> ${COM_PORT}  ${BAUD_RATE}")
-    val json = Json.encodeToString(
-        arrayListOf<ParameterCommonJson>(
-            ParameterCommonJson("comport", COM_PORT),
-            ParameterCommonJson("baudrate", BAUD_RATE.toString()),
-            ParameterCommonJson("last_operator_id", OPERATOR_ID),
-        )
-    )
-
-    var newFileJson = Dir4MainConfig_Txt //Dir4MainConfig_Json
-    if (!newFileJson.exists()) {
-        newFileJson.createNewFile()
-    }
-    newFileJson.writeText(json)
+//    val json = Json.encodeToString(
+//        arrayListOf<ParameterCommonJson>(
+//            ParameterCommonJson("comport", COM_PORT),
+//            ParameterCommonJson("baudrate", BAUD_RATE.toString()),
+//            ParameterCommonJson("last_operator_id", OPERATOR_ID),
+//        )
+//    )
+//
+//    var newFileJson = Dir4MainConfig_Txt //Dir4MainConfig_Json
+//    if (!newFileJson.exists()) {
+//        newFileJson.createNewFile()
+//    }
+//    newFileJson.writeText(json)
 
 }
 

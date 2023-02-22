@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
 import kotlinx.coroutines.flow.MutableSharedFlow
+import parsing_excel.writeToExcel
 import storage.readParameters
 import ui.charts.ChartWindowNew
 import ui.windows.WindowTypes
@@ -28,7 +29,7 @@ fun main() = singleWindowApplication (
 
     //var initParameters = readParameters(Dir4MainConfig)
 
-
+    //sound_On()
     initialize(readParameters(Dir4MainConfig_Txt))
 
     var isHaveConn = false

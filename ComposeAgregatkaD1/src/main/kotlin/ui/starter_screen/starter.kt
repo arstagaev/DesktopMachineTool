@@ -23,10 +23,8 @@ import parsing_excel.targetParseScenario
 import screenNav
 import showMeSnackBar
 import storage.PickTarget
-import storage.createParameters
+import storage.refreshParameters
 import storage.openPicker
-import storage.refreshParametersJson
-import ui.charts.ChartWindowNew
 import ui.navigation.Screens
 import utils.*
 
@@ -80,7 +78,7 @@ fun StarterScreen() {
                     onValueChange = {
                         textState.value = it
                         OPERATOR_ID = it
-                        createParameters()
+                        refreshParameters()
                         //refreshParametersJson()
                         // work json
                         //OPERATOR_ID = it
@@ -109,12 +107,12 @@ fun StarterScreen() {
         Row(modifier = Modifier.fillMaxSize().weight(3f).padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
-                    refreshParametersJson()
+                    //refreshParametersJson()
                     isAlreadyReceivedBytesForChart.value = false
                     CoroutineScope(crtxscp).launch {
                         //openPicker(Dir3Scenarios)
                         //targetParseScenario(createDemoConfigFile())
-
+                        refreshParameters()
                         if (!targetParseScenario(openPicker(Dir3Scenarios))) {
                             showMeSnackBar("Ошибка при парсинге xls",Color.Red)
                         }else {
@@ -135,7 +133,7 @@ fun StarterScreen() {
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
                     CoroutineScope(crtxscp).launch {
-                        openPicker(Dir2Reports,PickTarget.PICK_CHART)?.let { chartFileAfterExperiment.value = it }
+                        openPicker(Dir2Reports,PickTarget.PICK_CHART,isOnlyViewer = true)?.let { chartFileAfterExperiment.value = it }
 
 
 
