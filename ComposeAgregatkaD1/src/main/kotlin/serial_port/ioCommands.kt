@@ -2,9 +2,9 @@ package serial_port
 
 import com.fazecast.jSerialComm.SerialPort
 import kotlinx.coroutines.*
-import startTimer
 import ui.main_screen.center.support_elements.*
 import utils.*
+import java.math.BigInteger
 
 private var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
 private val crtx2 = CoroutineName("main")
@@ -46,11 +46,12 @@ fun stopSerialCommunication() {
 }
 
 suspend fun pauseSerialComm() {
-    writeToSerialPort(byteArrayOf(0x71,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
-    writeToSerialPort(byteArrayOf(0x51,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
+    //writeToSerialPort(byteArrayOf(0x71,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
+    //writeToSerialPort(byteArrayOf(0x51,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L)
+    sendZerosToSolenoid()
 
-    writeToSerialPort(byteArrayOf(0x78, 0x8A.toByte(), 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),withFlush = false)
-    delay(500)
+    //writeToSerialPort(byteArrayOf(0x78, 0x8A.toByte(), 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),withFlush = false)
+    //delay(500)
     //serialPort.flushIOBuffers()
     writeToSerialPort(byteArrayOf(0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00),withFlush = false)
 
@@ -93,14 +94,26 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
 //        scenario[idx].values[7].toByte(),
 //    )
 
-    pwm1SeekBar.value = scenario[idx].values[0].takeIf { it <= solenoids[0].maxPWM } ?: solenoids[0].maxPWM // [from 0 to 255]
-    pwm2SeekBar.value = scenario[idx].values[1].takeIf { it <= solenoids[1].maxPWM } ?: solenoids[1].maxPWM
-    pwm3SeekBar.value = scenario[idx].values[2].takeIf { it <= solenoids[2].maxPWM } ?: solenoids[2].maxPWM
-    pwm4SeekBar.value = scenario[idx].values[3].takeIf { it <= solenoids[3].maxPWM } ?: solenoids[3].maxPWM
-    pwm5SeekBar.value = scenario[idx].values[4].takeIf { it <= solenoids[4].maxPWM } ?: solenoids[4].maxPWM
-    pwm6SeekBar.value = scenario[idx].values[5].takeIf { it <= solenoids[5].maxPWM } ?: solenoids[5].maxPWM
-    pwm7SeekBar.value = scenario[idx].values[6].takeIf { it <= solenoids[6].maxPWM } ?: solenoids[6].maxPWM
-    pwm8SeekBar.value = scenario[idx].values[7].takeIf { it <= solenoids[7].maxPWM } ?: solenoids[7].maxPWM
+    logGarbage("comparatorToSolenoid ${idx} ~~~ ]${scenario.size}[")
+
+
+    pwm1SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[0].takeIf { it <= solenoids[0].maxPWM } }) ?: solenoids[0].maxPWM
+    pwm2SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[1].takeIf { it <= solenoids[1].maxPWM } }) ?: solenoids[1].maxPWM
+    pwm3SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[2].takeIf { it <= solenoids[2].maxPWM } }) ?: solenoids[2].maxPWM
+    pwm4SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[3].takeIf { it <= solenoids[3].maxPWM } }) ?: solenoids[3].maxPWM
+    pwm5SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[4].takeIf { it <= solenoids[4].maxPWM } }) ?: solenoids[4].maxPWM
+    pwm6SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[5].takeIf { it <= solenoids[5].maxPWM } }) ?: solenoids[5].maxPWM
+    pwm7SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[6].takeIf { it <= solenoids[6].maxPWM } }) ?: solenoids[6].maxPWM
+    pwm8SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[7].takeIf { it <= solenoids[7].maxPWM } }) ?: solenoids[7].maxPWM
+
+//    pwm1SeekBar.value = (scenario.getOrNull(idx){})              .values[0].takeIf { it <= solenoids[0].maxPWM } ?: solenoids[0].maxPWM // [from 0 to 255]
+//    pwm2SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[1].takeIf { it <= solenoids[1].maxPWM } ?: solenoids[1].maxPWM
+//    pwm3SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[2].takeIf { it <= solenoids[2].maxPWM } ?: solenoids[2].maxPWM
+//    pwm4SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[3].takeIf { it <= solenoids[3].maxPWM } ?: solenoids[3].maxPWM
+//    pwm5SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[4].takeIf { it <= solenoids[4].maxPWM } ?: solenoids[4].maxPWM
+//    pwm6SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[5].takeIf { it <= solenoids[5].maxPWM } ?: solenoids[5].maxPWM
+//    pwm7SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[6].takeIf { it <= solenoids[6].maxPWM } ?: solenoids[6].maxPWM
+//    pwm8SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[7].takeIf { it <= solenoids[7].maxPWM } ?: solenoids[7].maxPWM
 
     //logGarbage("pwm1SeekBar -> ${pwm1SeekBar.value}  ${pwm2SeekBar.value}  ${pwm3SeekBar.value}")
 
@@ -132,6 +145,54 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
 //    }
 
     //writeToSerialPort(btry)
-    txtOfScenario.value = scenario[idx].text
+    //txtOfScenario.value = scenario[idx].text
+    txtOfScenario.value = scenario.getOrElse(idx){
+        indexOfScenario.value = 0
+        scenario[0]
+    }.text
+
     //commentOfScenario.value = scenario[idx].comment
+}
+
+suspend fun sendZerosToSolenoid() {
+    ch1 = 0x00.toByte()
+    ch2 = 0x00.toByte()
+    ch3 = 0x00.toByte()
+    ch4 = 0x00.toByte()
+    ch5 = 0x00.toByte()
+    ch6 = 0x00.toByte()
+    ch7 = 0x00.toByte()
+    ch8 = 0x00.toByte()
+
+    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L)
+
+    writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L)
+
+}
+
+suspend fun sendScenarioToController() {
+    scenario.forEachIndexed { index, s ->
+        val time = BigInteger.valueOf(s.time.toLong()).toByteArray()
+
+        val send = byteArrayOf(
+            0x73,index.toByte(),0x00,
+
+            s.chs[0].toByte(),
+            s.chs[1].toByte(),
+            s.chs[2].toByte(),
+            s.chs[3].toByte(),
+
+            s.chs[4].toByte(),
+            s.chs[5].toByte(),
+            s.chs[6].toByte(),
+            s.chs[7].toByte(),
+
+            //time.getOrNull(1).takeIf { time.size == 2 } ?: 0x00,
+            time.getOrNull(1) ?: 0x00,
+            time[0],
+
+            0x00
+        )
+        writeToSerialPort(send,delay = 10)
+    }
 }

@@ -11,7 +11,6 @@ import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
 import ui.charts.Pointer
-import ui.charts.SaverChart
 import java.io.File
 import javax.swing.JFileChooser
 
@@ -40,12 +39,12 @@ var pressures = mutableListOf<PressuresHolder>()
 var scenario  = mutableListOf<ScenarioStep>()
 
 var GLOBAL_STATE = mutableStateOf(StateParseBytes.INIT)
-var STATE_CHART = mutableStateOf(StateExperiments.NONE)
+var STATE_EXPERIMENT = mutableStateOf(StateExperiments.NONE)
 var EXPLORER_MODE = mutableStateOf(ExplorerMode.AUTO)
 
 
-var dataChunkGauges   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
-var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
+var dataChunkGauges   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
+var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
 
 val PRESSURE_MAX_RAW = 4095
 val CURRENT_MAX_RAW = 255
@@ -68,12 +67,15 @@ var pwm6SeekBar = mutableStateOf<Int>(-1)
 var pwm7SeekBar = mutableStateOf<Int>(-1)
 var pwm8SeekBar = mutableStateOf<Int>(-1)
 
-var limitTime = 4500
+var limitTime = -1
 var indexOfScenario = mutableStateOf(0)
 var txtOfScenario = mutableStateOf("")
 var commentOfScenario = mutableStateOf("")
 
-
+// recording:
+var test_time = 0
+var indexScenario = 0
+var num : Int = 0
 
 var isAlreadyReceivedBytesForChart = mutableStateOf(false)
 var doOpen_First_ChartWindow = mutableStateOf(false)
@@ -82,7 +84,11 @@ var doOpen_Second_ChartWindow = mutableStateOf(false)
 var chartFileAfterExperiment = mutableStateOf( File(Dir2Reports,"demo2.txt") )
 var chartFileStandard = mutableStateOf( File(Dir7ReportsStandard,"17_02_2023 12_04_04_chart.txt") )
 
+var isExperimentStarts = mutableStateOf(false)
+var incrementTime = 0
+
 data class DataChunkG(
+    var isExperiment: Boolean = false,
     var firstGaugeData:   Int,
     var secondGaugeData:  Int,
     var thirdGaugeData:   Int,

@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Row
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
-import ui.main_screen.center.support_elements.selectorForChannels
 import utils.*
 import java.io.File
 import java.io.FileInputStream
@@ -41,7 +40,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
         while (cellIterator.hasNext()) {
             // to right ->
             val cell = cellIterator.next()
-            if (cell.toString().isNotBlank() && cell.toString().isNotEmpty()) {
+            if (cell.toString().isNotBlank() && cell.toString().isNotEmpty() && cell.toString() != "") {
                 rowComplete.add(cell.toString())
             }
 
@@ -50,9 +49,12 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 //                CellType.STRING -> print(cell.stringCellValue + "t")
 //            }
         }
-        println("${incr}Row: ${rowComplete.joinToString()}")
+        println("${incr}Row: ${rowComplete.joinToString()} ${rowComplete.size}")
         incr++
-        wholeSheet.add(rowComplete)
+        if (rowComplete.isNotEmpty()) {
+            wholeSheet.add(rowComplete)
+        }
+
     }
     println("Size sheet rows:${wholeSheet[2].size} in rows column:${wholeSheet[2][2].length}")
 
@@ -179,7 +181,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
         scenario.add(
             ScenarioStep(
                 time = newTime,
-                values = valueSteps,
+                chs = valueSteps,
                 text = wholeSheet[i][9],
                 comment = if (wholeSheet[i].size != 11) "" else wholeSheet[i][10]
             )

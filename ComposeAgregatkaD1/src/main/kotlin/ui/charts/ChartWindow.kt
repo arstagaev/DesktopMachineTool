@@ -33,7 +33,6 @@ import parsing_excel.writeToExcel
 import showMeSnackBar
 import storage.PickTarget
 import storage.openPicker
-import ui.styles.colorTrans60
 import utils.*
 import java.awt.BasicStroke
 import java.io.*
@@ -105,7 +104,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
                              },
         ) {
-            val chrt = remember { STATE_CHART }
+            val chrt = remember { STATE_EXPERIMENT }
 
             if (chrt.value == StateExperiments.NONE) {
                 ChartSecond()
@@ -124,7 +123,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
 
     private suspend fun fillUp() {
-        STATE_CHART.value = StateExperiments.PREPARE_CHART
+        STATE_EXPERIMENT.value = StateExperiments.PREPARE_CHART
         logAct("fillUp chart ${chartFileAfterExperiment.value.name}  ${chartFileStandard.value.name}")
 
         logGarbage(">>>1")
@@ -261,7 +260,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                 }
             }
 
-        STATE_CHART.value = StateExperiments.NONE
+        STATE_EXPERIMENT.value = StateExperiments.NONE
         logGarbage(">>>6")
         plot = XYPlot(dataset, xAxis, yAxis, renderer)
         plot.setOrientation(PlotOrientation.VERTICAL)

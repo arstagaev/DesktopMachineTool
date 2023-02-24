@@ -162,12 +162,13 @@ fun loadOperators() : MutableList<String> {
 }
 
 fun createMeasureExperiment() {
+    logGarbage("createMeasureExperiment() ${arr1Measure.size}")
     if (arr1Measure.isEmpty())
         return
 
     val fl = File(Dir2Reports, generateTimestampLastUpdate()+"_${OPERATOR_ID}"+"_chart.txt")
     CoroutineScope(Dispatchers.Default).launch {
-        logInfo("createMeasureExperiment ${arr8Measure.joinToString()}")
+        //logInfo("createMeasureExperiment ${arr8Measure.joinToString()}")
 
 
         fl.createNewFile()

@@ -1,6 +1,7 @@
 package utils
 
 fun checkIntervalScenarios(newIndex: Int): Int {
+    logGarbage("checkIntervalScenarios newIndex: ${newIndex}")
     if (newIndex in 0 until scenario.size) {
         return newIndex
     }else if (newIndex > scenario.size) {
@@ -12,8 +13,4 @@ fun checkIntervalScenarios(newIndex: Int): Int {
     } else {
         return indexOfScenario.value
     }
-}
-
-fun checkToUnBoudMAX_PWM() {
-
 }
