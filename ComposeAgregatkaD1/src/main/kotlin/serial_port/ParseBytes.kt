@@ -40,7 +40,7 @@ private var arrPress = arrayListOf<ArrayList<Int>>()
 private var start_time = 0L
 private var incr = 0
 var incrX = 0
-
+private var lastGauge : DataChunkG? = null
 
 
 suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
@@ -63,9 +63,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
     if (incrementTime >= 100_000 && !isExperimentStarts.value) {
         incrementTime = 0
     }
-    if (isExperimentStarts.value) {
-        incrX++
-    }
+
     when {
         updData[0] == 0xFE.toByte() && updData[1] == 0xFF.toByte() &&
         updData[2] == 0xFE.toByte() && updData[3] == 0xFF.toByte() &&
@@ -87,49 +85,14 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
             logGarbage("End Experiment! all it == 0xFF ${isExperimentStarts.value} contOfPacks: ${incrX}")
             //incrX = 0
         }
-        //currency
-        //STATE_EXPERIMENT.value != StateExperiments.PREP_DATA &&
-        updData[1] in 16..31 &&
-        updData[3] in 16..31 &&
-        updData[5] in 16..31 &&
-        updData[7] in 16..31 -> {
 
-            dchCurr = DataChunkCurrent(
-                onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()-16u),
-                onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()-16u),
-                onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()-16u),
-                onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()-16u),
-
-                onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()-16u),
-                onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()-16u),
-                onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
-                onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
-            )
-            //println("CURR  ${updData.joinToString()}||${dchCurr.toString()}")
-            dataChunkCurrents.emit(dchCurr)
-
-            if (DEBUG_PARSING) {
-                arrCurrRaw.add(updData)
-
-                arrCurr.add(arrayListOf(
-                    dchCurr.firstCurrentData,
-                    dchCurr.secondCurrentData,
-                    dchCurr.thirdCurrentData,
-                    dchCurr.fourthCurrentData,
-                    dchCurr.fifthCurrentData,
-                    dchCurr.sixthCurrentData,
-                    dchCurr.seventhCurrentData,
-                    dchCurr.eighthCurrentData,
-                ))
-            }
-
-
-        }
         //pressure
         //STATE_EXPERIMENT.value != StateExperiments.PREP_DATA &&
-                updData[1] < 16 && updData[3] < 16 && updData[5] < 16 && updData[7] < 16 -> {
+        updData[1] < 16 && updData[3] < 16 && updData[5] < 16 && updData[7] < 16 -> {
             //println("> ${updData.toHexString()} [size:${updData.size}]")
-
+            if (isExperimentStarts.value) {
+                incrX++
+            }
             dch = DataChunkG(
                 isExperiment = (isExperimentStarts.value),
                 onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()),
@@ -150,6 +113,7 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
             //println("PRES ${dch.toString()}")
 
             dataChunkGauges.emit(dch)
+            lastGauge = dch
 
             if (DEBUG_PARSING) {
                 arrPressRaw.add(updData)
@@ -166,6 +130,50 @@ suspend fun coreParse(updData: ByteArray) = withContext(Dispatchers.IO) {
                 ))
             }
         }
+
+        //currency
+        //STATE_EXPERIMENT.value != StateExperiments.PREP_DATA &&
+        //!isExperimentStarts.value &&
+        updData[1] in 16..31 &&
+        updData[3] in 16..31 &&
+        updData[5] in 16..31 &&
+        updData[7] in 16..31 -> {
+            if (isExperimentStarts.value) {
+                incrX++
+            }
+            dchCurr = DataChunkCurrent(
+                onesAndTens(byteToInt(updData[0]).toUInt() , byteToInt(updData[1]).toUInt()-16u),
+                onesAndTens(byteToInt(updData[2]).toUInt() , byteToInt(updData[3]).toUInt()-16u),
+                onesAndTens(byteToInt(updData[4]).toUInt() , byteToInt(updData[5]).toUInt()-16u),
+                onesAndTens(byteToInt(updData[6]).toUInt() , byteToInt(updData[7]).toUInt()-16u),
+
+                onesAndTens(byteToInt( updData[8]).toUInt() , byteToInt(updData[9] ).toUInt()-16u),
+                onesAndTens(byteToInt(updData[10]).toUInt(),  byteToInt(updData[11]).toUInt()-16u),
+                onesAndTens(byteToInt(updData[12]).toUInt(),  byteToInt(updData[13]).toUInt()-16u),
+                onesAndTens(byteToInt(updData[14]).toUInt(),  byteToInt(updData[15]).toUInt()-16u)
+            )
+            //println("CURR  ${updData.joinToString()}||${dchCurr.toString()}")
+            dataChunkCurrents.emit(dchCurr)
+            dataChunkGauges.emit(lastGauge!!)
+
+            if (DEBUG_PARSING) {
+                arrCurrRaw.add(updData)
+
+                arrCurr.add(arrayListOf(
+                    dchCurr.firstCurrentData,
+                    dchCurr.secondCurrentData,
+                    dchCurr.thirdCurrentData,
+                    dchCurr.fourthCurrentData,
+                    dchCurr.fifthCurrentData,
+                    dchCurr.sixthCurrentData,
+                    dchCurr.seventhCurrentData,
+                    dchCurr.eighthCurrentData,
+                ))
+            }
+
+
+        }
+
 
 //        (updData[0] == 0xFF.toByte() &&
 //         updData[1] == 0xFF.toByte() &&

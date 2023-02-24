@@ -68,9 +68,7 @@ fun CenterPiece(
             sendScenarioToController()
             var count = 0
             dataChunkGauges.collect {
-                if (it.isExperiment) {
-                    count++
-                }
+
                 //delay(DELAY_FOR_GET_DATA)
                 //logGarbage("Exp>  ${STATE_CHART.value.name}||${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
 
@@ -94,7 +92,7 @@ fun CenterPiece(
                             //limitTime >= incrementTime &&
                             (it.isExperiment)
                         ) {
-
+                            count++
 
                             arr1Measure.add(Pointer(x = incrementTime, y = pressure1X)) //it.firstGaugeData, ))
                             arr2Measure.add(Pointer(x = incrementTime, y = pressure2X)) //it.secondGaugeData,))
