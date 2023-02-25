@@ -1,8 +1,11 @@
 package ui.main_screen.center
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -13,6 +16,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -49,12 +53,20 @@ fun CenterPiece(
     val stateChart = remember { STATE_EXPERIMENT }
     val explMode = remember { EXPLORER_MODE }
     val expandedCom = remember { mutableStateOf(false) }
-
+    val isHideCurrents = remember { mutableStateOf(false) }
 
     val txt = remember { txtOfScenario }
 
     val ctxScope =
         CoroutineScope(Dispatchers.IO) + rememberCoroutineScope().coroutineContext + CoroutineName("MainScreen-CenterPart")
+
+    // Get local density from composable
+    val localDensity = LocalDensity.current
+
+    // Create element height in dp state
+    var columnHeightDp by remember {
+        mutableStateOf(0.dp)
+    }
 
     LaunchedEffect(true) {
         ctxScope.launch {
@@ -142,103 +154,97 @@ fun CenterPiece(
 //            }
         }
     }
-
-    Row(
-        modifier = Modifier
+    /**
+     * Composer:
+     */
+    Column(
+        modifier = Modifier //.padding(10.dp)
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(Color.Black)
+            .onGloballyPositioned { coordinates ->
+                sizeRow = coordinates.size.toSize()
+            }
     ) {
-
-        Column(
-            modifier = Modifier //.padding(10.dp)
-                .width(IntrinsicSize.Max)
-                .height(IntrinsicSize.Max)
-                .background(Color.Black)
-                .layoutId("r")
-                .onGloballyPositioned { coordinates ->
-                    sizeRow = coordinates.size.toSize()
-                }
-        ) {
-            Row() {
+        Row(Modifier.weight(0.5f)) {
 //                Box(Modifier.size(40.dp)) {
 //                    Image(painterResource("/trs.jpg"),"")
 //                }
-                if (isExperimentStarts.value) {
-                    Text(
-                        "Rec...",
-                        modifier = Modifier.padding(top = (10).dp, start = 20.dp).clickable {
-                        },
-                        fontFamily = FontFamily.Default,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Red
-                    )
-                }
+            if (isExperimentStarts.value) {
                 Text(
-                    "${txt.value}",
-                    modifier = Modifier.width(90.dp).padding(top = (10).dp, start = 20.dp).clickable {
-                        //screenNav.value = Screens.STARTER
+                    "Rec...",
+                    modifier = Modifier.padding(top = (10).dp, start = 20.dp).clickable {
                     },
                     fontFamily = FontFamily.Default,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Blue
+                    color = Color.Red
                 )
-                Box(Modifier.clickable {
-                    expandedCom.value = !expandedCom.value
-                }) {
+            }
+            Text(
+                "${txt.value}",
+                modifier = Modifier.width(90.dp).padding(top = (10).dp, start = 20.dp).clickable {
+                    //screenNav.value = Screens.STARTER
+                },
+                fontFamily = FontFamily.Default,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Blue
+            )
+            Box(Modifier.clickable {
+                expandedCom.value = !expandedCom.value
+            }) {
+                Text(
+                    "Mode: ${explMode.value.name}",
+                    modifier = Modifier.padding(top = (10).dp, start = 20.dp),
+                    fontFamily = FontFamily.Default, fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold, color = Color.White
+                )
+
+                DropdownMenu(
+                    modifier = Modifier.background(Color.White),
+                    expanded = expandedCom.value,
+                    onDismissRequest = { expandedCom.value = false },
+                ) {
                     Text(
-                        "Mode: ${explMode.value.name}",
-                        modifier = Modifier.padding(top = (10).dp, start = 20.dp),
-                        fontFamily = FontFamily.Default, fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold, color = Color.White
+                        "AUTO", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                            .clickable(onClick = {
+                                EXPLORER_MODE.value = ExplorerMode.AUTO
+                            }), color = Color.Black
                     )
-
-                    DropdownMenu(
-                        modifier = Modifier.background(Color.White),
-                        expanded = expandedCom.value,
-                        onDismissRequest = { expandedCom.value = false },
-                    ) {
-                        Text(
-                            "AUTO", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
-                                .clickable(onClick = {
-                                    EXPLORER_MODE.value = ExplorerMode.AUTO
-                                }), color = Color.Black
-                        )
-                        Text(
-                            "MANUAL", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
-                                .clickable(onClick = {
-                                    EXPLORER_MODE.value = ExplorerMode.MANUAL
-                                }), color = Color.Black
-                        )
-                    }
+                    Text(
+                        "MANUAL", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                            .clickable(onClick = {
+                                EXPLORER_MODE.value = ExplorerMode.MANUAL
+                            }), color = Color.Black
+                    )
                 }
+            }
 
-                Box(Modifier.clickable {
-                    test_time = 0
-                    // launch
-                    if (explMode.value == ExplorerMode.AUTO) {
-                        if (STATE_EXPERIMENT.value != StateExperiments.START) {
-                            ctxScope.launch {
-                                writeToSerialPort(
-                                    byteArrayOf(
-                                        0x78,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00
-                                    ), withFlush = false
-                                )
-                            }
+            Box(Modifier.clickable {
+                test_time = 0
+                // launch
+                if (explMode.value == ExplorerMode.AUTO) {
+                    if (STATE_EXPERIMENT.value != StateExperiments.START) {
+                        ctxScope.launch {
+                            writeToSerialPort(
+                                byteArrayOf(
+                                    0x78,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00,
+                                    0x00
+                                ), withFlush = false
+                            )
+                        }
 
 //                            if (GLOBAL_STATE.value != StateParseBytes.PLAY) {
 //                                ctxScope.launch {
@@ -247,189 +253,236 @@ fun CenterPiece(
 //                                }
 //                            }
 
-                            GLOBAL_STATE.value = StateParseBytes.PLAY
-                            sound_On()
-                            logGarbage("ONON ${test_time} V")
-                            test_time = 0
+                        GLOBAL_STATE.value = StateParseBytes.PLAY
+                        sound_On()
+                        logGarbage("ONON ${test_time} V")
+                        test_time = 0
 
-                            indexOfScenario.value = 0
-                            indexScenario = 0
-                            num = scenario[indexScenario].time
-                            isAlreadyReceivedBytesForChart.value = false
-                            logGarbage("ONON ${test_time} A")
+                        indexOfScenario.value = 0
+                        indexScenario = 0
+                        num = scenario[indexScenario].time
+                        isAlreadyReceivedBytesForChart.value = false
+                        logGarbage("ONON ${test_time} A")
 
-                        } else {
-                            sound_Error()
-                        }
-                    } else if (explMode.value == ExplorerMode.MANUAL) {
-                        indexOfScenario.value--
-                        ctxScope.launch {
-
-                            comparatorToSolenoid(indexOfScenario.value)
-                        }
-                        scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
-                        //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
-                        //txtOfScenario.value = scenario[indexOfScenario.value].text
+                    } else {
+                        sound_Error()
                     }
-
-
-                }) {
-                    Text(
-                        if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
-                        modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                        fontFamily = FontFamily.Default,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-                Box(Modifier.clickable {
-                    //stop scenario
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        if (explMode.value == ExplorerMode.AUTO) {
-                            reInitSolenoids()
-                            GLOBAL_STATE.value = StateParseBytes.WAIT
-//                            initSerialCommunication()
-//                            startReceiveFullData()
-                        } else if (explMode.value == ExplorerMode.MANUAL) {
-                            indexOfScenario.value++
-                            comparatorToSolenoid(indexOfScenario.value)
-
-                            //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { 0 }
-                            scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
-                            //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { scenario[0] }.text
-                        }
-                    }
-                }) {
-                    Text(
-                        if (explMode.value == ExplorerMode.AUTO) "⏸" else "⏩",
-                        modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                        fontFamily = FontFamily.Default,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-                /**
-                 *  DATA LIVE HERE:
-                 */
-                Text("Data Live:", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
-                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                )
-                Box(Modifier.clickable {
-//                    ctxScope.launch {
-//
-//                        if (GLOBAL_STATE.value != StateParseBytes.PLAY) {
-//                            GLOBAL_STATE.value = StateParseBytes.PLAY
-//
-//
-//                        } else {
-//                            indexOfScenario.value = 0
-//                            reInitSolenoids()
-//                            sound_Error()
-//                        }
-//
-//                    }
-
-                }) {
-                    Text("▶", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
-                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green
-                    )
-                }
-                Box(Modifier.clickable {
+                } else if (explMode.value == ExplorerMode.MANUAL) {
+                    indexOfScenario.value--
                     ctxScope.launch {
-                        GLOBAL_STATE.value = StateParseBytes.WAIT
-                        pauseSerialComm()
-                    }
 
-                }) {
-                    Text("⏸", modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp,start = 20.dp)
-                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                    )
+                        comparatorToSolenoid(indexOfScenario.value)
+                    }
+                    scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
+                    //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
+                    //txtOfScenario.value = scenario[indexOfScenario.value].text
                 }
-                Text("${COM_PORT},${BAUD_RATE},${limitTime}ms", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
-                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
+
+
+            }) {
+                Text(
+                    if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                    fontFamily = FontFamily.Default,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
             }
-                Spacer(Modifier.fillMaxWidth().height(10.dp))
-                Row {
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure1X,
-                        (pressures[0].minValue),
-                        (pressures[0].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[0].displayName,
-                        comment = pressures[0].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure2X,
-                        (pressures[1].minValue),
-                        (pressures[1].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[1].displayName,
-                        comment = pressures[1].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure3X,
-                        (pressures[2].minValue),
-                        (pressures[2].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[2].displayName,
-                        comment = pressures[2].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure4X,
-                        (pressures[3].minValue),
-                        (pressures[3].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[3].displayName,
-                        comment = pressures[3].commentString
-                    )
+            Box(Modifier.clickable {
+                //stop scenario
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (explMode.value == ExplorerMode.AUTO) {
+                        reInitSolenoids()
+                        GLOBAL_STATE.value = StateParseBytes.WAIT
+//                            initSerialCommunication()
+//                            startReceiveFullData()
+                    } else if (explMode.value == ExplorerMode.MANUAL) {
+                        indexOfScenario.value++
+                        comparatorToSolenoid(indexOfScenario.value)
+
+                        //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { 0 }
+                        scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
+                        //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { scenario[0] }.text
+                    }
                 }
-                Row {
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure5X,
-                        (pressures[4].minValue),
-                        (pressures[4].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[4].displayName,
-                        comment = pressures[4].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure6X,
-                        (pressures[5].minValue),
-                        (pressures[5].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[5].displayName,
-                        comment = pressures[5].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure7X,
-                        (pressures[6].minValue),
-                        (pressures[6].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[6].displayName,
-                        comment = pressures[6].commentString
-                    )
-                    GaugeX(
-                        DpSize(200.dp, 200.dp),
-                        pressure8X,
-                        (pressures[7].minValue),
-                        (pressures[7].maxValue.toInt()),
-                        type = "Бар",
-                        displayName = pressures[7].displayName,
-                        comment = pressures[7].commentString
-                    )
+            }) {
+                Text(
+                    if (explMode.value == ExplorerMode.AUTO) "⏸" else "⏩",
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                    fontFamily = FontFamily.Default,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+            Text("${COM_PORT},${BAUD_RATE},${limitTime}ms", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
+            )
+            Box(Modifier.clickable {
+                isHideCurrents.value = !isHideCurrents.value
+            }) {
+                Text(
+                    "Hide Currents⚡️",
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                    fontFamily = FontFamily.Default,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+        //Spacer(Modifier.fillMaxWidth().height(10.dp))
+
+        Row(Modifier.weight(5f)) {
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxWidth(),//.fillMaxSize(),
+                //columns = GridCells.Adaptive(150.dp),
+                columns = GridCells.Fixed(4),
+                verticalArrangement =   Arrangement.spacedBy(0.dp),
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                // content padding
+                contentPadding = PaddingValues(
+                    start = 0.dp,
+                    top = 0.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                ),
+                content = {
+                    item {
+                        Box(Modifier
+                            .aspectRatio(1f)
+                            .background(Color.Red)
+                            .onGloballyPositioned { coordinates ->
+                                // Set column height using the LayoutCoordinates
+                                if (coordinates.size.width != 0) {
+                                    columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
+                                }
+
+                            }
+                        ) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure1X,
+                                (pressures[0].minValue),
+                                (pressures[0].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[0].displayName,
+                                comment = pressures[0].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure2X,
+                                (pressures[1].minValue),
+                                (pressures[1].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[1].displayName,
+                                comment = pressures[1].commentString
+                            )
+                        }
+
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure3X,
+                                (pressures[2].minValue),
+                                (pressures[2].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[2].displayName,
+                                comment = pressures[2].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure4X,
+                                (pressures[3].minValue),
+                                (pressures[3].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[3].displayName,
+                                comment = pressures[3].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure5X,
+                                (pressures[4].minValue),
+                                (pressures[4].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[4].displayName,
+                                comment = pressures[4].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure6X,
+                                (pressures[5].minValue),
+                                (pressures[5].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[5].displayName,
+                                comment = pressures[5].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure7X,
+                                (pressures[6].minValue),
+                                (pressures[6].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[6].displayName,
+                                comment = pressures[6].commentString
+                            )
+                        }
+                    }
+                    item {
+                        Box(Modifier.aspectRatio(1f)) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                pressure8X,
+                                (pressures[7].minValue),
+                                (pressures[7].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[7].displayName,
+                                comment = pressures[7].commentString
+                            )
+                        }
+                    }
+
                 }
+            )
+
+        }
+        if(!isHideCurrents.value) {
+            Row(Modifier.fillMaxSize().weight(2f)) {
                 solenoidsPanel(sizeRow, duration)
             }
         }
+
+    }
+//    Row(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.DarkGray)
+//    ) {
+//
+//
+//    }
 }

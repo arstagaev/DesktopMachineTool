@@ -72,185 +72,185 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             )
         }
     }
+    Column(modifier = Modifier.size(if (inputSize.width < 200.dp) DpSize(200.dp,200.dp) else inputSize).aspectRatio(1f).clickable {
+        rememberShowComm.value = !rememberShowComm.value
+    }) {
+        Box(modifier = Modifier.fillMaxSize().weight(6f)) {
 
-    //var WIDTH = size
-    Box(modifier = Modifier.size(inputSize)) {
-        Column(modifier = Modifier.fillMaxSize().background(Color.Black).clickable {
-            rememberShowComm.value = !rememberShowComm.value
-        }) {
-            Box(modifier = Modifier.fillMaxSize().weight(6f)) {
+            Canvas(modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp)
+                .align(Alignment.TopCenter)
+                .border(BorderStroke(4.dp, Color.DarkGray))
+            ) {
+                val canvasCenter = Offset(x = size.width / 2f, y = size.height / 2f)
+                val canvasW = size.width
+                val canvasH = size.height
+                val shift = 15f
 
-                Canvas(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(0.dp)
-                    .align(Alignment.TopCenter)
-                    .border(BorderStroke(4.dp, Color.DarkGray))
-                ) {
-                    val canvasCenter = Offset(x = size.width / 2f, y = size.height / 2f)
-                    val canvasW = size.width
-                    val canvasH = size.height
-                    val shift = 15f
+                drawRect(Color.Black, topLeft = Offset(0f,0f), size = Size(canvasW,canvasH))
 
-                    drawRect(Color.Black, topLeft = Offset(0f,0f), size = Size(canvasW,canvasH))
-
-                    //step 3: draw clock minute markers
-                    val radius = size.width / 2.9f
-                    val radiusForText = size.width / 2.6f
-                    val minuteMarkerLength = radius / 12f
-                    repeat(60) {
-                        rotate((it / 60f) * 360) {
-                            val start = center - Offset(0f, radius.toFloat())
-                            val end =    start + Offset(0f, minuteMarkerLength)
-                            drawLine(
-                                color = Color.Blue,
-                                start = start,
-                                end = end,
-                                strokeWidth = 2f
-                            )
-                        }
-                    }
-
-                    //step 4: draw clock hour markers
-                    val hourMarkerLength = size.width / 15f
-                    repeat(12) {
-                        rotate((it / 12f) * 360) {
-                            val start = center - Offset(0f, radius)
-                            val end = start + Offset(0f, hourMarkerLength)
-                            drawLine(
-                                color = Color.White,
-                                start = start,
-                                end = end,
-                                strokeWidth = 3f
-                            )
-                        }
-                    }
-
-
-
-                    drawCircle(
-                        color = Color.White,
-                        style = Stroke(
-                            width = 5f
-                        ),
-                        radius = radius,
-                        center = canvasCenter
-                    )
-
-
-
-                    rotate(degrees = animatedPercentage.value) {
+                //step 3: draw clock minute markers
+                val radius = size.width / 2.9f
+                val radiusForText = size.width / 2.6f
+                val minuteMarkerLength = radius / 12f
+                repeat(60) {
+                    rotate((it / 60f) * 360) {
+                        val start = center - Offset(0f, radius.toFloat())
+                        val end =    start + Offset(0f, minuteMarkerLength)
                         drawLine(
-                            color = Color.Green,
-                            start = center,
-                            end = Offset(canvasCenter.x / 3f,canvasCenter.y ),
-                            strokeWidth = 4.dp.toPx()
+                            color = Color.Blue,
+                            start = start,
+                            end = end,
+                            strokeWidth = 2f
                         )
                     }
-
-                    drawCircle(
-                        color = Color.DarkGray,
-                        radius = 10f,
-                        center = canvasCenter
-                    )
-                    drawRect(topLeft = Offset(0f,canvasCenter.y+shift),color = Color.Black,size = Size(canvasCenter.x,canvasCenter.y-shift))
-
-                    val trianglePath = Path().apply {
-                        // 1)
-                        moveTo(canvasCenter.x, canvasCenter.y+shift)
-
-                        // 2)
-                        lineTo(canvasCenter.x, canvasH)
-
-                        // 3)
-                        lineTo((canvasCenter.x + canvasCenter.x / 2f) - shift, canvasH)
-                    }
-                    drawPath(
-                        color = Color.Black,
-                        path = trianglePath
-                    )
-
-                    drawIntoCanvas { canvas ->
-                        //val textPaint = Paint().asFrameworkPaint()
-
-
-                        repeat(9) {
-                            //The degree difference between the each 'minute' line
-                            val angleDegreeDifference = (270f / 9f)
-                            val angleRadDifference =
-                                (((angleDegreeDifference * it) - 180f) * (PI / 180f)).toFloat()
-
-                            var shifterX = 0
-                            var shifterY = 0
-
-                            when (it) {
-                                0 -> shifterX = -15
-                                1 -> shifterX = -20
-                                2 -> shifterX = -20
-                                3 -> shifterY = (inputSize.height.value*0.025f).toInt()
-                            }
-                            val positionX = (radius * 1.12f) * cos(angleRadDifference) + center.x + shifterX
-                            val positionY = (radius * 1.12f) * sin(angleRadDifference) + center.y + shifterY
-                            val text = (it / 5).toString()
-                            val txtPaint = Paint().asFrameworkPaint()
-                            txtPaint.color = org.jetbrains.skia.Color.GREEN
-
-
-                            val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
-                            canvas.nativeCanvas.drawTextLine(
-                                TextLine.Companion.make("${if (it == 8) maxType else{ (minType+it*valueOfDivision).roundToInt()}}", Font(typeFace, (inputSize.height.value*0.05f))),
-                                positionX,
-                                positionY,
-                                txtPaint
-                            )
-                        }
-                    }
-
-
                 }
 
-                Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
-                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                    , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                //step 4: draw clock hour markers
+                val hourMarkerLength = size.width / 15f
+                repeat(12) {
+                    rotate((it / 12f) * 360) {
+                        val start = center - Offset(0f, radius)
+                        val end = start + Offset(0f, hourMarkerLength)
+                        drawLine(
+                            color = Color.White,
+                            start = start,
+                            end = end,
+                            strokeWidth = 3f
+                        )
+                    }
+                }
+
+
+
+                drawCircle(
+                    color = Color.White,
+                    style = Stroke(
+                        width = 5f
+                    ),
+                    radius = radius,
+                    center = canvasCenter
                 )
 
-                Column(modifier = Modifier.height(inputSize.height*0.3f).align(Alignment.BottomStart).padding(start = 10.dp, bottom = 10.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
 
-                    Text("${signValue}",
-                        modifier = Modifier.padding(0.dp),
-                        fontFamily = fontDigital,
-                        fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
+
+                rotate(degrees = animatedPercentage.value) {
+                    drawLine(
+                        color = Color.Green,
+                        start = center,
+                        end = Offset(canvasCenter.x / 3f,canvasCenter.y ),
+                        strokeWidth = 4.dp.toPx()
                     )
+                }
 
+                drawCircle(
+                    color = Color.DarkGray,
+                    radius = 10f,
+                    center = canvasCenter
+                )
+                drawRect(topLeft = Offset(0f,canvasCenter.y+shift),color = Color.Black,size = Size(canvasCenter.x,canvasCenter.y-shift))
+
+                val trianglePath = Path().apply {
+                    // 1)
+                    moveTo(canvasCenter.x, canvasCenter.y+shift)
+
+                    // 2)
+                    lineTo(canvasCenter.x, canvasH)
+
+                    // 3)
+                    lineTo((canvasCenter.x + canvasCenter.x / 2f) - shift, canvasH)
+                }
+                drawPath(
+                    color = Color.Black,
+                    path = trianglePath
+                )
+
+                drawIntoCanvas { canvas ->
+                    //val textPaint = Paint().asFrameworkPaint()
+
+
+                    repeat(9) {
+                        //The degree difference between the each 'minute' line
+                        val angleDegreeDifference = (270f / 9f)
+                        val angleRadDifference =
+                            (((angleDegreeDifference * it) - 180f) * (PI / 180f)).toFloat()
+
+                        var shifterX = 0
+                        var shifterY = 0
+
+                        when (it) {
+                            0 -> shifterX = -15
+                            1 -> shifterX = -20
+                            2 -> shifterX = -20
+                            3 -> shifterY = (inputSize.height.value*0.025f).toInt()
+                        }
+                        val positionX = (radius * 1.12f) * cos(angleRadDifference) + center.x + shifterX
+                        val positionY = (radius * 1.12f) * sin(angleRadDifference) + center.y + shifterY
+                        val text = (it / 5).toString()
+                        val txtPaint = Paint().asFrameworkPaint()
+                        txtPaint.color = org.jetbrains.skia.Color.GREEN
+
+
+                        val typeFace = org.jetbrains.skia.Typeface.makeFromName("TimesRoman", FontStyle.BOLD)
+                        canvas.nativeCanvas.drawTextLine(
+                            TextLine.Companion.make("${if (it == 8) maxType else{ (minType+it*valueOfDivision).roundToInt()}}", Font(typeFace, (inputSize.height.value*0.05f))),
+                            positionX,
+                            positionY,
+                            txtPaint
+                        )
+                    }
                 }
 
 
             }
-            Box(modifier = Modifier.fillMaxSize().weight(1f).background(Color.Gray)) {
+
+            Text("[${type}]", modifier = Modifier.align(Alignment.TopCenter).padding(top = (inputSize.height.value*0.25f).dp)
+                //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                , fontFamily = FontFamily.Default, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Bold, color = Color.White
+            )
+
+            Column(modifier = Modifier.height(inputSize.height*0.3f).align(Alignment.BottomStart).padding(start = 10.dp, bottom = 10.dp, top = 5.dp), verticalArrangement = Arrangement.SpaceBetween) {
+
+                Text("${signValue}",
+                    modifier = Modifier.padding(0.dp),
+                    fontFamily = fontDigital,
+                    fontSize = (inputSize.height.value*0.200f).sp, fontWeight = FontWeight.Bold, color = Color.White
+                )
+
+            }
+            if(rememberShowComm.value) {
+                Box(modifier = Modifier.fillMaxSize().background(colorTrans60)) {
+                    Text("raw: ${progress} .. ${comment}", modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(10.dp)
+                        //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                        , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    )
+                }
+            }
+
+        }
+        Box(modifier = Modifier.fillMaxSize().weight(1f).background(Color.Gray)) {
 //                Text(
 //                    modifier = Modifier
 //                        .fillMaxSize()
 //                        .padding(horizontal = 4.dp), text = txt,
 //                    fontSize = TextUnit(10f, TextUnitType.Sp), color = Color.Black
 //                )
-                Text("${displayName}", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center
-                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                    , fontFamily = FontFamily.Monospace, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Medium, color = Color.White
-                )
-            }
+            Text("${displayName}", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center
+                //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
+                , fontFamily = FontFamily.Monospace, fontSize = (inputSize.height.value*0.075f).sp, fontWeight = FontWeight.Medium, color = Color.White
+            )
+        }
 
 
-        }
-        AnimatedVisibility(rememberShowComm.value) {
-            Box(modifier = Modifier.fillMaxSize().background(colorTrans60)) {
-                Text("raw: ${progress} .. ${comment}", modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(10.dp)
-                    //.offset(calcNumGaug(90f,WIDTH).x.dp,calcNumGaug(90f,WIDTH).y.dp)
-                    , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
-                )
-            }
-        }
     }
+    //var WIDTH = size
+//    Box(modifier = Modifier) {
+//
+//
+//    }
 }
 
 

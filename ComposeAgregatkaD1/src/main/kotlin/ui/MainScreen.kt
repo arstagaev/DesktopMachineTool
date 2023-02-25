@@ -23,10 +23,14 @@ import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DatasetUtils
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import parsing_excel.targetParseScenario
+import storage.openPicker
 import ui.navigation.Screens
 import ui.main_screen.center.CenterPiece
 import ui.starter_screen.StarterScreen
+import utils.Dir3Scenarios
 import java.awt.Font
+import java.io.File
 
 
 //import VariablesUSB.*
@@ -46,6 +50,18 @@ fun App() {
 //    if (screenNavi.value == Screens.CHART){
 //        chartWindow()
 //    }
+    // f
+    LaunchedEffect(true) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (targetParseScenario(File(Dir3Scenarios,"scenario_demo.xls"))) {
+                screenNav.value = Screens.MAIN
+            }
+
+
+        }
+    }
+
+
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             Row{
@@ -53,6 +69,7 @@ fun App() {
 
                 when(screenNavi.value) {
                     Screens.STARTER -> {
+
                         //Box(Modifier.fillMaxSize().background(Color.Red))
                         StarterScreen()
                     }
