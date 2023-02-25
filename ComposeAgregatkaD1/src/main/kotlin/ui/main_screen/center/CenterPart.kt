@@ -28,18 +28,20 @@ import enums.StateExperiments
 import enums.StateParseBytes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import screenNav
 import serial_port.*
 import storage.createMeasureExperiment
 import ui.charts.Pointer
 import ui.custom.GaugeX
 import ui.main_screen.center.support_elements.solenoidsPanel
+import ui.navigation.Screens
 import utils.*
 
 
 @Composable
 fun CenterPiece(
 ) {
-    var sizeRow by remember { mutableStateOf(Size.Zero) }
+    var sizeRow    by remember {mutableStateOf(Size.Zero)}
     var pressure1X by remember { mutableStateOf(0) }
     var pressure2X by remember { mutableStateOf(0) }
     var pressure3X by remember { mutableStateOf(0) }
@@ -67,20 +69,20 @@ fun CenterPiece(
     var columnHeightDp by remember {
         mutableStateOf(0.dp)
     }
-
+    var isShowPlay = remember { mutableStateOf(false) }
     LaunchedEffect(true) {
         ctxScope.launch {
             //EXPLORER_MODE.value = ExplorerMode.MANUAL
             //reInitSolenoids()
             indexOfScenario.value = 0
 
-            sound_On()
+            //sound_On()
             startReceiveFullData()
             comparatorToSolenoid(indexOfScenario.value)
             sendScenarioToController()
             var count = 0
             dataChunkGauges.collect {
-
+                isShowPlay.value = true
                 //delay(DELAY_FOR_GET_DATA)
                 //logGarbage("Exp>  ${STATE_CHART.value.name}||${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
 
@@ -219,32 +221,32 @@ fun CenterPiece(
                     )
                 }
             }
-
-            Box(Modifier.clickable {
-                test_time = 0
-                // launch
-                if (explMode.value == ExplorerMode.AUTO) {
-                    if (STATE_EXPERIMENT.value != StateExperiments.START) {
-                        ctxScope.launch {
-                            writeToSerialPort(
-                                byteArrayOf(
-                                    0x78,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00,
-                                    0x00
-                                ), withFlush = false
-                            )
-                        }
+            AnimatedVisibility(isShowPlay.value) {
+                Box(Modifier.clickable {
+                    test_time = 0
+                    // launch
+                    if (explMode.value == ExplorerMode.AUTO) {
+                        if (STATE_EXPERIMENT.value != StateExperiments.START) {
+                            ctxScope.launch {
+                                writeToSerialPort(
+                                    byteArrayOf(
+                                        0x78,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00,
+                                        0x00
+                                    ), withFlush = false
+                                )
+                            }
 
 //                            if (GLOBAL_STATE.value != StateParseBytes.PLAY) {
 //                                ctxScope.launch {
@@ -253,42 +255,44 @@ fun CenterPiece(
 //                                }
 //                            }
 
-                        GLOBAL_STATE.value = StateParseBytes.PLAY
-                        sound_On()
-                        logGarbage("ONON ${test_time} V")
-                        test_time = 0
+                            GLOBAL_STATE.value = StateParseBytes.PLAY
+                            sound_On()
+                            logGarbage("ONON ${test_time} V")
+                            test_time = 0
 
-                        indexOfScenario.value = 0
-                        indexScenario = 0
-                        num = scenario[indexScenario].time
-                        isAlreadyReceivedBytesForChart.value = false
-                        logGarbage("ONON ${test_time} A")
+                            indexOfScenario.value = 0
+                            indexScenario = 0
+                            num = scenario[indexScenario].time
+                            isAlreadyReceivedBytesForChart.value = false
+                            logGarbage("ONON ${test_time} A")
 
-                    } else {
-                        sound_Error()
+                        } else {
+                            sound_Error()
+                        }
+                    } else if (explMode.value == ExplorerMode.MANUAL) {
+                        indexOfScenario.value--
+                        ctxScope.launch {
+
+                            comparatorToSolenoid(indexOfScenario.value)
+                        }
+                        scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
+                        //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
+                        //txtOfScenario.value = scenario[indexOfScenario.value].text
                     }
-                } else if (explMode.value == ExplorerMode.MANUAL) {
-                    indexOfScenario.value--
-                    ctxScope.launch {
 
-                        comparatorToSolenoid(indexOfScenario.value)
-                    }
-                    scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
-                    //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
-                    //txtOfScenario.value = scenario[indexOfScenario.value].text
+
+                }) {
+                    Text(
+                        if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                        fontFamily = FontFamily.Default,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
-
-
-            }) {
-                Text(
-                    if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                    fontFamily = FontFamily.Default,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
             }
+
             Box(Modifier.clickable {
                 //stop scenario
 
@@ -332,6 +336,18 @@ fun CenterPiece(
                     color = Color.White
                 )
             }
+            Box(Modifier.clickable {
+                screenNav.value = Screens.STARTER
+            }) {
+                Text(
+                    "Home↩️",
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                    fontFamily = FontFamily.Default,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
         //Spacer(Modifier.fillMaxWidth().height(10.dp))
 
@@ -340,8 +356,8 @@ fun CenterPiece(
                 modifier = Modifier.fillMaxWidth(),//.fillMaxSize(),
                 //columns = GridCells.Adaptive(150.dp),
                 columns = GridCells.Fixed(4),
-                verticalArrangement =   Arrangement.spacedBy(0.dp),
-                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                verticalArrangement =   Arrangement.Center,
+                horizontalArrangement = Arrangement.Center,
                 // content padding
                 contentPadding = PaddingValues(
                     start = 0.dp,
@@ -350,121 +366,144 @@ fun CenterPiece(
                     bottom = 0.dp
                 ),
                 content = {
-                    item {
-                        Box(Modifier
-                            .aspectRatio(1f)
-                            .background(Color.Red)
-                            .onGloballyPositioned { coordinates ->
-                                // Set column height using the LayoutCoordinates
-                                if (coordinates.size.width != 0) {
-                                    columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
+                    if (pressures[0].isVisible) {
+                        item {
+                            Box(Modifier
+                                .aspectRatio(1f)
+                                .background(Color.Red)
+                                .onGloballyPositioned { coordinates ->
+                                    // Set column height using the LayoutCoordinates
+                                    if (coordinates.size.width != 0) {
+                                        columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
+                                    }
+
                                 }
-
+                            ) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure1X,
+                                    (pressures[0].minValue),
+                                    (pressures[0].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[0].displayName,
+                                    comment = pressures[0].commentString
+                                )
                             }
-                        ) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure1X,
-                                (pressures[0].minValue),
-                                (pressures[0].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[0].displayName,
-                                comment = pressures[0].commentString
-                            )
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure2X,
-                                (pressures[1].minValue),
-                                (pressures[1].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[1].displayName,
-                                comment = pressures[1].commentString
-                            )
-                        }
+                    if (pressures[1].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure2X,
+                                    (pressures[1].minValue),
+                                    (pressures[1].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[1].displayName,
+                                    comment = pressures[1].commentString
+                                )
+                            }
 
-                    }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure3X,
-                                (pressures[2].minValue),
-                                (pressures[2].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[2].displayName,
-                                comment = pressures[2].commentString
-                            )
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure4X,
-                                (pressures[3].minValue),
-                                (pressures[3].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[3].displayName,
-                                comment = pressures[3].commentString
-                            )
+
+                    if (pressures[2].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure3X,
+                                    (pressures[2].minValue),
+                                    (pressures[2].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[2].displayName,
+                                    comment = pressures[2].commentString
+                                )
+                            }
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure5X,
-                                (pressures[4].minValue),
-                                (pressures[4].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[4].displayName,
-                                comment = pressures[4].commentString
-                            )
+
+                    if (pressures[3].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure4X,
+                                    (pressures[3].minValue),
+                                    (pressures[3].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[3].displayName,
+                                    comment = pressures[3].commentString
+                                )
+                            }
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure6X,
-                                (pressures[5].minValue),
-                                (pressures[5].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[5].displayName,
-                                comment = pressures[5].commentString
-                            )
+
+                    if (pressures[4].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure5X,
+                                    (pressures[4].minValue),
+                                    (pressures[4].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[4].displayName,
+                                    comment = pressures[4].commentString
+                                )
+                            }
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure7X,
-                                (pressures[6].minValue),
-                                (pressures[6].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[6].displayName,
-                                comment = pressures[6].commentString
-                            )
+
+                    if (pressures[5].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure6X,
+                                    (pressures[5].minValue),
+                                    (pressures[5].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[5].displayName,
+                                    comment = pressures[5].commentString
+                                )
+                            }
                         }
                     }
-                    item {
-                        Box(Modifier.aspectRatio(1f)) {
-                            GaugeX(
-                                DpSize(columnHeightDp, columnHeightDp),
-                                pressure8X,
-                                (pressures[7].minValue),
-                                (pressures[7].maxValue.toInt()),
-                                type = "Бар",
-                                displayName = pressures[7].displayName,
-                                comment = pressures[7].commentString
-                            )
+
+                    if (pressures[6].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure7X,
+                                    (pressures[6].minValue),
+                                    (pressures[6].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[6].displayName,
+                                    comment = pressures[6].commentString
+                                )
+                            }
                         }
                     }
+
+                    if (pressures[7].isVisible) {
+                        item {
+                            Box(Modifier.aspectRatio(1f)) {
+                                GaugeX(
+                                    DpSize(columnHeightDp, columnHeightDp),
+                                    pressure8X,
+                                    (pressures[7].minValue),
+                                    (pressures[7].maxValue.toInt()),
+                                    type = "Бар",
+                                    displayName = pressures[7].displayName,
+                                    comment = pressures[7].commentString
+                                )
+                            }
+                        }
+                    }
+
 
                 }
             )

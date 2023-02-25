@@ -1,6 +1,7 @@
 package ui.starter_screen
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fazecast.jSerialComm.SerialPort
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import parsing_excel.targetParseScenario
@@ -35,6 +38,7 @@ fun StarterScreen() {
     var expandedOperator by remember { mutableStateOf(false) }
     var expandedCom by remember { mutableStateOf(false) }
     var expandedBaud by remember { mutableStateOf(false) }
+    var expandedSound by remember { mutableStateOf(false) }
     var visibilitySettings = remember { mutableStateOf(false)}
     var choosenCOM = remember { mutableStateOf(0) }
     var choosenBaud = remember { mutableStateOf(BAUD_RATE) }
@@ -132,6 +136,20 @@ fun StarterScreen() {
 
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        if (targetParseScenario(LAST_SCENARIO)) {
+                            screenNav.value = Screens.MAIN
+                        }
+
+
+                    }
+                }) {
+                Text("Open last scenario",
+                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+            }
+
+            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+                .clickable {
                     CoroutineScope(crtxscp).launch {
                         openPicker(Dir2Reports,PickTarget.PICK_CHART,isOnlyViewer = true)?.let { chartFileAfterExperiment.value = it }
 
@@ -146,20 +164,25 @@ fun StarterScreen() {
             }
 
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
-                .clickable {
-                    visibilitySettings.value = !visibilitySettings.value
-                }) {
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {},
+                        onDoubleTap = {
+                            screenNav.value = Screens.EASTER_EGG
+                        },
+                        onLongPress = {},
+                        onTap = {
+                            visibilitySettings.value = !visibilitySettings.value
+                        }
+                    )
+                }
+                ) {
                 Text("Settings",
-                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                    modifier = Modifier.padding(4.dp)
+                    , fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
             }
 
-            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
-                .clickable {
 
-                }) {
-                Text("Quick",
-                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
-            }
 //            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
 //                .clickable { visibilitySettings.value = !visibilitySettings.value }) {
 //                Text("Settings",
@@ -254,6 +277,38 @@ fun StarterScreen() {
                                     BAUD_RATE = choosenBaud.value
                                     }).fillMaxSize().padding(10.dp))
                                     Divider()
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Row {
+                            Text("Sound type",
+                                modifier = Modifier.width(200.dp).padding(4.dp).clickable {
+                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+
+                            Box {
+                                Text("${SOUND_ENABLED}",
+                                    modifier = Modifier.width(200.dp).padding(4.dp).clickable {
+                                        expandedSound = !expandedSound
+                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+
+                                DropdownMenu(
+                                    modifier = Modifier.background(Color.White),
+                                    expanded = expandedSound,
+                                    onDismissRequest = { expandedSound = false },
+                                ) {
+                                    Text("0",   fontSize=18.sp, modifier = Modifier.clickable(onClick= {
+                                        SOUND_ENABLED = 0
+                                    })  .fillMaxSize().padding(10.dp))
+                                    Text("1",   fontSize=18.sp, modifier = Modifier.clickable(onClick= {
+                                        SOUND_ENABLED = 1
+                                    })  .fillMaxSize().padding(10.dp))
+                                    Text("2",   fontSize=18.sp, modifier = Modifier.clickable(onClick= {
+                                        SOUND_ENABLED = 2
+                                    })  .fillMaxSize().padding(10.dp))
+
                                 }
                             }
                         }

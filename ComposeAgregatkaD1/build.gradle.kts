@@ -42,7 +42,7 @@ tasks.withType<KotlinCompile>() {
 }
 
 compose.desktop {
-    val version = "1.1.5"
+    val version = "1.2.0"
     application {
         mainClass = "MainKt"
         nativeDistributions {

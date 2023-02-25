@@ -70,6 +70,12 @@ fun readParameters(file: File) : List<ParameterCommon> {
                         "last_operator_id" -> {
                             listParams.add(ParameterCommon(name = "last_operator_id", value = items[1]))
                         }
+                        "sound_enabled" -> {
+                            listParams.add(ParameterCommon(name = "sound_enabled", value = items[1]))
+                        }
+                        "last_scenario" -> {
+                            listParams.add(ParameterCommon(name = "last_scenario", value = items[1]))
+                        }
                     }
                 }
             }
@@ -100,16 +106,20 @@ fun refreshParameters() {
         ParameterCommon("comport","${COM_PORT}"),
         ParameterCommon("baudrate","${BAUD_RATE}"),
         ParameterCommon("last_operator_id","${OPERATOR_ID}"),
+        ParameterCommon("sound_enabled","${SOUND_ENABLED}"),
+        ParameterCommon("last_scenario","${LAST_SCENARIO}"),
     )
 
-    //files:
+    //IF first launch
     val fl = Dir4MainConfig_Txt
     if (!fl.exists()) {
         fl.createNewFile()
         newParameters = arrayListOf(
             ParameterCommon("comport","COM10"),
-            ParameterCommon("baudrate","115200"),
+            ParameterCommon("baudrate","500000"),
             ParameterCommon("last_operator_id","Гаджилы Жималбек Али оглы"),
+            ParameterCommon("sound_enabled","1"),
+            ParameterCommon("last_scenario","${Dir9Scenario.absolutePath}"),
         )
     }
 
@@ -136,24 +146,6 @@ fun refreshParameters() {
 //    if (!newFileJson.exists()) {
 //        newFileJson.createNewFile()
 //    }
-
-}
-
-fun refreshParametersJson() {
-    logAct("refreshParametersJson -> ${COM_PORT}  ${BAUD_RATE}")
-//    val json = Json.encodeToString(
-//        arrayListOf<ParameterCommonJson>(
-//            ParameterCommonJson("comport", COM_PORT),
-//            ParameterCommonJson("baudrate", BAUD_RATE.toString()),
-//            ParameterCommonJson("last_operator_id", OPERATOR_ID),
-//        )
-//    )
-//
-//    var newFileJson = Dir4MainConfig_Txt //Dir4MainConfig_Json
-//    if (!newFileJson.exists()) {
-//        newFileJson.createNewFile()
-//    }
-//    newFileJson.writeText(json)
 
 }
 

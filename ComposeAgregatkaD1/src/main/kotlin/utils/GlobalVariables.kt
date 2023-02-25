@@ -10,15 +10,20 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
+import storage.models.ParameterCommon
 import ui.charts.Pointer
 import java.io.File
 import javax.swing.JFileChooser
 
-var COM_PORT = "COM0"
-var BAUD_RATE = 500000
-var OPERATOR_ID = "no name"
+
+
 var DELAY_FOR_GET_DATA = 0L
 var arrayOfComPorts = arrayOf<SerialPort>()
+
+
+val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","inner_marker.wav")
+val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","auto_click.wav")
+val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","run_vine.wav")
 
 
 val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config")
@@ -33,6 +38,11 @@ val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory
 val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
 val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
+var COM_PORT = "COM0"
+var BAUD_RATE = 500000
+var OPERATOR_ID = "no name"
+var SOUND_ENABLED = 1
+var LAST_SCENARIO = Dir9Scenario
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()

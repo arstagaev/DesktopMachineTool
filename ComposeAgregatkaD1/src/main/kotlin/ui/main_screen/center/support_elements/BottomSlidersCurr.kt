@@ -74,7 +74,7 @@ fun solenoidsPanel(
             }
         }
     }
-
+    val aspc = 4f
     Column(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth(),//.fillMaxSize(),
@@ -90,43 +90,183 @@ fun solenoidsPanel(
                 bottom = 0.dp
             ),
             content = {
-                item {
-                    justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+                if (solenoids[0].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+
+                        }
+                    }
                 }
-                item {
-                    justBar(index = 2,solenoids[1].displayName, current = map(x=current2,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].currentMaxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration = duration)
+                if (solenoids[1].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 2,
+                                solenoids[1].displayName,
+                                current = map(
+                                    x = current2,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[1].currentMaxValue
+                                ),
+                                maxPWM = solenoids[1].maxPWM,
+                                step = solenoids[1].step,
+                                duration = duration
+                            )
+
+                        }
+                    }
                 }
-                item {
-                    justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+                if (solenoids[2].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 3,
+                                solenoids[2].displayName,
+                                current = map(
+                                    x = current3,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[2].currentMaxValue
+                                ),
+                                maxPWM = solenoids[2].maxPWM,
+                                step = solenoids[2].step,
+                                duration = duration
+                            )
+
+                        }
+                    }
                 }
-                item {
-                    justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+                if (solenoids[3].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 4,
+                                solenoids[3].displayName,
+                                current = map(
+                                    x = current4,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[3].currentMaxValue
+                                ),
+                                maxPWM = solenoids[3].maxPWM,
+                                step = solenoids[3].step,
+                                duration = duration
+                            )
+
+                        }
+                    }
+                }
+                /////
+                if(solenoids[4].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 5,
+                                solenoids[4].displayName,
+                                current = map(
+                                    x = current5,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[0].currentMaxValue
+                                ),
+                                maxPWM = solenoids[4].maxPWM,
+                                step = solenoids[4].step,
+                                duration = duration
+                            )
+                        }
+                    }
+                }
+                if (solenoids[5].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 6,
+                                solenoids[5].displayName,
+                                current = map(
+                                    x = current6,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[0].currentMaxValue
+                                ),
+                                maxPWM = solenoids[5].maxPWM,
+                                step = solenoids[5].step,
+                                duration = duration
+                            )
+                        }
+                    }
+                }
+                if (solenoids[6].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 7,
+                                solenoids[6].displayName,
+                                current = map(
+                                    x = current7,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[0].currentMaxValue
+                                ),
+                                maxPWM = solenoids[6].maxPWM,
+                                step = solenoids[6].step,
+                                duration = duration
+                            )
+                        }
+                    }
+                }
+                if (solenoids[7].isVisible) {
+                    item {
+                        Box(Modifier.aspectRatio(aspc)) {
+                            justBar(
+                                index = 8,
+                                solenoids[7].displayName,
+                                current = map(
+                                    x = current8,
+                                    in_min = 0,
+                                    in_max = 4095,
+                                    out_min = 0,
+                                    out_max = solenoids[0].currentMaxValue
+                                ),
+                                maxPWM = solenoids[7].maxPWM,
+                                step = solenoids[7].step,
+                                duration = duration
+                            )
+                        }
+                    }
                 }
             }
         )
-        Row(
-            modifier = Modifier.fillMaxSize().weight(1f) //.padding(10.dp)
-//            .width(sizeRow.width.dp)
-//            .height(IntrinsicSize.Min)
-                .background(Color.Black)
-        ) {
-
-            justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
-            justBar(index = 2,solenoids[1].displayName, current = map(x=current2,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].currentMaxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration = duration)
-            justBar(index = 3,solenoids[2].displayName, current = map(x=current3,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[2].currentMaxValue), maxPWM = solenoids[2].maxPWM, step = solenoids[2].step, duration = duration)
-            justBar(index = 4,solenoids[3].displayName, current = map(x=current4,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[3].currentMaxValue), maxPWM = solenoids[3].maxPWM, step = solenoids[3].step, duration = duration)
-        }
-        Row(
-            modifier = androidx.compose.ui.Modifier.weight(1f) //.padding(10.dp)
-//                .width(sizeRow.width.dp)
-//                .height(IntrinsicSize.Min)
-                .background(Color.Black)
-        ) {
-            justBar(index = 5, solenoids[4].displayName, current = map(x=current5,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration = duration)
-            justBar(index = 6, solenoids[5].displayName, current = map(x=current6,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration = duration)
-            justBar(index = 7, solenoids[6].displayName, current = map(x=current7,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[6].maxPWM, step = solenoids[6].step, duration = duration)
-            justBar(index = 8, solenoids[7].displayName, current = map(x=current8,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[7].maxPWM, step = solenoids[7].step, duration = duration)
-        }
+//        Row(
+//            modifier = Modifier.fillMaxSize().weight(1f) //.padding(10.dp)
+////            .width(sizeRow.width.dp)
+////            .height(IntrinsicSize.Min)
+//                .background(Color.Black)
+//        ) {
+//
+//            justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+//            justBar(index = 2,solenoids[1].displayName, current = map(x=current2,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[1].currentMaxValue), maxPWM = solenoids[1].maxPWM, step = solenoids[1].step, duration = duration)
+//            justBar(index = 3,solenoids[2].displayName, current = map(x=current3,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[2].currentMaxValue), maxPWM = solenoids[2].maxPWM, step = solenoids[2].step, duration = duration)
+//            justBar(index = 4,solenoids[3].displayName, current = map(x=current4,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[3].currentMaxValue), maxPWM = solenoids[3].maxPWM, step = solenoids[3].step, duration = duration)
+//        }
+//        Row(
+//            modifier = androidx.compose.ui.Modifier.weight(1f) //.padding(10.dp)
+////                .width(sizeRow.width.dp)
+////                .height(IntrinsicSize.Min)
+//                .background(Color.Black)
+//        ) {
+//            justBar(index = 5, solenoids[4].displayName, current = map(x=current5,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[4].maxPWM, step = solenoids[4].step, duration = duration)
+//            justBar(index = 6, solenoids[5].displayName, current = map(x=current6,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[5].maxPWM, step = solenoids[5].step, duration = duration)
+//            justBar(index = 7, solenoids[6].displayName, current = map(x=current7,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[6].maxPWM, step = solenoids[6].step, duration = duration)
+//            justBar(index = 8, solenoids[7].displayName, current = map(x=current8,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[7].maxPWM, step = solenoids[7].step, duration = duration)
+//        }
     }
 
 }
@@ -185,7 +325,7 @@ fun justBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
+                    modifier = Modifier.fillMaxSize().background(Color.DarkGray).weight(1f).clickable {
                         PWMremember.value = 0
                         //pos.value = 1.0f
                         CoroutineScope(Dispatchers.IO).launch {
@@ -308,7 +448,7 @@ fun justBar(
                     )
                 }
                 Box(
-                    modifier = Modifier.fillMaxSize().background(Color.Gray).weight(1f).clickable {
+                    modifier = Modifier.fillMaxSize().background(Color.DarkGray).weight(1f).clickable {
                         PWMremember.value = 255
                         if (PWMremember.value > maxPWM) {
                             PWMremember.value = maxPWM

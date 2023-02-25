@@ -266,7 +266,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         plot.setOrientation(PlotOrientation.VERTICAL)
         logGarbage(">>>7")
         plot.setRenderer(renderer)
-
+        soundUniversal(Dir0Configs_End)
     }
 
     @Composable

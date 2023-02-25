@@ -11,6 +11,7 @@ fun initialize(params: List<ParameterCommon>) {
             "baudrate" -> BAUD_RATE = parameterCommon.value.toIntOrNull() ?: 115200
             //"is_demo" ->
             "last_operator_id" -> OPERATOR_ID = parameterCommon.value
+            "sound_enabled" -> SOUND_ENABLED = parameterCommon.value.toIntOrNull() ?: 1
         }
     }
 }

@@ -29,6 +29,7 @@ import ui.navigation.Screens
 import ui.main_screen.center.CenterPiece
 import ui.starter_screen.StarterScreen
 import utils.Dir3Scenarios
+import utils.Represent
 import java.awt.Font
 import java.io.File
 
@@ -47,19 +48,17 @@ var screenNav = mutableStateOf<Screens>(Screens.STARTER)
 @Preview
 fun App() {
     val screenNavi = remember { screenNav }
-//    if (screenNavi.value == Screens.CHART){
-//        chartWindow()
+
+    // for test:
+//    LaunchedEffect(true) {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            if (targetParseScenario(File(Dir3Scenarios,"scenario_demo.xls"))) {
+//                screenNav.value = Screens.MAIN
+//            }
+//
+//
+//        }
 //    }
-    // f
-    LaunchedEffect(true) {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (targetParseScenario(File(Dir3Scenarios,"scenario_demo.xls"))) {
-                screenNav.value = Screens.MAIN
-            }
-
-
-        }
-    }
 
 
     MaterialTheme {
@@ -75,6 +74,9 @@ fun App() {
                     }
                     Screens.MAIN -> {
                         CenterPiece()
+                    }
+                    Screens.EASTER_EGG -> {
+                        Represent()
                     }
                     else -> {
                         CenterPiece()

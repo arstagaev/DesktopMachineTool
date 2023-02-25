@@ -2,6 +2,7 @@
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -32,6 +33,7 @@ fun main() = application (
     Window(
         title = "Main Panel",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
+        icon = painterResource("drawable/ava.png"),
         onCloseRequest = {
             CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
                 pauseSerialComm()
@@ -46,7 +48,7 @@ fun main() = application (
 
         //var initParameters = readParameters(Dir4MainConfig)
 
-        //sound_On()
+
         initialize(readParameters(Dir4MainConfig_Txt))
 
         var isHaveConn = false

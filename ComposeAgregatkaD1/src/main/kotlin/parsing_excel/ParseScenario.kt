@@ -99,10 +99,10 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
                 unit =         wholeSheet[7][it+1],
                 commentString =wholeSheet[8][it+1],
                 prefferedColor=wholeSheet[9][it+1],
-                isVisible = wholeSheet[10].getOrNull(it+1) == "1"
+                isVisible =   wholeSheet[10].getOrNull(it+1) == "true"
             )
         )
-
+        logInfo("pressures: ${pressures.joinToString()} ]")
 
     }
 
@@ -131,7 +131,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
                 frequency =         wholeSheet[19][it+1].toDouble().toInt(),
                 expectedTestValue = wholeSheet[20][it+1].toDouble().toInt(),
                 currentMaxValue =   wholeSheet[21][it+1].toDouble().toInt(),
-                isVisible =         wholeSheet[22].getOrNull(it+1) == "1"
+                isVisible =         wholeSheet[22].getOrNull(it+1) == "true"
             )
         )
         maxPWMs.add(wholeSheet[16][it+1].toDouble().toInt())
