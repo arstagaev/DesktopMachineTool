@@ -28,6 +28,7 @@ import enums.StateExperiments
 import enums.StateParseBytes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import launchPlay
 import screenNav
 import serial_port.*
 import storage.createMeasureExperiment
@@ -226,49 +227,7 @@ fun CenterPiece(
                     test_time = 0
                     // launch
                     if (explMode.value == ExplorerMode.AUTO) {
-                        if (STATE_EXPERIMENT.value != StateExperiments.START) {
-                            ctxScope.launch {
-                                writeToSerialPort(
-                                    byteArrayOf(
-                                        0x78,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00,
-                                        0x00
-                                    ), withFlush = false
-                                )
-                            }
-
-//                            if (GLOBAL_STATE.value != StateParseBytes.PLAY) {
-//                                ctxScope.launch {
-//
-//                                    initSerialCommunication()
-//                                }
-//                            }
-
-                            GLOBAL_STATE.value = StateParseBytes.PLAY
-                            sound_On()
-                            logGarbage("ONON ${test_time} V")
-                            test_time = 0
-
-                            indexOfScenario.value = 0
-                            indexScenario = 0
-                            num = scenario[indexScenario].time
-                            isAlreadyReceivedBytesForChart.value = false
-                            logGarbage("ONON ${test_time} A")
-
-                        } else {
-                            sound_Error()
-                        }
+                        launchPlay()
                     } else if (explMode.value == ExplorerMode.MANUAL) {
                         indexOfScenario.value--
                         ctxScope.launch {
@@ -337,6 +296,11 @@ fun CenterPiece(
                 )
             }
             Box(Modifier.clickable {
+                CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
+                    delay(10)
+                    pauseSerialComm()
+
+                }
                 screenNav.value = Screens.STARTER
             }) {
                 Text(
@@ -353,7 +317,7 @@ fun CenterPiece(
 
         Row(Modifier.weight(5f)) {
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxWidth(),//.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 //columns = GridCells.Adaptive(150.dp),
                 columns = GridCells.Fixed(4),
                 verticalArrangement =   Arrangement.Center,

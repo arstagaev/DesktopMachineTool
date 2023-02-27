@@ -42,15 +42,15 @@ tasks.withType<KotlinCompile>() {
 }
 
 compose.desktop {
-    val version = "1.2.0"
+    val version = "1.2.1"
     application {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Agregatka MachineTool"
             packageVersion = version
-        }
 
+        }
         buildTypes.release {
             proguard {
                 //isEnabled.set(false)
@@ -58,4 +58,17 @@ compose.desktop {
             }
         }
     }
+
+//    nativeDistributions {
+//        val iconsRoot = project.file("src/main/resources")
+//        linux {
+//            iconFile.set(iconsRoot.resolve("drawables/linux_logo.png"))
+//        }
+//        windows {
+//            iconFile.set(iconsRoot.resolve("drawables/windows_logo.png"))
+//        }
+//        macOS{
+//            iconFile.set(iconsRoot.resolve("drawables/macOS_logo.png"))
+//        }
+//    }
 }

@@ -22,6 +22,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import openChartViewer
+import openLastScenario
+import openNewScenario
 import parsing_excel.targetParseScenario
 import screenNav
 import showMeSnackBar
@@ -66,11 +69,11 @@ fun StarterScreen() {
                     //screenNav.value = Screens.MAIN
                 }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
         }
-        Row(modifier = Modifier.fillMaxSize().weight(3f).background(Color.DarkGray), horizontalArrangement = Arrangement.Center) {
-            Image(
-                painter = painterResource("drawable/trs.jpg"),
-                contentDescription = null
-            )
+        Row(modifier = Modifier.fillMaxSize().weight(3f).background(Color.Black), horizontalArrangement = Arrangement.Center) {
+//            Image(
+//                painter = painterResource("drawable/trs.jpg"),
+//                contentDescription = null
+//            )
             Column(Modifier.padding(16.dp)) {
 
                 TextField(colors = TextFieldDefaults.textFieldColors(
@@ -111,23 +114,7 @@ fun StarterScreen() {
         Row(modifier = Modifier.fillMaxSize().weight(3f).padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
-                    //refreshParametersJson()
-                    isAlreadyReceivedBytesForChart.value = false
-                    CoroutineScope(crtxscp).launch {
-                        //openPicker(Dir3Scenarios)
-                        //targetParseScenario(createDemoConfigFile())
-                        refreshParameters()
-                        if (!targetParseScenario(openPicker(Dir3Scenarios))) {
-                            showMeSnackBar("Ошибка при парсинге xls",Color.Red)
-                        }else {
-
-                            //doOpen_First_ChartWindow.value = true
-                            //isAlreadyReceivedBytesForChart.value = true
-                            screenNav.value = Screens.MAIN
-                        }
-                    }
-
-
+                    openNewScenario()
 
                 }) {
                 Text("Open Scenario",
@@ -136,13 +123,7 @@ fun StarterScreen() {
 
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        if (targetParseScenario(LAST_SCENARIO)) {
-                            screenNav.value = Screens.MAIN
-                        }
-
-
-                    }
+                    openLastScenario()
                 }) {
                 Text("Open last scenario",
                     modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
@@ -150,13 +131,7 @@ fun StarterScreen() {
 
             Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
                 .clickable {
-                    CoroutineScope(crtxscp).launch {
-                        openPicker(Dir2Reports,PickTarget.PICK_CHART,isOnlyViewer = true)?.let { chartFileAfterExperiment.value = it }
-
-
-
-
-                    }
+                   openChartViewer()
 
                 }) {
                 Text("Open Chart",

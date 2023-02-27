@@ -76,6 +76,9 @@ fun readParameters(file: File) : List<ParameterCommon> {
                         "last_scenario" -> {
                             listParams.add(ParameterCommon(name = "last_scenario", value = items[1]))
                         }
+                        "delay_before_chart" -> {
+                            listParams.add(ParameterCommon(name = "delay_before_chart", value = items[1]))
+                        }
                     }
                 }
             }
@@ -108,19 +111,20 @@ fun refreshParameters() {
         ParameterCommon("last_operator_id","${OPERATOR_ID}"),
         ParameterCommon("sound_enabled","${SOUND_ENABLED}"),
         ParameterCommon("last_scenario","${LAST_SCENARIO}"),
+        ParameterCommon("delay_before_chart","${DELAY_BEFORE_CHART}"),
     )
 
     //IF first launch
     val fl = Dir4MainConfig_Txt
     if (!fl.exists()) {
         fl.createNewFile()
-        newParameters = arrayListOf(
-            ParameterCommon("comport","COM10"),
-            ParameterCommon("baudrate","500000"),
-            ParameterCommon("last_operator_id","Гаджилы Жималбек Али оглы"),
-            ParameterCommon("sound_enabled","1"),
-            ParameterCommon("last_scenario","${Dir9Scenario.absolutePath}"),
-        )
+//        newParameters = arrayListOf(
+//            ParameterCommon("comport","COM10"),
+//            ParameterCommon("baudrate","500000"),
+//            ParameterCommon("last_operator_id","Гаджилы Жималбек Али оглы"),
+//            ParameterCommon("sound_enabled","1"),
+//            ParameterCommon("last_scenario","${Dir9Scenario.absolutePath}"),
+//        )
     }
 
     val bw = fl.bufferedWriter()

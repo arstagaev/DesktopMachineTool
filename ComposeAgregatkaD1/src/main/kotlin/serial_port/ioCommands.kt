@@ -126,7 +126,7 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
     ch7 = pwm7SeekBar.value.toByte() //(rawPreByte6).toByte()
     ch8 = pwm8SeekBar.value.toByte() //(rawPreByte7).toByte()
 
-    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L)
+    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 100L)
 
     writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L)
 
@@ -196,3 +196,44 @@ suspend fun sendScenarioToController() {
         writeToSerialPort(send,delay = 10)
     }
 }
+
+fun sendFrequency() {
+    var arrSend = arrayListOf<Frequence>()
+    solenoids.forEachIndexed { index, solenoidHolder ->
+        val mkrs = 1_000_000 / solenoidHolder.frequency
+
+        val time = BigInteger.valueOf(mkrs.toLong()).toByteArray()
+        arrSend.add(Frequence(units = time[0], dozens = time[1]))
+    }
+
+
+    CoroutineScope(Dispatchers.IO).launch {
+        writeToSerialPort(byteArrayOf(
+            0x68,
+            arrSend[0].units,arrSend[0].dozens,
+            arrSend[1].units,arrSend[1].dozens,
+            arrSend[2].units,arrSend[2].dozens,
+            arrSend[3].units,arrSend[3].dozens,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ))
+        writeToSerialPort(byteArrayOf(
+            0x48,
+            arrSend[4].units,arrSend[4].dozens,
+            arrSend[5].units,arrSend[5].dozens,
+            arrSend[6].units,arrSend[6].dozens,
+            arrSend[7].units,arrSend[7].dozens,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ))
+    }
+
+}
+
+data class Frequence(val units: Byte, val dozens: Byte)

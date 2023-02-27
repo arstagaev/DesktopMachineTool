@@ -24,6 +24,7 @@ var arrayOfComPorts = arrayOf<SerialPort>()
 val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","inner_marker.wav")
 val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","auto_click.wav")
 val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","run_vine.wav")
+val Dir0Configs_Error = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","tesla_err.wav")
 
 
 val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config")
@@ -43,6 +44,7 @@ var BAUD_RATE = 500000
 var OPERATOR_ID = "no name"
 var SOUND_ENABLED = 1
 var LAST_SCENARIO = Dir9Scenario
+var DELAY_BEFORE_CHART = 2000
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()

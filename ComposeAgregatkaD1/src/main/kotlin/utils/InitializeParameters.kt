@@ -12,6 +12,7 @@ fun initialize(params: List<ParameterCommon>) {
             //"is_demo" ->
             "last_operator_id" -> OPERATOR_ID = parameterCommon.value
             "sound_enabled" -> SOUND_ENABLED = parameterCommon.value.toIntOrNull() ?: 1
+            "delay_before_chart" -> DELAY_BEFORE_CHART
         }
     }
 }

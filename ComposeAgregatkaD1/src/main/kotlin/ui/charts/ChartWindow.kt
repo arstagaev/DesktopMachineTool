@@ -19,6 +19,7 @@ import androidx.compose.ui.window.WindowState
 import enums.StateExperiments
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.JFreeChart
@@ -74,9 +75,15 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         plot,true
     )
 
+    private var sizeStandard   = 0
+    private var sizeExperiment = 0
+
     init {
         crtx.launch {
+            delay(1000)
             fillUp()
+            delay(1000)
+            STATE_EXPERIMENT.value = StateExperiments.NONE
         }.invokeOnCompletion {
             chart = JFreeChart(
                 "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
@@ -93,16 +100,22 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
     fun chartWindow() {
 
         Window(
-            title = "Compare with Standard",
+            title = if (isViewerOnly) "Viewer" else "Compare with Standard",
             state = WindowState(size = DpSize(1000.dp, 800.dp)),
             onCloseRequest = {
-                if (isViewerOnly) {
-                    doOpen_Second_ChartWindow.value = false
-                } else {
-                    doOpen_First_ChartWindow.value = false
-                }
 
-                             },
+                CoroutineScope(Dispatchers.Default).launch {
+                    if (isViewerOnly) {
+                        doOpen_Second_ChartWindow.value = false
+                    } else {
+                        doOpen_First_ChartWindow.value = false
+                    }
+                    delay(100)
+
+                    writeToExcel(0,0, chartFileStandard.value.name)
+
+                }
+        },
         ) {
             val chrt = remember { STATE_EXPERIMENT }
 
@@ -192,6 +205,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         //}
 
         logGarbage(">>>3")
+        sizeExperiment = series1.items.size
             dataset.addSeries(series1)
             dataset.addSeries(series2)
             dataset.addSeries(series3)
@@ -202,6 +216,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
             dataset.addSeries(series8)
 
             if (withStandard) {
+                sizeStandard = series10.items.size
                 //logInfo("chart series16 ${series16.maximumItemCount} ${series16}")
                 dataset.addSeries(series9)
                 dataset.addSeries(series10)
@@ -260,7 +275,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                 }
             }
 
-        STATE_EXPERIMENT.value = StateExperiments.NONE
+
         logGarbage(">>>6")
         plot = XYPlot(dataset, xAxis, yAxis, renderer)
         plot.setOrientation(PlotOrientation.VERTICAL)
@@ -295,8 +310,8 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                         }
 
                     }){
-                        Text("Эталон: ${standardFile.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
-                            fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                        Text("Эталон(${sizeStandard}): ${standardFile.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                            fontFamily = FontFamily.Default, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black
                         )
                     }
                     Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
@@ -307,8 +322,8 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                         }
 
                     }){
-                        Text("Эксперимент: ${chartFileAfterExperiment.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
-                            fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
+                        Text("Эксперимент(${sizeExperiment}): ${chartFileAfterExperiment.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
+                            fontFamily = FontFamily.Default, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black
                         )
                     }
                 }

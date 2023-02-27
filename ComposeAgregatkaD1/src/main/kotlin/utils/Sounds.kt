@@ -60,12 +60,14 @@ fun soundUniversal(file: File) {
 }
 
 fun sound_Error() {
-    return
-    val lol = File("raw/tesla_err.wav")
+    if (SOUND_ENABLED == 0) {
+        return
+    }
+    //val lol = File(Dir0Configs_End)
 
     try {
         val clip = AudioSystem.getClip()
-        clip.open(AudioSystem.getAudioInputStream(lol))
+        clip.open(AudioSystem.getAudioInputStream(Dir0Configs_End))
         clip.start()
     } catch (e: Exception) {
         e.printStackTrace()
