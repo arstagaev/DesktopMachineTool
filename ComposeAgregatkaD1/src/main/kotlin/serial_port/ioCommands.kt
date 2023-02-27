@@ -63,7 +63,7 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, 
 //    }
     repeat(1) {
 
-        println("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
+        logAct("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
         serialPort.writeBytes(sendBytes, sendBytes.size.toLong())
         if (withFlush) {
             serialPort.flushIOBuffers()

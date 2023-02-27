@@ -20,22 +20,24 @@ import javax.swing.JFileChooser
 var DELAY_FOR_GET_DATA = 0L
 var arrayOfComPorts = arrayOf<SerialPort>()
 
+val MAINFOLDER = "mcm"
 
-val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","inner_marker.wav")
-val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","auto_click.wav")
-val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","run_vine.wav")
-val Dir0Configs_Error = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config","tesla_err.wav")
+val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","inner_marker.wav")
+val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","auto_click.wav")
+val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","run_vine.wav")
+val Dir0Configs_Error = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","tesla_err.wav")
 
 
-val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\config")
-val Dir2Reports = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\reports")
-val Dir3Scenarios = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\scenarios")
+val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config")
+val Dir2Reports = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\reports")
+val Dir3Scenarios = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\scenarios")
 val Dir4MainConfig_Json = File(Dir1Configs,"\\config.json")
 val Dir4MainConfig_Txt = File(Dir1Configs,"\\config.txt")
+val Dir4MainConfig_Log by lazy { File(Dir1Configs,"\\log${generateTimestampLastUpdate()}.txt") }
 val Dir5Operators = File(Dir1Configs,"\\operator_ids.txt")
 
 val Dir6 = File(Dir2Reports,"\\demo.txt")
-val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\agregatka_machinetool\\reports\\standard")
+val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\reports\\standard")
 val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
 val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
@@ -45,6 +47,7 @@ var OPERATOR_ID = "no name"
 var SOUND_ENABLED = 1
 var LAST_SCENARIO = Dir9Scenario
 var DELAY_BEFORE_CHART = 2000
+var SAVELOG = true
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()

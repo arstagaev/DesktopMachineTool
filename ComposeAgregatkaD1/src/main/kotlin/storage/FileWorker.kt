@@ -6,9 +6,7 @@ import kotlinx.coroutines.launch
 import showMeSnackBar
 import storage.models.ParameterCommon
 import utils.*
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
+import java.io.*
 
 fun checkNeededFolders(): Boolean {
         return false
@@ -79,6 +77,9 @@ fun readParameters(file: File) : List<ParameterCommon> {
                         "delay_before_chart" -> {
                             listParams.add(ParameterCommon(name = "delay_before_chart", value = items[1]))
                         }
+                        "save_log" -> {
+                            listParams.add(ParameterCommon(name = "save_log", value = items[1]))
+                        }
                     }
                 }
             }
@@ -112,6 +113,7 @@ fun refreshParameters() {
         ParameterCommon("sound_enabled","${SOUND_ENABLED}"),
         ParameterCommon("last_scenario","${LAST_SCENARIO}"),
         ParameterCommon("delay_before_chart","${DELAY_BEFORE_CHART}"),
+        ParameterCommon("save_log","${SAVELOG}"),
     )
 
     //IF first launch
@@ -222,4 +224,39 @@ fun readMeasuredExperiment(file: File) {
     } catch (e: Exception) {
         logError("error +${e.message}")
     }
+}
+
+
+fun writeToFile(msg: String, fl: File) {
+
+    //IF first launch
+    //val fl = Dir4MainConfig_Log
+    if (!fl.exists()) {
+        fl.createNewFile()
+//        )
+    }
+    val fileOutputStream = FileOutputStream(fl,true)
+    val outputStreamWriter = OutputStreamWriter(fileOutputStream)
+    try {
+
+        outputStreamWriter.append(msg+"\n")
+
+
+    }catch (e:Exception) {
+        logError("ERROR ${e.message}")
+    } finally {
+        outputStreamWriter.close()
+        fileOutputStream.close()
+
+    }
+
+//    val bw = fl.bufferedWriter()
+//
+//    try {
+//        bw.append(msg)
+//        bw.close()
+//    }catch (e: Exception){
+//        showMeSnackBar("Error! ${e.message}")
+//    }
+
 }

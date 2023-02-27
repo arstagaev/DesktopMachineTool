@@ -27,6 +27,7 @@ import ui.charts.ChartWindowNew
 import ui.windows.WindowTypes
 import utils.*
 import java.awt.event.KeyEvent
+import java.io.File
 import kotlin.concurrent.fixedRateTimer
 
 
@@ -37,7 +38,7 @@ fun main() = application (
 //    visible = true
 ) {
     Window(
-        title = "Main Panel",
+        title = "MCM",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
         icon = painterResource("drawable/ava.png"),
         onKeyEvent = {

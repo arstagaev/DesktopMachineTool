@@ -1,5 +1,6 @@
 package ui.starter_screen
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -9,9 +10,12 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -32,9 +36,12 @@ import storage.PickTarget
 import storage.refreshParameters
 import storage.openPicker
 import ui.navigation.Screens
+import ui.styles.fontDigital
+import ui.styles.fontRoboGirls
 import utils.*
 
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun StarterScreen() {
 
@@ -58,16 +65,39 @@ fun StarterScreen() {
             delay(1000)
         }
     }
-
+//    val infiniteTransition = rememberInfiniteTransition()
+//
+//    val offset by infiniteTransition.animateFloat(
+//        initialValue = 0f,
+//        targetValue = 1f,
+//        animationSpec = infiniteRepeatable(
+//            animation = tween(durationMillis = 2000, easing = LinearEasing),
+//            repeatMode = RepeatMode.Reverse
+//        )
+//    )
+//    val brush = remember(offset) {
+//        object : ShaderBrush() {
+//            override fun createShader(size: Size): Shader {
+//                val widthOffset = size.width * offset
+//                val heightOffset = size.height * offset
+//                return LinearGradientShader(
+//                    colors = listOf(Color.White, Color.Gray, Color.DarkGray),
+//                    from = Offset(widthOffset, heightOffset),
+//                    to = Offset(widthOffset + size.width, heightOffset + size.height),
+//                    tileMode = TileMode.Mirror
+//                )
+//            }
+//        }
+//    }
     Column(Modifier.fillMaxSize().background(Color.Black)) {
         Row(modifier = Modifier.fillMaxSize().weight(2f), horizontalArrangement = Arrangement.Center) {
 
             //Image("",painter = painterResource("drawable/trs.jpg"))
-            Text("TRS | Трансмиссионные системы \n Станок №${7}",
+            Text("MCM - Modulation Control Module",
                 modifier = Modifier//.fillMaxSize()
-                    .padding(4.dp).clickable {
+                    .padding(top = 20.dp).clickable {
                     //screenNav.value = Screens.MAIN
-                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                }, fontSize = 50.sp, fontFamily = fontRoboGirls, color = Color.White, textAlign = TextAlign.Center)
         }
         Row(modifier = Modifier.fillMaxSize().weight(3f).background(Color.Black), horizontalArrangement = Arrangement.Center) {
 //            Image(
@@ -204,6 +234,7 @@ fun StarterScreen() {
                                                 choosenCOM.value = it
                                                 COM_PORT = arrayOfComPorts[it].systemPortName
                                                 logAct("DropdownMenu click ${COM_PORT}")
+                                                refreshParameters()
                                             }))
 
                                     }
@@ -287,6 +318,30 @@ fun StarterScreen() {
                                 }
                             }
                         }
+                    }
+
+                    item {
+                        Row {
+                            Text("Enable Logger",
+                                modifier = Modifier.width(200.dp).padding(4.dp).clickable {
+                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+
+
+                            val checkedState = remember { mutableStateOf(SAVELOG) }
+                            Checkbox(
+                                checked = checkedState.value,
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = Color.Blue,
+                                    uncheckedColor = Color.Gray
+                                ),
+                                onCheckedChange = {
+                                    checkedState.value = it
+                                    SAVELOG = it
+                                    refreshParameters()
+                                }
+                            )
+                        }
+
                     }
                 }
             }

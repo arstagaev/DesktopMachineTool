@@ -42,12 +42,12 @@ tasks.withType<KotlinCompile>() {
 }
 
 compose.desktop {
-    val version = "1.2.1"
+    val version = "1.2.3"
     application {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Agregatka MachineTool"
+            packageName = "MCM"
             packageVersion = version
 
         }
