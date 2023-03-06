@@ -38,7 +38,7 @@ fun main() = application (
 //    visible = true
 ) {
     Window(
-        title = "MCM",
+        title = "MCM [${generateTimestampLastUpdate()}]",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
         icon = painterResource("drawable/ava.png"),
         onKeyEvent = {

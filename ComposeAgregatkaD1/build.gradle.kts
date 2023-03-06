@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+
     implementation(compose.desktop.windows_x64)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
@@ -42,7 +43,9 @@ tasks.withType<KotlinCompile>() {
 }
 
 compose.desktop {
-    val version = "1.2.3"
+
+    val version = "1.2.8"
+
     application {
         mainClass = "MainKt"
         nativeDistributions {

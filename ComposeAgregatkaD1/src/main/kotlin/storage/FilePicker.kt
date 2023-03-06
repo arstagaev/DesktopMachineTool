@@ -1,10 +1,5 @@
 package storage
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import parsing_excel.targetParseScenario
-import utils.Dir3Scenarios
 import utils.chartFileAfterExperiment
 import utils.doOpen_Second_ChartWindow
 import java.io.File
@@ -31,7 +26,7 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO,is
                 "Chart", "txt","agregatka"
             )
         }
-        PickTarget.PICK_CHART -> {
+        PickTarget.PICK_CHART_VIEWER -> {
             filter = FileNameExtensionFilter(
                 "Chart", "txt","agregatka"
             )
@@ -51,7 +46,7 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO,is
 //        }
 
         when {
-            picker == PickTarget.PICK_CHART -> {
+            picker == PickTarget.PICK_CHART_VIEWER -> {
                 chartFileAfterExperiment.value = chooser.selectedFile
                 if (isOnlyViewer) {
                     doOpen_Second_ChartWindow.value = true
@@ -65,4 +60,4 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO,is
     return null
 }
 
-enum class PickTarget { PICK_SCENARIO, PICK_CHART, PICK_STANDARD_CHART }
+enum class PickTarget { PICK_SCENARIO, PICK_CHART_VIEWER, PICK_STANDARD_CHART }

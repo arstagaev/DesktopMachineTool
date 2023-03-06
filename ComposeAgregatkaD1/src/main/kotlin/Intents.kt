@@ -60,21 +60,38 @@ fun launchPlay() {
 }
 
 
-fun openNewScenario() {
-    //refreshParametersJson()
-    isAlreadyReceivedBytesForChart.value = false
+fun openNewScenario(isRefreshForChart: Boolean = false) {
+
     CoroutineScope(Dispatchers.Default).launch {
         //openPicker(Dir3Scenarios)
         //targetParseScenario(createDemoConfigFile())
-        refreshParameters()
-        if (!targetParseScenario(openPicker(Dir3Scenarios))) {
-            showMeSnackBar("Ошибка при парсинге xls", Color.Red)
-        }else {
+        if (isRefreshForChart) {
+            //open just viewer
 
-            //doOpen_First_ChartWindow.value = true
-            //isAlreadyReceivedBytesForChart.value = true
-            screenNav.value = Screens.MAIN
+            showMeSnackBar("Нужно выбрать сценарий для отметки степов")
+            if (!targetParseScenario(openPicker(Dir3Scenarios))) {
+                showMeSnackBar("Ошибка при парсинге xls", Color.Red)
+            }else {
+
+                //doOpen_First_ChartWindow.value = true
+                //isAlreadyReceivedBytesForChart.value = true
+                //screenNav.value = Screens.MAIN
+            }
+        } else {
+            // open new scenario
+            isAlreadyReceivedBytesForChart.value = false
+            refreshParameters()
+            if (!targetParseScenario(openPicker(Dir3Scenarios))) {
+                showMeSnackBar("Ошибка при парсинге xls", Color.Red)
+            }else {
+
+                //doOpen_First_ChartWindow.value = true
+                //isAlreadyReceivedBytesForChart.value = true
+                screenNav.value = Screens.MAIN
+            }
         }
+
+
     }
 }
 
@@ -90,7 +107,7 @@ fun openLastScenario() {
 
 fun openChartViewer() {
     CoroutineScope(Dispatchers.Default).launch {
-        openPicker(Dir2Reports, PickTarget.PICK_CHART,isOnlyViewer = true)?.let { chartFileAfterExperiment.value = it }
+        openPicker(Dir2Reports, PickTarget.PICK_CHART_VIEWER,isOnlyViewer = true)?.let { chartFileAfterExperiment.value = it }
 
 
 

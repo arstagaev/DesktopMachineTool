@@ -1,5 +1,6 @@
 package ui.starter_screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -65,30 +66,7 @@ fun StarterScreen() {
             delay(1000)
         }
     }
-//    val infiniteTransition = rememberInfiniteTransition()
-//
-//    val offset by infiniteTransition.animateFloat(
-//        initialValue = 0f,
-//        targetValue = 1f,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(durationMillis = 2000, easing = LinearEasing),
-//            repeatMode = RepeatMode.Reverse
-//        )
-//    )
-//    val brush = remember(offset) {
-//        object : ShaderBrush() {
-//            override fun createShader(size: Size): Shader {
-//                val widthOffset = size.width * offset
-//                val heightOffset = size.height * offset
-//                return LinearGradientShader(
-//                    colors = listOf(Color.White, Color.Gray, Color.DarkGray),
-//                    from = Offset(widthOffset, heightOffset),
-//                    to = Offset(widthOffset + size.width, heightOffset + size.height),
-//                    tileMode = TileMode.Mirror
-//                )
-//            }
-//        }
-//    }
+
     Column(Modifier.fillMaxSize().background(Color.Black)) {
         Row(modifier = Modifier.fillMaxSize().weight(2f), horizontalArrangement = Arrangement.Center) {
 
@@ -116,9 +94,6 @@ fun StarterScreen() {
                         textState.value = it
                         OPERATOR_ID = it
                         refreshParameters()
-                        //refreshParametersJson()
-                        // work json
-                        //OPERATOR_ID = it
                     },
                     textStyle = TextStyle.Default.copy(fontSize = 35.sp)
                 )
@@ -208,8 +183,9 @@ fun StarterScreen() {
 
 
         if(visibilitySettings.value) {
-            Row(modifier = Modifier.fillMaxSize().weight(4f).background(Color.DarkGray)) {
-                LazyColumn {
+            Row(modifier = Modifier.fillMaxSize().weight(4f).background(Color.DarkGray),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                LazyColumn(Modifier.width(300.dp)) {
                     item {
                         Row {
                             Text("COM Port:",
@@ -344,6 +320,28 @@ fun StarterScreen() {
 
                     }
                 }
+
+                Column(Modifier.width(600.dp).verticalScroll(rememberScrollState())) {
+                    Row(Modifier.width(600.dp)) {
+                        Text("⌨️\uD83D\uDD25Hot Keys:" +
+                                "\n [N] - new experiment" +
+                                "\n [L] - later experiment" +
+                                "\n [V] - open viewer" +
+                                "\n [Space] - start experiment" +
+                                "\n [<-] - previous scenario" +
+                                "\n [->] - next scenario" +
+                                "",
+                            modifier = Modifier.fillMaxSize().clickable {
+                            },
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+
             }
         }
     }

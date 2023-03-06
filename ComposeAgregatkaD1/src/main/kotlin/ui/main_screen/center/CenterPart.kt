@@ -299,7 +299,7 @@ fun CenterPiece(
                 CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
                     delay(10)
                     pauseSerialComm()
-
+                    scenario.clear()
                 }
                 screenNav.value = Screens.STARTER
             }) {

@@ -3,7 +3,7 @@ package utils
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun generateChartShapshoot() = OPERATOR_ID+" "+generateTimestampLastUpdate()
+fun generateChartShapshoot() = generateTimestampLastUpdate()+" ${OPERATOR_ID}"
 
 fun generateTimestampLastUpdate() : String{
     //return SimpleDateFormat("HHmmss dd_MM_yyyy").format(Date())

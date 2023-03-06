@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
@@ -21,24 +23,32 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import openNewScenario
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.axis.NumberAxis
+import org.jfree.chart.plot.IntervalMarker
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.chart.ui.Layer
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import parsing_excel.targetParseScenario
 import parsing_excel.writeToExcel
 import showMeSnackBar
 import storage.PickTarget
 import storage.openPicker
+import ui.charts.models.ScenarioIntervalChart
 import utils.*
 import java.awt.BasicStroke
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
 import javax.swing.BoxLayout
 import javax.swing.JPanel
+
 
 class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolean = false) {
     val dataset = XYSeriesCollection()
@@ -62,6 +72,8 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
     private val series15 = XYSeries("Давление 7"+(" [Стандарт]"))
     private val series16 = XYSeries("Давление 8"+(" [Стандарт]"))
 
+    private var showMeChart = mutableStateOf(false)
+
     var chartPanel: JPanel? = null
     var isLoading = mutableStateOf(false)
     val crtx = CoroutineScope(Dispatchers.Default)
@@ -70,6 +82,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
     private val xAxis = NumberAxis("time (ms)")
     private val yAxis = NumberAxis("Bar")
     private var plot = XYPlot(dataset, xAxis, yAxis, renderer)
+
     var chart = JFreeChart(
         "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
         plot,true
@@ -80,16 +93,26 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
     init {
         crtx.launch {
+
             delay(1000)
             fillUp()
             delay(1000)
             STATE_EXPERIMENT.value = StateExperiments.NONE
         }.invokeOnCompletion {
-            chart = JFreeChart(
-                "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
-                plot,true
-            )
-            logGarbage(">>>8 ${it?.message}")
+
+            crtx.launch {
+
+                addMarkersScenarios()
+
+            }.invokeOnCompletion {
+                chart = JFreeChart(
+                    "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
+                    plot,true
+                )
+                logGarbage(">>>8 ${it?.message}")
+                soundUniversal(Dir0Configs_End)
+            }
+
         }
 
 
@@ -281,12 +304,16 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         plot.setOrientation(PlotOrientation.VERTICAL)
         logGarbage(">>>7")
         plot.setRenderer(renderer)
-        soundUniversal(Dir0Configs_End)
+
+
+
+
     }
 
     @Composable
     fun ChartSecond() {
         val standardFile = remember { chartFileStandard }
+        val shwmechrt = remember { showMeChart }
         //val loader = remember { isLoading }
         Box {
             Column(
@@ -315,7 +342,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                         )
                     }
                     Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
-                        openPicker(Dir2Reports, PickTarget.PICK_CHART).let { if(it != null) chartFileAfterExperiment.value = it }
+                        openPicker(Dir2Reports, PickTarget.PICK_CHART_VIEWER).let { if(it != null) chartFileAfterExperiment.value = it }
 
                         CoroutineScope(Dispatchers.Default).launch {
                             fillExperiment(isRefresh = true)
@@ -339,17 +366,19 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                         fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
                     )
                 }
-                SwingPanel(
-                    background = Color.DarkGray,
-                    modifier = Modifier.fillMaxSize(),//.size(width = 1000.dp, height =  600.dp),
-                    factory = {
-                        JPanel().apply {
-                            setLayout(BoxLayout(this, BoxLayout.Y_AXIS))
-                            add(chartPanel)
+                if (shwmechrt.value) {
+                    SwingPanel(
+                        background = Color.DarkGray,
+                        modifier = Modifier.fillMaxSize(),//.size(width = 1000.dp, height =  600.dp),
+                        factory = {
+                            JPanel().apply {
+                                setLayout(BoxLayout(this, BoxLayout.Y_AXIS))
+                                add(chartPanel)
 
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 //            if (loader.value) {
 //                Box(Modifier.fillMaxSize().background(colorTrans60)){
@@ -390,17 +419,23 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
             //var countOfLine = 0
             while (br.readLine().also { line = it } != null) {
                 if(line != ""|| line != " ") {
-                    val items = line?.split(";","|")?.toTypedArray()
-                    if (items != null ) {
-                        series9 .add(items[0].toInt(),items[1].toInt())
-                        series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
-                        series11.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
-                        series12.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
-                        series13.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
-                        series14.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
-                        series15.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
-                        series16.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                    if (line?.first() == '&') {
+                        val items = line?.split("&")?.toTypedArray()
+                        Dir_10_ScenarioForChart = File(Dir3Scenarios,items?.get(0) ?: "")
+                    } else {
+                        val items = line?.split(";","|")?.toTypedArray()
+                        if (items != null ) {
+                            series9 .add(items[0].toInt(),items[1].toInt())
+                            series10.add(items[2].toInt(),items[3].toInt()).takeIf { items.size > 2 }
+                            series11.add(items[4].toInt(),items[5].toInt()).takeIf { items.size > 4 }
+                            series12.add(items[6].toInt(),items[7].toInt()).takeIf { items.size > 6 }
+                            series13.add(items[8].toInt(),items[9].toInt()).takeIf { items.size > 8 }
+                            series14.add(items[10].toInt(),items[11].toInt()).takeIf { items.size > 10 }
+                            series15.add(items[12].toInt(),items[13].toInt()).takeIf { items.size > 12 }
+                            series16.add(items[14].toInt(),items[15].toInt()).takeIf { items.size > 14 }
+                        }
                     }
+
                 }
                 //countOfLine++
             }
@@ -488,14 +523,40 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         series8.notify = true
 
 
-
-        if (withStandard) {
-
-        }
         isLoading.value = false
     }
 
-    fun refreshSeries() {
+    suspend fun addMarkersScenarios() {
+        if (Dir_10_ScenarioForChart.exists()) {
+            targetParseScenario(Dir_10_ScenarioForChart)
+        }
 
+
+        if (scenario.isEmpty()) {
+            openNewScenario(isRefreshForChart = true)
+        } else {
+
+        }
+
+        var lastNum = 0.0
+        logGarbage("SCENNNAAX ${scenario.size} ")
+        repeat(scenario.size) {
+            logGarbage("SCENNNAA")
+            val target = IntervalMarker(lastNum, lastNum+scenario[it].time.toDouble(),
+                if (it % 2 == 0)java.awt.Color.LIGHT_GRAY else java.awt.Color.GRAY)
+            lastNum += scenario[it].time.toDouble()
+            target.label = "[${scenario[it].comment}]"
+            //target.paint = java.awt.Color.GREEN
+            //target.labelAnchor = RectangleAnchor.LEFT
+            //target.labelTextAnchor = TextAnchor.CENTER_LEFT
+            //target.setPaint(java.awt.Color.GREEN)
+//		target.setPaint(new Color(10, 222, 2, 128));
+            //		target.setPaint(new Color(10, 222, 2, 128));
+            //plot.addRangeMarker(1,target,Layer.FOREGROUND,true)
+            val plot: XYPlot = chart.getXYPlot()
+            plot.addDomainMarker(target, Layer.BACKGROUND)
+            chart.isNotify = true
+        }
+        showMeChart.value = true
     }
 }
