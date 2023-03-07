@@ -40,6 +40,7 @@ import parsing_excel.writeToExcel
 import showMeSnackBar
 import storage.PickTarget
 import storage.openPicker
+import storage.openPickerLambda
 import ui.charts.models.ScenarioIntervalChart
 import utils.*
 import java.awt.BasicStroke
@@ -105,12 +106,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                 addMarkersScenarios()
 
             }.invokeOnCompletion {
-                chart = JFreeChart(
-                    "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
-                    plot,true
-                )
-                logGarbage(">>>8 ${it?.message}")
-                soundUniversal(Dir0Configs_End)
+
             }
 
         }
@@ -301,6 +297,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
         logGarbage(">>>6")
         plot = XYPlot(dataset, xAxis, yAxis, renderer)
+        plot
         plot.setOrientation(PlotOrientation.VERTICAL)
         logGarbage(">>>7")
         plot.setRenderer(renderer)
@@ -533,30 +530,46 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
 
         if (scenario.isEmpty()) {
-            openNewScenario(isRefreshForChart = true)
+            openPickerLambda(Dir3Scenarios) {
+                crtx.launch {
+                    targetParseScenario(it)
+
+                    var lastNum = 0.0
+                    logGarbage("SCENNNAAX ${scenario.size} ")
+                    repeat(scenario.size) {
+                        logGarbage("SCENNNAA")
+                        val target = IntervalMarker(lastNum, lastNum+scenario[it].time.toDouble(),
+                            if (it % 2 == 0)java.awt.Color.LIGHT_GRAY else java.awt.Color.GRAY)
+                        lastNum += scenario[it].time.toDouble()
+                        target.label = "[${scenario[it].comment}]"
+                        //target.paint = java.awt.Color.GREEN
+                        //target.labelAnchor = RectangleAnchor.LEFT
+                        //target.labelTextAnchor = TextAnchor.CENTER_LEFT
+                        //target.setPaint(java.awt.Color.GREEN)
+//		target.setPaint(new Color(10, 222, 2, 128));
+                        //		target.setPaint(new Color(10, 222, 2, 128));
+                        //plot.addRangeMarker(1,target,Layer.FOREGROUND,true)
+                        val plot: XYPlot = chart.getXYPlot()
+                        plot.addDomainMarker(target, Layer.BACKGROUND)
+                        chart.isNotify = true
+                    }
+                    showMeChart.value = true
+
+
+                    chart = JFreeChart(
+                        "Эталон и текущий эксперимент", JFreeChart.DEFAULT_TITLE_FONT,
+                        plot,true
+                    )
+                    logGarbage(">>>8 $}")
+                    soundUniversal(Dir0Configs_End)
+                }
+
+            }
+            //openNewScenario(isRefreshForChart = true)
         } else {
 
         }
 
-        var lastNum = 0.0
-        logGarbage("SCENNNAAX ${scenario.size} ")
-        repeat(scenario.size) {
-            logGarbage("SCENNNAA")
-            val target = IntervalMarker(lastNum, lastNum+scenario[it].time.toDouble(),
-                if (it % 2 == 0)java.awt.Color.LIGHT_GRAY else java.awt.Color.GRAY)
-            lastNum += scenario[it].time.toDouble()
-            target.label = "[${scenario[it].comment}]"
-            //target.paint = java.awt.Color.GREEN
-            //target.labelAnchor = RectangleAnchor.LEFT
-            //target.labelTextAnchor = TextAnchor.CENTER_LEFT
-            //target.setPaint(java.awt.Color.GREEN)
-//		target.setPaint(new Color(10, 222, 2, 128));
-            //		target.setPaint(new Color(10, 222, 2, 128));
-            //plot.addRangeMarker(1,target,Layer.FOREGROUND,true)
-            val plot: XYPlot = chart.getXYPlot()
-            plot.addDomainMarker(target, Layer.BACKGROUND)
-            chart.isNotify = true
-        }
-        showMeChart.value = true
+
     }
 }

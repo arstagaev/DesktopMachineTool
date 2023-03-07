@@ -41,7 +41,7 @@ val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory
 val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
 val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
-var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo.xls")
+var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demx.xls")
 
 var COM_PORT = "COM0"
 var BAUD_RATE = 500000

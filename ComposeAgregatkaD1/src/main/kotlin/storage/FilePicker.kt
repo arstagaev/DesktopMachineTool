@@ -61,3 +61,20 @@ fun openPicker(targetDir: File, picker: PickTarget = PickTarget.PICK_SCENARIO,is
 }
 
 enum class PickTarget { PICK_SCENARIO, PICK_CHART_VIEWER, PICK_STANDARD_CHART }
+
+suspend fun openPickerLambda(targetDir: File, out: (fileOut: File) -> Unit) {
+
+    val chooser = JFileChooser(targetDir)
+    var filter = FileNameExtensionFilter(
+        "Config", "xls","xlsx"
+    )
+    chooser.fileFilter = filter
+    val returnVal = chooser.showOpenDialog(null)
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+        println(
+            "You chose to open this file: " +
+                    chooser.selectedFile.name
+        )
+        out.invoke(chooser.selectedFile)
+    }
+}
