@@ -92,6 +92,32 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
     private var sizeStandard   = 0
     private var sizeExperiment = 0
 
+    var stateOfVisibleSeries = arrayListOf<Boolean>()
+
+    val arrClrExperiment = arrayOf(
+        java.awt.Color.RED,
+        java.awt.Color.ORANGE,
+        java.awt.Color.YELLOW,
+        java.awt.Color.GREEN,
+        java.awt.Color.BLUE,
+        java.awt.Color.CYAN,
+        java.awt.Color.MAGENTA,
+        java.awt.Color.BLACK
+    )
+
+    val arrClrStandard = arrayOf(
+        java.awt.Color(255, 145, 145),
+        java.awt.Color(255, 200, 50),
+        java.awt.Color(255, 255, 150),
+        java.awt.Color(147, 255, 100),
+        java.awt.Color(147, 147, 255),
+        java.awt.Color(147, 255, 255),
+        java.awt.Color(255, 147, 255),
+        java.awt.Color(128, 128, 128)
+    )
+
+    var halfNumberOfCharts = 0
+
     init {
         crtx.launch {
 
@@ -160,9 +186,9 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
         logGarbage(">>>1")
         //CoroutineScope(Dispatchers.Default).launch {
-            //experiment:
+        if (withStandard) {
             try {
-                val br = BufferedReader(FileReader(chartFileAfterExperiment.value))
+                val br = BufferedReader(FileReader(chartFileStandard.value)) // chartFileAfterExperiment
                 var line: String?
                 //var countOfLine = 0
                 while (br.readLine().also { line = it } != null) {
@@ -189,38 +215,40 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                 logError("error +${e.message}")
             }
             logGarbage(">>>2")
+        }
             //standard:
-            if (withStandard) {
-                try {
+        try {
 
-                    val br = BufferedReader(FileReader(chartFileStandard.value))
-                    var line: String?
-                    //var countOfLine = 0
-                    while (br.readLine().also { line = it } != null) {
-                        if (line != "" || line != " ") {
-                            val items = line?.split(";", "|")?.toTypedArray()
-                            println("withStandard >>>> ${items?.joinToString()}")
-                            if (items != null) {
-                                series9.add(items[0].toInt(), items[1].toInt())
-                                series10.add(items[2].toInt(), items[3].toInt()).takeIf { items.size > 2 }
-                                series11.add(items[4].toInt(), items[5].toInt()).takeIf { items.size > 4 }
-                                series12.add(items[6].toInt(), items[7].toInt()).takeIf { items.size > 6 }
-                                series13.add(items[8].toInt(), items[9].toInt()).takeIf { items.size > 8 }
-                                series14.add(items[10].toInt(), items[11].toInt()).takeIf { items.size > 10 }
-                                series15.add(items[12].toInt(), items[13].toInt()).takeIf { items.size > 12 }
-                                series16.add(items[14].toInt(), items[15].toInt()).takeIf { items.size > 14 }
-                            }
-                        }
-                        //countOfLine++
+            val br = BufferedReader(FileReader(chartFileAfterExperiment.value)) // chartFileStandard
+            var line: String?
+            //var countOfLine = 0
+            while (br.readLine().also { line = it } != null) {
+                if (line != "" || line != " ") {
+                    val items = line?.split(";", "|")?.toTypedArray()
+                    println("withStandard >>>> ${items?.joinToString()}")
+                    if (items != null) {
+                        series9.add(items[0].toInt(), items[1].toInt())
+                        series10.add(items[2].toInt(), items[3].toInt()).takeIf { items.size > 2 }
+                        series11.add(items[4].toInt(), items[5].toInt()).takeIf { items.size > 4 }
+                        series12.add(items[6].toInt(), items[7].toInt()).takeIf { items.size > 6 }
+                        series13.add(items[8].toInt(), items[9].toInt()).takeIf { items.size > 8 }
+                        series14.add(items[10].toInt(), items[11].toInt()).takeIf { items.size > 10 }
+                        series15.add(items[12].toInt(), items[13].toInt()).takeIf { items.size > 12 }
+                        series16.add(items[14].toInt(), items[15].toInt()).takeIf { items.size > 14 }
                     }
-                    br.close()
-                } catch (e: Exception) {
-                    logError("error +${e.message}")
-                    showMeSnackBar("Error Chart:  ${e.message}", Color.Red)
                 }
-
-
+                //countOfLine++
             }
+            br.close()
+        } catch (e: Exception) {
+            logError("error +${e.message}")
+            showMeSnackBar("Error Chart:  ${e.message}", Color.Red)
+        }
+
+
+
+
+
         //}
 
         logGarbage(">>>3")
@@ -251,27 +279,11 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
             xAxis.autoRangeIncludesZero = false
 
         logGarbage(">>>4")
-            val arrClrExperiment = arrayOf(
-                java.awt.Color.RED,
-                java.awt.Color.ORANGE,
-                java.awt.Color.YELLOW,
-                java.awt.Color.GREEN,
-                java.awt.Color.BLUE,
-                java.awt.Color.CYAN,
-                java.awt.Color.MAGENTA,
-                java.awt.Color.BLACK
-            )
 
-            val arrClrStandard = arrayOf(
-                java.awt.Color(255, 145, 145),
-                java.awt.Color(255, 200, 50),
-                java.awt.Color(255, 255, 150),
-                java.awt.Color(147, 255, 100),
-                java.awt.Color(147, 147, 255),
-                java.awt.Color(147, 255, 255),
-                java.awt.Color(255, 147, 255),
-                java.awt.Color(128, 128, 128)
-            )
+        repeat(dataset.seriesCount) {
+            stateOfVisibleSeries.add(true)
+        }
+
         logGarbage(">>>5")
             repeat(8) {
                 //renderer
@@ -297,7 +309,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
         logGarbage(">>>6")
         plot = XYPlot(dataset, xAxis, yAxis, renderer)
-        plot
+        //plot
         plot.setOrientation(PlotOrientation.VERTICAL)
         logGarbage(">>>7")
         plot.setRenderer(renderer)
@@ -316,9 +328,8 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
             Column(
                 modifier = Modifier.fillMaxSize()//fillMaxWidth().height(800.dp)
             ) {
-                Row(Modifier.fillMaxWidth().height(20.dp).background(Color.Yellow)) {
-
-                    Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
+                Row(Modifier.fillMaxWidth().height(20.dp).background(Color.White), horizontalArrangement = Arrangement.Center) {
+                    Box(Modifier.height(20.dp).weight(1f).clickable {
                         openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let {
                             if(it != null) {
                                 chartFileStandard.value = it
@@ -338,7 +349,24 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                             fontFamily = FontFamily.Default, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black
                         )
                     }
-                    Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
+                    repeat((dataset.seriesCount/2)) {
+                        val rmClr = remember { mutableStateOf(stateOfVisibleSeries[it+dataset.seriesCount/2]) }
+                        Box(
+                            Modifier.width(30.dp).fillMaxHeight().padding(horizontal = 3.dp).background(if (rmClr.value) Color.Blue else Color.LightGray).clickable {
+                                stateOfVisibleSeries[it+dataset.seriesCount/2] = !stateOfVisibleSeries[it+dataset.seriesCount/2]
+                                rmClr.value = stateOfVisibleSeries[it+dataset.seriesCount/2]
+                                renderer.setSeriesVisible(it+dataset.seriesCount/2, stateOfVisibleSeries[it+dataset.seriesCount/2], true)
+
+                                //renderer.setSeriesVisible(0,false,true)
+                            }
+                        ) {
+                            Text("${it+dataset.seriesCount/2}")
+                        }
+                    }
+
+                }
+                Row(Modifier.fillMaxWidth().height(20.dp).background(Color.White), horizontalArrangement = Arrangement.Center) {
+                    Box(Modifier.height(20.dp).weight(1f).clickable {
                         openPicker(Dir2Reports, PickTarget.PICK_CHART_VIEWER).let { if(it != null) chartFileAfterExperiment.value = it }
 
                         CoroutineScope(Dispatchers.Default).launch {
@@ -350,19 +378,22 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                             fontFamily = FontFamily.Default, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Black
                         )
                     }
-                }
-                Box(Modifier.fillMaxWidth().height(20.dp).weight(1f).clickable {
-                    openPicker(Dir7ReportsStandard, PickTarget.PICK_STANDARD_CHART).let { if(it != null) chartFileStandard.value = it }
+                    repeat((dataset.seriesCount/2)) {
+                        val rmClr = remember { mutableStateOf(stateOfVisibleSeries[it]) }
+                        Box(
+                            Modifier.width(30.dp).fillMaxHeight().padding(horizontal = 3.dp).background(if (rmClr.value) Color.Blue else Color.LightGray).clickable {
+                                stateOfVisibleSeries[it] = !stateOfVisibleSeries[it]
+                                rmClr.value = stateOfVisibleSeries[it]
+                                renderer.setSeriesVisible(it, stateOfVisibleSeries[it], true)
 
-                    CoroutineScope(Dispatchers.Default).launch {
-                        fillStandard(isRefresh = true)
+                                //renderer.setSeriesVisible(0,false,true)
+                            }
+                        ) {
+                            Text("${it}")
+                        }
                     }
-
-                }){
-                    Text("Эталон: ${standardFile.value.name}", modifier = Modifier.padding(0.dp).align(Alignment.Center),
-                        fontFamily = FontFamily.Default, fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Color.Black
-                    )
                 }
+
                 if (shwmechrt.value) {
                     SwingPanel(
                         background = Color.DarkGray,
@@ -376,6 +407,8 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                         }
                     )
                 }
+
+
             }
 //            if (loader.value) {
 //                Box(Modifier.fillMaxSize().background(colorTrans60)){
@@ -519,7 +552,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
         series7.notify = true
         series8.notify = true
 
-
+        halfNumberOfCharts = dataset.seriesCount / 2
         isLoading.value = false
     }
 
@@ -562,6 +595,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
                     )
                     logGarbage(">>>8 $}")
                     soundUniversal(Dir0Configs_End)
+                    halfNumberOfCharts = dataset.seriesCount
                 }
 
             }
