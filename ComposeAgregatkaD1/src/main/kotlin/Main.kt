@@ -64,19 +64,19 @@ fun main() = application (
                  }
                  scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
                 true
-            }else if (it.key == Key.Spacebar &&  it.type == KeyEventType.KeyUp) {
+            }else if (it.key == Key.CtrlLeft && it.key == Key.Spacebar &&  it.type == KeyEventType.KeyDown) {
                  //shiftIsPressed = false
                  launchPlay()
                  true
-            }else if (it.key == Key.N &&  it.type == KeyEventType.KeyUp) {
+            }else if (it.key == Key.N &&  it.type == KeyEventType.KeyDown && it.key == Key.CtrlLeft) {
                  //shiftIsPressed = false
                  openNewScenario()
                  true
-            }else if (it.key == Key.L &&  it.type == KeyEventType.KeyUp) {
+            }else if (it.key == Key.L &&  it.type == KeyEventType.KeyDown && it.key == Key.CtrlLeft) {
                  //shiftIsPressed = false
                  openLastScenario()
                  true
-            }else if (it.key == Key.V &&  it.type == KeyEventType.KeyUp) {
+            }else if (it.key == Key.V &&  it.type == KeyEventType.KeyDown && it.key == Key.CtrlLeft) {
                  //shiftIsPressed = false
                  openChartViewer()
                  true

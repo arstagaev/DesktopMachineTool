@@ -67,7 +67,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
     pressures.clear()
     scenario.clear()
 
-    // Fill file address to Standard
+    // Fill file address to Standard chart, Эталон . txt
     val standard = File(Dir7ReportsStandard, wholeSheet[0][0])
     if ( !standard.name.endsWith("txt") ) {
         needReWriteStandard = true

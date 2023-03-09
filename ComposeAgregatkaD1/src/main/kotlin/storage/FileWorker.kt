@@ -173,7 +173,12 @@ fun createMeasureExperiment() {
         val bw = fl.bufferedWriter()
         try {
             // read lines in txt by Bufferreader
-
+            bw.write("#standard#${chartFileStandard.value.name}\n")
+            bw.write(
+                "#visibility#${pressures[0].isVisible.toBin()}#${pressures[1].isVisible.toBin()}#${pressures[2].isVisible.toBin()}#${pressures[3].isVisible.toBin()}"+
+                    "#${pressures[4].isVisible.toBin()}#${pressures[5].isVisible.toBin()}#${pressures[6].isVisible.toBin()}#${pressures[7].isVisible.toBin()}\n"
+            )
+            bw.write("#\n")
             repeat(arr1Measure.size-1) {
                 val newStroke =
                     "${arr1Measure[it].x};${arr1Measure[it].y}|"+

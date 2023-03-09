@@ -324,10 +324,10 @@ fun StarterScreen() {
                 Column(Modifier.width(600.dp).verticalScroll(rememberScrollState())) {
                     Row(Modifier.width(600.dp)) {
                         Text("⌨️\uD83D\uDD25Hot Keys:" +
-                                "\n [N] - new experiment" +
-                                "\n [L] - later experiment" +
-                                "\n [V] - open viewer" +
-                                "\n [Space] - start experiment" +
+                                "\n [ctrl + N] - new experiment" +
+                                "\n [ctrl + L] - later experiment" +
+                                "\n [ctrl + V] - open viewer" +
+                                "\n [ctrl + Space] - start experiment" +
                                 "\n [<-] - previous scenario" +
                                 "\n [->] - next scenario" +
                                 "",

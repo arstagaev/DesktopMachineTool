@@ -41,7 +41,7 @@ val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory
 val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
 val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
-var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demx.xls")
+var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo.xls")
 
 var COM_PORT = "COM0"
 var BAUD_RATE = 500000
@@ -99,7 +99,7 @@ var doOpen_First_ChartWindow = mutableStateOf(false)
 var doOpen_Second_ChartWindow = mutableStateOf(false)
 
 var chartFileAfterExperiment = mutableStateOf( File(Dir2Reports,"demo2.txt") )
-var chartFileStandard = mutableStateOf( File(Dir7ReportsStandard,"17_02_2023 12_04_04_chart.txt") )
+var chartFileStandard = mutableStateOf( File(Dir7ReportsStandard,"17_02_2023X12_04_04_chart.txt") )
 
 var isExperimentStarts = mutableStateOf(false)
 var incrementTime = 0
