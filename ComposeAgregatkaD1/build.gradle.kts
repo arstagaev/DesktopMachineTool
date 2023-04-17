@@ -3,11 +3,13 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta5"
+    kotlin("jvm") version "1.8.0"
+    id("org.jetbrains.compose") version "1.3.0"
+    kotlin("plugin.serialization") version "1.8.0"
+    //id("kotlinx-serialization")
 }
 
-group = "me.agaev"
+group = "me.tagaev"
 version = "1.0"
 
 repositories {
@@ -20,31 +22,56 @@ repositories {
 }
 
 dependencies {
+
     implementation(compose.desktop.windows_x64)
-    //implementation(// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
-    implementation("com.fazecast:jSerialComm:2.7.0")
-    // https://mvnrepository.com/artifact/org.apache.poi/poi
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
+    implementation("com.fazecast:jSerialComm:2.9.3")
+
     implementation("org.apache.poi:poi:5.0.0")
-    //implementation("com.github.tehras:charts:beta-01")
-    //implementation("io.github.bytebeats:compose-charts:0.1.0")
-    // https://mvnrepository.com/artifact/jfree/jfreechart
 
     implementation("org.jfree:jcommon:1.0.24")
     implementation("org.jfree:jfreechart:1.5.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+
 
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "15"
 }
 
 compose.desktop {
+
+    val version = "1.2.8"
+
     application {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "ComposeAgregatkaD1"
-            packageVersion = "1.1.3"
+            packageName = "MCM"
+            packageVersion = version
+
+        }
+        buildTypes.release {
+            proguard {
+                //isEnabled.set(false)
+                configurationFiles.from("compose-desktop.pro")
+            }
         }
     }
+
+//    nativeDistributions {
+//        val iconsRoot = project.file("src/main/resources")
+//        linux {
+//            iconFile.set(iconsRoot.resolve("drawables/linux_logo.png"))
+//        }
+//        windows {
+//            iconFile.set(iconsRoot.resolve("drawables/windows_logo.png"))
+//        }
+//        macOS{
+//            iconFile.set(iconsRoot.resolve("drawables/macOS_logo.png"))
+//        }
+//    }
 }

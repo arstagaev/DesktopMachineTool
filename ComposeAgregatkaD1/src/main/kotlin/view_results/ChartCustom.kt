@@ -19,6 +19,7 @@ sealed class LinearChartStyle {
     object Smooth : LinearChartStyle()
 }
 data class PointF(val x: Float,val y : Float)
+
 @Composable
 fun LinearChart(
     modifier: Modifier = Modifier,
