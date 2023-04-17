@@ -23,7 +23,8 @@ repositories {
 
 dependencies {
 
-    implementation(compose.desktop.windows_x64)
+    //implementation(compose.desktop.windows_x64)
+    implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 

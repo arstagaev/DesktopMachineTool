@@ -1,33 +1,24 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.singleWindowApplication
+import com.fazecast.jSerialComm.SerialPort
 import enums.ExplorerMode
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import parsing_excel.writeToExcel
 import serial_port.comparatorToSolenoid
 import serial_port.pauseSerialComm
-import serial_port.sendZerosToSolenoid
 import storage.readParameters
 import ui.charts.ChartWindowNew
-import ui.windows.WindowTypes
 import utils.*
-import java.awt.event.KeyEvent
-import java.io.File
 import kotlin.concurrent.fixedRateTimer
 
 
@@ -40,7 +31,7 @@ fun main() = application (
     Window(
         title = "MCM [${generateTimestampLastUpdate()}]",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
-        icon = painterResource("drawable/ava.png"),
+        //icon = painterResource("drawable/ava.png"),
         onKeyEvent = {
              if ( it.key == Key.DirectionRight && it.type == KeyEventType.KeyUp) {
 
@@ -98,6 +89,17 @@ fun main() = application (
     ) {
         val doOpenNewWindowInternal = remember { doOpen_First_ChartWindow }
         val doOpenNewWindowInternal2 = remember { doOpen_Second_ChartWindow }
+
+        println("initial dir: ${Dir1Configs}")
+
+        SerialPort.getCommPorts().forEach {
+            if (it.systemPortName.contains("COM")) {
+                isPortsEnabled = true
+            }
+            println("Serial ${it.systemPortName} isEnabled ${isPortsEnabled}")
+
+        }
+
         //COM_PORT = "COM10"//getComPorts_Array().get(0).systemPortName
         //readExcelFile()
 
@@ -106,14 +108,17 @@ fun main() = application (
 
         initialize(readParameters(Dir4MainConfig_Txt))
 
-        var isHaveConn = false
-        getComPorts_Array()?.forEach {
-            if (it.systemPortName == COM_PORT) {
-                isHaveConn = true
+        if (isPortsEnabled) {
+            var isHaveConn = false
+            getComPorts_Array()?.forEach {
+                if (it.systemPortName == COM_PORT) {
+                    isHaveConn = true
+                }
             }
-        }
-        if (!isHaveConn) {
-            showMeSnackBar("NO Connect to ${COM_PORT} !!", Color.Red)
+
+            if (!isHaveConn) {
+                showMeSnackBar("NO Connect to ${COM_PORT} !!", Color.Red)
+            }
         }
 
         App()

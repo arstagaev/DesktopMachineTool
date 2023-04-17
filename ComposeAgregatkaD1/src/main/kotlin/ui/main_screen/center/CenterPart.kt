@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
@@ -78,10 +77,20 @@ fun CenterPiece(
             indexOfScenario.value = 0
 
             //sound_On()
-            startReceiveFullData()
+            //println("well ${serialPort == null}")
+            if (isPortsEnabled) {
+                startReceiveFullData()
+            }
+
             comparatorToSolenoid(indexOfScenario.value)
-            sendScenarioToController()
+
+            if (isPortsEnabled) {
+                sendScenarioToController()
+            }
+
+
             var count = 0
+
             dataChunkGauges.collect {
                 isShowPlay.value = true
                 //delay(DELAY_FOR_GET_DATA)

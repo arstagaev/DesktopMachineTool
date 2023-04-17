@@ -9,6 +9,7 @@ fun logGarbage(msg: String) = println("g~>"+msg)
 
 
 fun logAgregator(msg: String) {
+    return
     println(msg)
     if (SAVELOG) {
         writeToFile(msg, Dir4MainConfig_Log)

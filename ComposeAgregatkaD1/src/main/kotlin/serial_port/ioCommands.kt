@@ -6,23 +6,25 @@ import ui.main_screen.center.support_elements.*
 import utils.*
 import java.math.BigInteger
 
-private var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
+
+private var serialPort: SerialPort? = null //SerialPort.getCommPort(COM_PORT)
+
 private val crtx2 = CoroutineName("main")
 
 suspend fun initSerialCommunication() {
+
     println(">>>serial communication has been started, COM_PORT:$COM_PORT ${BAUD_RATE}")
     serialPort = SerialPort.getCommPort(COM_PORT)
-    serialPort.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
-    serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
-    serialPort.openPort()
+    serialPort?.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
+    serialPort?.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
+    serialPort?.openPort()
     //serialPort.clearBreak()
     arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
 
     delay(2000)
     println("Run Callbacks::")
     val listener = PacketListener()
-    serialPort.addDataListener(listener)
-    //showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
+    serialPort?.addDataListener(listener)
 }
 
 suspend fun startReceiveFullData() {
@@ -31,7 +33,11 @@ suspend fun startReceiveFullData() {
 //    ) {
 //        println(">>>Available Com ports:${getComPorts_Array().get(it).systemPortName} is Open: ${getComPorts_Array().get(it).isOpen}||${getComPorts_Array().get(it).descriptivePortName}")
 //    }
-    if (!serialPort.isOpen) {
+
+
+
+
+    if (!serialPort!!.isOpen) {
         initSerialCommunication()
     }
     writeToSerialPort(byteArrayOf(0x74.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00))
@@ -39,10 +45,10 @@ suspend fun startReceiveFullData() {
 }
 
 fun stopSerialCommunication() {
-    serialPort.removeDataListener()
-    serialPort.closePort()
+    serialPort?.removeDataListener()
+    serialPort?.closePort()
 
-    println(">< STOP SERIAL PORT // is Open:${serialPort.isOpen} ${BAUD_RATE}")
+    println(">< STOP SERIAL PORT // is Open:${serialPort?.isOpen} ${BAUD_RATE}")
 }
 
 suspend fun pauseSerialComm() {
@@ -61,12 +67,15 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, 
 //    if (sendBytes[0] == 0x74.toByte()) {
 //        //startTimer()
 //    }
+    if (!isPortsEnabled) {
+        logError("DISABLED WRITE TO PORT")
+    }
     repeat(1) {
 
         logAct("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
-        serialPort.writeBytes(sendBytes, sendBytes.size.toLong())
+        serialPort?.writeBytes(sendBytes, sendBytes.size.toLong())
         if (withFlush) {
-            serialPort.flushIOBuffers()
+            serialPort?.flushIOBuffers()
         }
         delay(delay)
         //println("goo " + sendBytes.size)
@@ -146,7 +155,7 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
 
     //writeToSerialPort(btry)
     //txtOfScenario.value = scenario[idx].text
-    txtOfScenario.value = scenario.getOrElse(idx){
+    txtOfScenario.value = scenario.getOrElse(idx) {
         indexOfScenario.value = 0
         scenario[0]
     }.text

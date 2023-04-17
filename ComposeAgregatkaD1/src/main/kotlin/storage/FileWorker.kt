@@ -95,6 +95,7 @@ fun readParameters(file: File) : List<ParameterCommon> {
 }
 
 fun refreshParameters() {
+
     logAct("createParameters")
     //"comport" -> COM_P
     //"baudrate" -> BAUD
