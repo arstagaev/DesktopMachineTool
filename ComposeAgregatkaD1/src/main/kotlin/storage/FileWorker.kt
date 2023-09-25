@@ -178,22 +178,23 @@ fun createMeasureExperiment() {
                 "#visibility#${pressures[0].isVisible.toBin()}#${pressures[1].isVisible.toBin()}#${pressures[2].isVisible.toBin()}#${pressures[3].isVisible.toBin()}"+
                     "#${pressures[4].isVisible.toBin()}#${pressures[5].isVisible.toBin()}#${pressures[6].isVisible.toBin()}#${pressures[7].isVisible.toBin()}\n"
             )
-            bw.write("#\n")
+            bw.write("#name#${pressures[0].displayName}#\n")
             repeat(arr1Measure.size-1) {
                 val newStroke =
-                    "${arr1Measure[it].x};${arr1Measure[it].y}|"+
-                    "${arr2Measure[it].x};${arr2Measure[it].y}|"+
-                    "${arr3Measure[it].x};${arr3Measure[it].y}|"+
-                    "${arr4Measure[it].x};${arr4Measure[it].y}|"+
-                    "${arr5Measure[it].x};${arr5Measure[it].y}|"+
-                    "${arr6Measure[it].x};${arr6Measure[it].y}|"+
-                    "${arr7Measure[it].x};${arr7Measure[it].y}|"+
-                    "${arr8Measure[it].x};${arr8Measure[it].y}"
+                    "${arr0Time[it]};${arr1Measure[it]}|"+
+                    "${arr2Measure[it]}|"+
+                    "${arr3Measure[it]}|"+
+                    "${arr4Measure[it]}|"+
+                    "${arr5Measure[it]}|"+
+                    "${arr6Measure[it]}|"+
+                    "${arr7Measure[it]}|"+
+                    "${arr8Measure[it]}"
                 logInfo("newStroke= ${newStroke}")
                 bw.write("${newStroke}\n")
             }
             bw.close()
 
+            arr0Time.clear()
             arr1Measure.clear()
             arr2Measure.clear()
             arr3Measure.clear()

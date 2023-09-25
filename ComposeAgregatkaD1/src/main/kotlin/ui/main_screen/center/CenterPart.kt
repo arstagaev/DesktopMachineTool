@@ -108,15 +108,15 @@ fun CenterPiece(
                             (it.isExperiment)
                         ) {
                             count++
-
-                            arr1Measure.add(Pointer(x = incrementTime, y = pressure1X)) //it.firstGaugeData, ))
-                            arr2Measure.add(Pointer(x = incrementTime, y = pressure2X)) //it.secondGaugeData,))
-                            arr3Measure.add(Pointer(x = incrementTime, y = pressure3X)) //it.thirdGaugeData, ))
-                            arr4Measure.add(Pointer(x = incrementTime, y = pressure4X)) //it.fourthGaugeData,))
-                            arr5Measure.add(Pointer(x = incrementTime, y = pressure5X)) //it.fifthGaugeData, ))
-                            arr6Measure.add(Pointer(x = incrementTime, y = pressure6X)) //it.sixthGaugeData, ))
-                            arr7Measure.add(Pointer(x = incrementTime, y = pressure7X)) //it.seventhGaugeData))
-                            arr8Measure.add(Pointer(x = incrementTime, y = pressure8X)) //it.eighthGaugeData, ))
+                            arr0Time   .add(incrementTime)
+                            arr1Measure.add(pressure1X) //it.firstGaugeData, ))
+                            arr2Measure.add(pressure2X) //it.secondGaugeData,))
+                            arr3Measure.add(pressure3X) //it.thirdGaugeData, ))
+                            arr4Measure.add(pressure4X) //it.fourthGaugeData,))
+                            arr5Measure.add(pressure5X) //it.fifthGaugeData, ))
+                            arr6Measure.add(pressure6X) //it.sixthGaugeData, ))
+                            arr7Measure.add(pressure7X) //it.seventhGaugeData))
+                            arr8Measure.add(pressure8X) //it.eighthGaugeData, ))
 
 //                            num = scenario[indexScenario].time
 //
@@ -132,6 +132,9 @@ fun CenterPiece(
                             //test_time += 2
 
                         } else if (STATE_EXPERIMENT.value == StateExperiments.PREP_DATA) {
+                            /**
+                             * Already filled experiment
+                             */
                             logGarbage("Output: |${incrX}|=>|${count}|  | ${arr1Measure.size} ${arr1Measure[arr1Measure.lastIndex]}")
 
                             STATE_EXPERIMENT.value = StateExperiments.PREPARE_CHART

@@ -66,14 +66,15 @@ var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBuf
 val PRESSURE_MAX_RAW = 4095
 val CURRENT_MAX_RAW = 255
 
-var arr1Measure = arrayListOf<Pointer>()
-var arr2Measure = arrayListOf<Pointer>()
-var arr3Measure = arrayListOf<Pointer>()
-var arr4Measure = arrayListOf<Pointer>()
-var arr5Measure = arrayListOf<Pointer>()
-var arr6Measure = arrayListOf<Pointer>()
-var arr7Measure = arrayListOf<Pointer>()
-var arr8Measure = arrayListOf<Pointer>()
+var arr0Time = arrayListOf<Int>()
+var arr1Measure = arrayListOf<Int>()
+var arr2Measure = arrayListOf<Int>()
+var arr3Measure = arrayListOf<Int>()
+var arr4Measure = arrayListOf<Int>()
+var arr5Measure = arrayListOf<Int>()
+var arr6Measure = arrayListOf<Int>()
+var arr7Measure = arrayListOf<Int>()
+var arr8Measure = arrayListOf<Int>()
 
 var pwm1SeekBar = mutableStateOf<Int>(-1)
 var pwm2SeekBar = mutableStateOf<Int>(-1)

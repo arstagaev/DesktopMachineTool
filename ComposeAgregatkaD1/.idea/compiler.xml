@@ -3,7 +3,6 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="15">
       <module name="BuildSrc" target="11" />
-      <module name="ComposeAgregatkaD1.BuildSrc" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

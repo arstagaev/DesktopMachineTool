@@ -50,10 +50,12 @@ import java.io.FileReader
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 
-data class SeriesChart( var xySeries: XYSeries, var isVisible: Boolean )
+
 
 class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolean = false) {
     val dataset = XYSeriesCollection()
+
+    //private var seriesList = mutableListOf<SeriesChart>()
 
     private val series1 = XYSeries("Давление 1")
     private val series2 = XYSeries("Давление 2")
@@ -120,6 +122,7 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
     var halfNumberOfCharts = 0
 
     init {
+
         crtx.launch {
 
             delay(1000)
@@ -257,14 +260,14 @@ class ChartWindowNew(var withStandard: Boolean = false, val isViewerOnly: Boolea
 
         logGarbage(">>>3")
         sizeExperiment = series1.items.size
-            dataset.addSeries(series1)
-            dataset.addSeries(series2)
-            dataset.addSeries(series3)
-            dataset.addSeries(series4)
-            dataset.addSeries(series5)
-            dataset.addSeries(series6)
-            dataset.addSeries(series7)
-            dataset.addSeries(series8)
+        dataset.addSeries(series1)
+        dataset.addSeries(series2)
+        dataset.addSeries(series3)
+        dataset.addSeries(series4)
+        dataset.addSeries(series5)
+        dataset.addSeries(series6)
+        dataset.addSeries(series7)
+        dataset.addSeries(series8)
 
             if (withStandard) {
                 sizeStandard = series10.items.size

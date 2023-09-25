@@ -1,4 +1,3 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -35,7 +34,6 @@ dependencies {
     implementation("org.jfree:jfreechart:1.5.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
-
 }
 
 tasks.withType<KotlinCompile>() {
@@ -52,7 +50,6 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "MCM"
             packageVersion = version
-
         }
         buildTypes.release {
             proguard {
