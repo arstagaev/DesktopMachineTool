@@ -44,6 +44,7 @@ val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo.xls")
 
 var COM_PORT = "COM0"
+var COM_PORT_2 = "COM0"
 var BAUD_RATE = 500000
 var OPERATOR_ID = "no name"
 var SOUND_ENABLED = 1
@@ -63,6 +64,10 @@ var EXPLORER_MODE = mutableStateOf(ExplorerMode.AUTO)
 var dataChunkGauges   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
 var dataChunkCurrents = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
 
+var dataChunkGauges2   = MutableSharedFlow<DataChunkG>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
+var dataChunkCurrents2 = MutableSharedFlow<DataChunkCurrent>(replay = 0, extraBufferCapacity = 1000, onBufferOverflow = BufferOverflow.SUSPEND)
+
+
 val PRESSURE_MAX_RAW = 4095
 val CURRENT_MAX_RAW = 255
 
@@ -76,6 +81,15 @@ var arr6Measure = arrayListOf<Int>()
 var arr7Measure = arrayListOf<Int>()
 var arr8Measure = arrayListOf<Int>()
 
+var arr9Measure  = arrayListOf<Int>()
+var arr10Measure = arrayListOf<Int>()
+var arr11Measure = arrayListOf<Int>()
+var arr12Measure = arrayListOf<Int>()
+var arr13Measure = arrayListOf<Int>()
+var arr14Measure = arrayListOf<Int>()
+var arr15Measure = arrayListOf<Int>()
+var arr16Measure = arrayListOf<Int>()
+
 var pwm1SeekBar = mutableStateOf<Int>(-1)
 var pwm2SeekBar = mutableStateOf<Int>(-1)
 var pwm3SeekBar = mutableStateOf<Int>(-1)
@@ -84,6 +98,15 @@ var pwm5SeekBar = mutableStateOf<Int>(-1)
 var pwm6SeekBar = mutableStateOf<Int>(-1)
 var pwm7SeekBar = mutableStateOf<Int>(-1)
 var pwm8SeekBar = mutableStateOf<Int>(-1)
+
+var pwm9SeekBar = mutableStateOf<Int>(-1)
+var pwm10SeekBar = mutableStateOf<Int>(-1)
+var pwm11SeekBar = mutableStateOf<Int>(-1)
+var pwm12SeekBar = mutableStateOf<Int>(-1)
+var pwm13SeekBar = mutableStateOf<Int>(-1)
+var pwm14SeekBar = mutableStateOf<Int>(-1)
+var pwm15SeekBar = mutableStateOf<Int>(-1)
+var pwm16SeekBar = mutableStateOf<Int>(-1)
 
 var limitTime = -1
 var indexOfScenario = mutableStateOf(0)

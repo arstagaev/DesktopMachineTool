@@ -7,22 +7,51 @@ import utils.*
 import java.math.BigInteger
 
 private var serialPort: SerialPort = SerialPort.getCommPort(COM_PORT)
+private var serialPort_SECOND: SerialPort = SerialPort.getCommPort(COM_PORT_2)
 private val crtx2 = CoroutineName("main")
 
 suspend fun initSerialCommunication() {
+    arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
+
     println(">>>serial communication has been started, COM_PORT:$COM_PORT ${BAUD_RATE}")
     serialPort = SerialPort.getCommPort(COM_PORT)
     serialPort.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
     serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
     serialPort.openPort()
     //serialPort.clearBreak()
-    arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
+
 
     delay(2000)
     println("Run Callbacks::")
     val listener = PacketListener()
     serialPort.addDataListener(listener)
     //showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
+//////////////////////////////////////////////////////////////////////////////////////////////// SECOND PORT
+    if (serialPort_SECOND.isOpen) {
+        println(">>>serial communication has been started, COM_PORT:$COM_PORT_2 ${BAUD_RATE}")
+        serialPort_SECOND = SerialPort.getCommPort(COM_PORT_2)
+        serialPort_SECOND.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
+        serialPort_SECOND.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
+        serialPort_SECOND.openPort()
+        //serialPort.clearBreak()
+    } else {
+        println("serialPort_SECOND is closed")
+//        pressures.removeAt(8)
+//        pressures.removeAt(9)
+//        pressures.removeAt(10)
+//        pressures.removeAt(11)
+//
+//        pressures.removeAt(12)
+//        pressures.removeAt(13)
+//        pressures.removeAt(14)
+//        pressures.removeAt(15)
+    }
+
+
+    delay(2000)
+    println("Run Callbacks::")
+    val listener2 = PacketListener2()
+    serialPort_SECOND.addDataListener(listener2)
 }
 
 suspend fun startReceiveFullData() {
@@ -41,6 +70,9 @@ suspend fun startReceiveFullData() {
 fun stopSerialCommunication() {
     serialPort.removeDataListener()
     serialPort.closePort()
+
+    serialPort_SECOND.removeDataListener()
+    serialPort_SECOND.closePort()
 
     println(">< STOP SERIAL PORT // is Open:${serialPort.isOpen} ${BAUD_RATE}")
 }
@@ -65,8 +97,26 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, 
 
         logAct("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
         serialPort.writeBytes(sendBytes, sendBytes.size.toLong())
+        try {
+            if (serialPort_SECOND.isOpen) {
+                serialPort_SECOND.writeBytes(sendBytes, sendBytes.size.toLong())
+            }
+
+        }catch (e: Exception) {
+            println("ERROR io Commands!!! ${e.message}")
+        }
+
         if (withFlush) {
+
             serialPort.flushIOBuffers()
+            try {
+                if (serialPort_SECOND.isOpen) {
+                    serialPort_SECOND.flushIOBuffers()
+                }
+            }catch (e: Exception) {
+
+                println("ERROR io Commands!!! ${e.message}")
+            }
         }
         delay(delay)
         //println("goo " + sendBytes.size)
@@ -76,23 +126,8 @@ suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, 
 
 // increment and decrement steps of scenario
 suspend fun comparatorToSolenoid(newIndex: Int) {
-    //var btary = muta()
-    //val size = scenario[newIndex].values.size
 
     val idx = checkIntervalScenarios(newIndex)
-
-
-//    val btry = byteArrayOf(
-//        scenario[idx].values[0].toByte(),
-//        scenario[idx].values[1].toByte(),
-//        scenario[idx].values[2].toByte(),
-//        scenario[idx].values[3].toByte(),
-//
-//        scenario[idx].values[4].toByte(),
-//        scenario[idx].values[5].toByte(),
-//        scenario[idx].values[6].toByte(),
-//        scenario[idx].values[7].toByte(),
-//    )
 
     logGarbage("comparatorToSolenoid ${idx} ~~~ ]${scenario.size}[")
 

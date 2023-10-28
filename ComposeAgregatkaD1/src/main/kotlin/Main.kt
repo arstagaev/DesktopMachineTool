@@ -38,7 +38,7 @@ fun main() = application (
 //    visible = true
 ) {
     Window(
-        title = "MCM [${generateTimestampLastUpdate()}] version: ",
+        title = "MCM-16 Ports version: 1.1",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
         icon = painterResource("drawable/ava.png"),
         onKeyEvent = {

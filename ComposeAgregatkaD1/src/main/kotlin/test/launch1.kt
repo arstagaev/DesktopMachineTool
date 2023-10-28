@@ -1,9 +1,5 @@
 package test
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import serial_port.coreParse
 import utils.to2ByteArray
 import utils.toHexString
 

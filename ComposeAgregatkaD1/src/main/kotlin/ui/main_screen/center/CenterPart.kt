@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -51,6 +52,15 @@ fun CenterPiece(
     var pressure6X by remember { mutableStateOf(0) }
     var pressure7X by remember { mutableStateOf(0) }
     var pressure8X by remember { mutableStateOf(0) }
+
+    var pressure9X  by remember { mutableStateOf(0) }
+    var pressure10X by remember { mutableStateOf(0) }
+    var pressure11X by remember { mutableStateOf(0) }
+    var pressure12X by remember { mutableStateOf(0) }
+    var pressure13X by remember { mutableStateOf(0) }
+    var pressure14X by remember { mutableStateOf(0) }
+    var pressure15X by remember { mutableStateOf(0) }
+    var pressure16X by remember { mutableStateOf(0) }
     val duration = MutableStateFlow(100L)
 
     val stateChart = remember { STATE_EXPERIMENT }
@@ -153,11 +163,80 @@ fun CenterPiece(
                     }
                 }
             }
+            /////
+        }
 
-//            dataChunkGauges.collect {
+        ctxScope.launch {
+            dataChunkGauges2.collect {
+                isShowPlay.value = true
+                //delay(DELAY_FOR_GET_DATA)
+                //logGarbage("Exp>  ${STATE_CHART.value.name}||${arr1Measure.size} ${dataChunkGauges.replayCache.size} ${solenoids.size} ${pressures.size} ${scenario.size}")
+
+                //println("|<<<<<<<<<<<<<<<<<<<${it.isExperiment} [${it.firstGaugeData}]")
+                //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
+                //longForChart.add(pressure1X)
+
+                pressure9X  = map(it.firstGaugeData, 0, 4095, ( pressures[9 ].minValue), (pressures[9 ].maxValue),)
+                pressure10X = map(it.secondGaugeData, 0, 4095, (pressures[10].minValue), (pressures[10].maxValue),)
+                pressure11X = map(it.thirdGaugeData, 0, 4095, ( pressures[11].minValue), (pressures[11].maxValue),)
+                pressure12X = map(it.fourthGaugeData, 0, 4095, (pressures[12].minValue), (pressures[12].maxValue),)
+                pressure13X = map(it.fifthGaugeData, 0, 4095, ( pressures[13].minValue), (pressures[13].maxValue),)
+                pressure14X = map(it.sixthGaugeData, 0, 4095, ( pressures[14].minValue), (pressures[14].maxValue),)
+                pressure15X = map(it.seventhGaugeData, 0, 4095,(pressures[15].minValue), (pressures[15].maxValue),)
+                pressure16X = map(it.eighthGaugeData, 0, 4095, (pressures[16].minValue), (pressures[16].maxValue),)
+
+                when (EXPLORER_MODE.value) {
+                    ExplorerMode.AUTO -> {
+                        //logGarbage("konec ${}")
+                        if (
+                        //limitTime >= incrementTime &&
+                            (it.isExperiment)
+                        ) {
+                            arr0Time   .add(incrementTime)
+                            arr9Measure .add( pressure9X  ) //it.firstGaugeData, ))
+                            arr10Measure.add( pressure10X ) //it.secondGaugeData,))
+                            arr11Measure.add( pressure11X ) //it.thirdGaugeData, ))
+                            arr12Measure.add( pressure12X ) //it.fourthGaugeData,))
+                            arr13Measure.add( pressure13X ) //it.fifthGaugeData, ))
+                            arr14Measure.add( pressure14X ) //it.sixthGaugeData, ))
+                            arr15Measure.add( pressure15X ) //it.seventhGaugeData))
+                            arr16Measure.add( pressure16X ) //it.eighthGaugeData, ))
+
+//                            num = scenario[indexScenario].time
 //
-//
-//            }
+//                            if (num > 0) {
+//                                // 2 - is recieve data every 2ms
+//                                num -= 2
+//                            } else {
+//                                indexScenario++
+//                                num = scenario[indexScenario].time
+//                                txt.value = scenario[indexScenario].text
+//                            }
+                            incrementTime += 2
+                            //test_time += 2
+
+                        } else if (STATE_EXPERIMENT.value == StateExperiments.PREP_DATA) {
+                            /**
+                             * Already filled experiment
+                             */
+                            //logGarbage("Output: |${incrX}|=>|${count}|  | ${arr1Measure.size} ${arr1Measure[arr1Measure.lastIndex]}")
+
+                            STATE_EXPERIMENT.value = StateExperiments.PREPARE_CHART
+                            incrementTime = 0
+                            if (!isAlreadyReceivedBytesForChart.value) {
+                                isAlreadyReceivedBytesForChart.value = true
+                                createMeasureExperiment()
+                            }
+
+
+                        }
+                    }
+
+                    ExplorerMode.MANUAL -> {
+                        // without recording
+                    }
+                }
+            }
         }
     }
     /**
@@ -322,7 +401,7 @@ fun CenterPiece(
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxWidth(),
                 //columns = GridCells.Adaptive(150.dp),
-                columns = GridCells.Fixed(4),
+                columns = GridCells.Fixed(6),
                 verticalArrangement =   Arrangement.Center,
                 horizontalArrangement = Arrangement.Center,
                 // content padding
@@ -331,150 +410,50 @@ fun CenterPiece(
                     top = 0.dp,
                     end = 0.dp,
                     bottom = 0.dp
-                ),
-                content = {
-                    if (pressures[0].isVisible) {
-                        item {
-                            Box(Modifier
-                                .aspectRatio(1f)
-                                .background(Color.Red)
-                                .onGloballyPositioned { coordinates ->
-                                    // Set column height using the LayoutCoordinates
-                                    if (coordinates.size.width != 0) {
-                                        columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
-                                    }
-
-                                }
-                            ) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure1X,
-                                    (pressures[0].minValue),
-                                    (pressures[0].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[0].displayName,
-                                    comment = pressures[0].commentString
-                                )
+                )
+            ) {
+                itemsIndexed(pressures) { index , press ->
+                    Box(Modifier
+                        .aspectRatio(1f)
+                        .background(Color.Red)
+                        .onGloballyPositioned { coordinates ->
+                            // Set column height using the LayoutCoordinates
+                            if (coordinates.size.width != 0) {
+                                columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
                             }
                         }
+                    ) {
+                        GaugeX(
+                            DpSize(columnHeightDp, columnHeightDp),
+                            when(index) {
+                                0 -> pressure1X
+                                1 -> pressure2X
+                                2 -> pressure3X
+                                3 -> pressure4X
+                                4 -> pressure5X
+                                5 -> pressure6X
+                                6 -> pressure7X
+                                7 -> pressure8X
+
+                                8 ->  pressure9X
+                                9 ->  pressure10X
+                                10 -> pressure11X
+                                11 -> pressure12X
+                                12 -> pressure13X
+                                13 -> pressure14X
+                                14 -> pressure15X
+                                15 -> pressure16X
+                                else -> 0
+                            },
+                            (pressures[index].minValue),
+                            (pressures[index].maxValue.toInt()),
+                            type = "Бар",
+                            displayName = pressures[index].displayName,
+                            comment = pressures[index].commentString
+                        )
                     }
-                    if (pressures[1].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure2X,
-                                    (pressures[1].minValue),
-                                    (pressures[1].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[1].displayName,
-                                    comment = pressures[1].commentString
-                                )
-                            }
-
-                        }
-                    }
-
-                    if (pressures[2].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure3X,
-                                    (pressures[2].minValue),
-                                    (pressures[2].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[2].displayName,
-                                    comment = pressures[2].commentString
-                                )
-                            }
-                        }
-                    }
-
-                    if (pressures[3].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure4X,
-                                    (pressures[3].minValue),
-                                    (pressures[3].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[3].displayName,
-                                    comment = pressures[3].commentString
-                                )
-                            }
-                        }
-                    }
-
-                    if (pressures[4].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure5X,
-                                    (pressures[4].minValue),
-                                    (pressures[4].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[4].displayName,
-                                    comment = pressures[4].commentString
-                                )
-                            }
-                        }
-                    }
-
-                    if (pressures[5].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure6X,
-                                    (pressures[5].minValue),
-                                    (pressures[5].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[5].displayName,
-                                    comment = pressures[5].commentString
-                                )
-                            }
-                        }
-                    }
-
-                    if (pressures[6].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure7X,
-                                    (pressures[6].minValue),
-                                    (pressures[6].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[6].displayName,
-                                    comment = pressures[6].commentString
-                                )
-                            }
-                        }
-                    }
-
-                    if (pressures[7].isVisible) {
-                        item {
-                            Box(Modifier.aspectRatio(1f)) {
-                                GaugeX(
-                                    DpSize(columnHeightDp, columnHeightDp),
-                                    pressure8X,
-                                    (pressures[7].minValue),
-                                    (pressures[7].maxValue.toInt()),
-                                    type = "Бар",
-                                    displayName = pressures[7].displayName,
-                                    comment = pressures[7].commentString
-                                )
-                            }
-                        }
-                    }
-
-
                 }
-            )
-
+            }
         }
         if(!isHideCurrents.value) {
             Row(Modifier.fillMaxSize().weight(2f)) {

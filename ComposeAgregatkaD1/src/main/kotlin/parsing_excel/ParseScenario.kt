@@ -13,7 +13,7 @@ import java.io.FileInputStream
 
 var wholeSheet = mutableListOf<MutableList<String>>()
 suspend fun targetParseScenario(inputScenario: File?) : Boolean {
-
+    val NUMBER_OF_PORTS = 16
     if (inputScenario == null)
         return false
     var needReWriteStandard = false
@@ -76,7 +76,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
     }
 
 
-    repeat(8) {
+    repeat(NUMBER_OF_PORTS) {
 //        var asd = arrayListOf<String>(
 //            wholeSheet[2][it+1],
 //            wholeSheet[3][it+1],
@@ -99,16 +99,15 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
                 unit =         wholeSheet[7][it+1],
                 commentString =wholeSheet[8][it+1],
                 prefferedColor=wholeSheet[9][it+1],
-                isVisible =   wholeSheet[10].getOrNull(it+1) == "true"
+                isVisible =    wholeSheet[10].getOrNull(it+1) == "true"
             )
         )
-        logInfo("pressures: ${pressures.joinToString()} ]")
-
     }
+    logInfo("pressures: ${pressures.joinToString()} ]")
 
     var maxPWMs = arrayListOf<Int>()
 
-    repeat(8) {
+    repeat(NUMBER_OF_PORTS) {
 //        var asd = arrayListOf<String>(
 //            wholeSheet[14][it+1],
 //            wholeSheet[15][it+1],
@@ -135,16 +134,17 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
             )
         )
         maxPWMs.add(wholeSheet[16][it+1].toDouble().toInt())
+
+
     }
-
-
-
+    logInfo("solenoids: ${solenoids.joinToString()} ]")
     limitTime = 0
 
-    for ( i in (27) until wholeSheet.size) {
+    // 27 by vertical:
+    for ( i in 27 until wholeSheet.size) {
         var valueSteps = arrayListOf<Int>()
 
-        repeat(8) {
+        repeat(NUMBER_OF_PORTS) {
             var newPWM = wholeSheet[i][it+1].toDouble().toInt()
 
             // check limits maxPWM, for not burn out

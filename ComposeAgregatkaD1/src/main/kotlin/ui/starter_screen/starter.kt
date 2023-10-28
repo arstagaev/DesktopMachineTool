@@ -48,10 +48,13 @@ fun StarterScreen() {
 
     var expandedOperator by remember { mutableStateOf(false) }
     var expandedCom by remember { mutableStateOf(false) }
+    var expandedCom2 by remember { mutableStateOf(false) }
     var expandedBaud by remember { mutableStateOf(false) }
     var expandedSound by remember { mutableStateOf(false) }
     var visibilitySettings = remember { mutableStateOf(false)}
+
     var choosenCOM = remember { mutableStateOf(0) }
+    var choosenCOM2 = remember { mutableStateOf(0) }
     var choosenBaud = remember { mutableStateOf(BAUD_RATE) }
     val textState = remember { mutableStateOf(OPERATOR_ID) }
     var listOfOperators = mutableListOf<String>()//loadOperators()
@@ -63,6 +66,7 @@ fun StarterScreen() {
 
         while (true) {
             arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
+            println(arrayOfComPorts.joinToString { it.systemPortName })
             delay(1000)
         }
     }
@@ -222,6 +226,40 @@ fun StarterScreen() {
 
                     item {
                         Row {
+                            Text("COM Port 2:",
+                                modifier = Modifier.width(200.dp).padding(4.dp).clickable {
+                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+
+                            Box {
+                                Text(
+                                    if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else arrayOfComPorts[choosenCOM2.value].systemPortName,
+                                    modifier = Modifier.width(200.dp).padding(4.dp).clickable {
+                                        expandedCom2 = !expandedCom2
+                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+
+                                DropdownMenu(
+                                    modifier = Modifier.background(Color.White),
+                                    expanded = expandedCom2,
+                                    onDismissRequest = { expandedCom2 = false },
+                                ) {
+                                    repeat(arrayOfComPorts.size-1) {
+                                        Text("${arrayOfComPorts[it].descriptivePortName}", fontSize=18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                                            .clickable(onClick= {
+                                                choosenCOM.value = it
+                                                COM_PORT_2 = arrayOfComPorts[it].systemPortName
+                                                logAct("DropdownMenu click ${COM_PORT_2}")
+                                                refreshParameters()
+                                            }))
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                    item {
+                        Row {
                             Text("Baud-rate:",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                 }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
@@ -340,8 +378,6 @@ fun StarterScreen() {
                         )
                     }
                 }
-
-
             }
         }
     }
