@@ -45,31 +45,56 @@ import utils.*
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun StarterScreen() {
+    //var remarrayports = remember { arrayOfComPorts }
+
+    var choosenCOM = remember { mutableStateOf(0) }
+    var choosenCOM2 = remember { mutableStateOf(0) }
+
+    //TODO remove loop after Decompose
+    LaunchedEffect(true) {
+        var isFirstPortFounded = false
+
+        while (isFirstPortFounded == false) {
+            arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
+            println(arrayOfComPorts.joinToString { it.systemPortName })
+
+
+            arrayOfComPorts.forEachIndexed { index, serialPort ->
+                println(">>> ${serialPort.descriptivePortName.contains("Silicon")}")
+                if (serialPort.descriptivePortName.contains("Silicon")) { // Silicon Labs
+                    if (!isFirstPortFounded) {
+                        choosenCOM.value = index
+                        COM_PORT = serialPort.systemPortName
+                        isFirstPortFounded = true
+                    } else {
+                        choosenCOM2.value = index
+                        COM_PORT_2 = serialPort.systemPortName
+                    }
+                }
+            }
+            delay(1000)
+        }
+
+    }
+
 
     var expandedOperator by remember { mutableStateOf(false) }
+
     var expandedCom by remember { mutableStateOf(false) }
     var expandedCom2 by remember { mutableStateOf(false) }
+
     var expandedBaud by remember { mutableStateOf(false) }
     var expandedSound by remember { mutableStateOf(false) }
     var visibilitySettings = remember { mutableStateOf(false)}
 
-    var choosenCOM = remember { mutableStateOf(0) }
-    var choosenCOM2 = remember { mutableStateOf(0) }
+
     var choosenBaud = remember { mutableStateOf(BAUD_RATE) }
     val textState = remember { mutableStateOf(OPERATOR_ID) }
     var listOfOperators = mutableListOf<String>()//loadOperators()
 
     var crtxscp = rememberCoroutineScope().coroutineContext
 
-    //var remarrayports = remember { arrayOfComPorts }
-    LaunchedEffect(true) {
 
-        while (true) {
-            arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
-            println(arrayOfComPorts.joinToString { it.systemPortName })
-            delay(1000)
-        }
-    }
 
     Column(Modifier.fillMaxSize().background(Color.Black)) {
         Row(modifier = Modifier.fillMaxSize().weight(2f), horizontalArrangement = Arrangement.Center) {
@@ -194,14 +219,15 @@ fun StarterScreen() {
                         Row {
                             Text("COM Port:",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
-                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                                }, fontSize = 24.sp, fontFamily = FontFamily.Cursive, color = Color.White, textAlign = TextAlign.Center)
 
                             Box {
                                 Text(
-                                    if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else arrayOfComPorts[choosenCOM.value].systemPortName,
+                                    if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else COM_PORT,// arrayOfComPorts[choosenCOM.value].systemPortName,
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedCom = !expandedCom
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center
+                                )
 
                                 DropdownMenu(
                                     modifier = Modifier.background(Color.White),
@@ -228,14 +254,15 @@ fun StarterScreen() {
                         Row {
                             Text("COM Port 2:",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
-                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                                }, fontSize = 24.sp, fontFamily = FontFamily.Cursive, color = Color.White, textAlign = TextAlign.Center)
 
                             Box {
                                 Text(
-                                    if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else arrayOfComPorts[choosenCOM2.value].systemPortName,
+                                    if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else COM_PORT_2,//arrayOfComPorts[choosenCOM2.value].systemPortName,
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedCom2 = !expandedCom2
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center
+                                )
 
                                 DropdownMenu(
                                     modifier = Modifier.background(Color.White),

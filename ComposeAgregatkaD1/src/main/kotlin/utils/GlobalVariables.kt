@@ -51,6 +51,7 @@ var SOUND_ENABLED = 1
 var LAST_SCENARIO = Dir9Scenario
 var DELAY_BEFORE_CHART = 2000
 var SAVELOG = true
+var isHidedCurrents = mutableStateOf(false)
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()
@@ -90,6 +91,7 @@ var arr14Measure = arrayListOf<Int>()
 var arr15Measure = arrayListOf<Int>()
 var arr16Measure = arrayListOf<Int>()
 
+// Currents:
 var pwm1SeekBar = mutableStateOf<Int>(-1)
 var pwm2SeekBar = mutableStateOf<Int>(-1)
 var pwm3SeekBar = mutableStateOf<Int>(-1)

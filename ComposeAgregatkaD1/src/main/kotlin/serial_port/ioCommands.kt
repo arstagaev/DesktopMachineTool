@@ -27,12 +27,14 @@ suspend fun initSerialCommunication() {
     serialPort.addDataListener(listener)
     //showMeSnackBar("baudRate of Port:${speedOfPort.value.text.toInt()} ", Color.White)
 //////////////////////////////////////////////////////////////////////////////////////////////// SECOND PORT
+    serialPort_SECOND = SerialPort.getCommPort(COM_PORT_2)
+    serialPort_SECOND.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
+    serialPort_SECOND.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
+    serialPort_SECOND.openPort()
+
     if (serialPort_SECOND.isOpen) {
         println(">>>serial communication has been started, COM_PORT:$COM_PORT_2 ${BAUD_RATE}")
-        serialPort_SECOND = SerialPort.getCommPort(COM_PORT_2)
-        serialPort_SECOND.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
-        serialPort_SECOND.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0)
-        serialPort_SECOND.openPort()
+
         //serialPort.clearBreak()
     } else {
         println("serialPort_SECOND is closed")
@@ -89,25 +91,33 @@ suspend fun pauseSerialComm() {
 
 }
 
-suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 0L) {
+enum class MultiPortMode { First, Second, Dual }
+
+suspend fun writeToSerialPort(sendBytes: ByteArray, withFlush: Boolean = false, delay: Long = 0L, mode: MultiPortMode = MultiPortMode.Dual) {
 //    if (sendBytes[0] == 0x74.toByte()) {
 //        //startTimer()
 //    }
     repeat(1) {
 
-        logAct("Run Send bytes:: ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
-        serialPort.writeBytes(sendBytes, sendBytes.size.toLong())
-        try {
-            if (serialPort_SECOND.isOpen) {
-                serialPort_SECOND.writeBytes(sendBytes, sendBytes.size.toLong())
-            }
+        if (mode == MultiPortMode.First || mode == MultiPortMode.Dual) {
+            logAct(">>>first: ${COM_PORT} ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
+            serialPort.writeBytes(sendBytes, sendBytes.size.toLong())
 
-        }catch (e: Exception) {
-            println("ERROR io Commands!!! ${e.message}")
+
         }
 
-        if (withFlush) {
+        if (mode == MultiPortMode.Second || mode == MultiPortMode.Dual) {
+            try {
+                if (serialPort_SECOND.isOpen ) {
+                    logAct(">>>second: ${COM_PORT_2} ${sendBytes.toHexString()}   size of bytes: ${sendBytes.size}")
+                    serialPort_SECOND.writeBytes(sendBytes, sendBytes.size.toLong())
+                }
+            }catch (e: Exception) { println("ERROR io Commands!!! ${e.message}") }
+        }
 
+
+
+        if (withFlush) {
             serialPort.flushIOBuffers()
             try {
                 if (serialPort_SECOND.isOpen) {
@@ -141,6 +151,15 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
     pwm7SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[6].takeIf { it <= solenoids[6].maxPWM } }) ?: solenoids[6].maxPWM
     pwm8SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[7].takeIf { it <= solenoids[7].maxPWM } }) ?: solenoids[7].maxPWM
 
+    pwm9SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs [8].takeIf { it <= solenoids[8].maxPWM } }) ?: solenoids[8].maxPWM
+    pwm10SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[9].takeIf { it <= solenoids[9].maxPWM } }) ?: solenoids[9].maxPWM
+    pwm11SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[10].takeIf { it <= solenoids[10].maxPWM } }) ?: solenoids[10].maxPWM
+    pwm12SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[11].takeIf { it <= solenoids[11].maxPWM } }) ?: solenoids[11].maxPWM
+    pwm13SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[12].takeIf { it <= solenoids[12].maxPWM } }) ?: solenoids[12].maxPWM
+    pwm14SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[13].takeIf { it <= solenoids[13].maxPWM } }) ?: solenoids[13].maxPWM
+    pwm15SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[14].takeIf { it <= solenoids[14].maxPWM } }) ?: solenoids[14].maxPWM
+    pwm16SeekBar.value = (scenario.getOrNull(idx)?.let { it.chs[15].takeIf { it <= solenoids[15].maxPWM } }) ?: solenoids[15].maxPWM
+
 //    pwm1SeekBar.value = (scenario.getOrNull(idx){})              .values[0].takeIf { it <= solenoids[0].maxPWM } ?: solenoids[0].maxPWM // [from 0 to 255]
 //    pwm2SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[1].takeIf { it <= solenoids[1].maxPWM } ?: solenoids[1].maxPWM
 //    pwm3SeekBar.value = (scenario.getOrElse(idx){ scenario[0] }) .values[2].takeIf { it <= solenoids[2].maxPWM } ?: solenoids[2].maxPWM
@@ -161,9 +180,26 @@ suspend fun comparatorToSolenoid(newIndex: Int) {
     ch7 = pwm7SeekBar.value.toByte() //(rawPreByte6).toByte()
     ch8 = pwm8SeekBar.value.toByte() //(rawPreByte7).toByte()
 
-    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 100L)
 
-    writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L)
+    ch9 =  pwm9SeekBar.value.toByte()
+    ch10 = pwm10SeekBar.value.toByte()
+    ch11 = pwm11SeekBar.value.toByte()
+    ch12 = pwm12SeekBar.value.toByte()
+    ch13 = pwm13SeekBar.value.toByte()
+    ch14 = pwm14SeekBar.value.toByte()
+    ch15 = pwm15SeekBar.value.toByte()
+    ch16 = pwm16SeekBar.value.toByte()
+
+
+    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 100L, mode = MultiPortMode.First)
+
+    writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L, mode = MultiPortMode.First)
+
+    // Second:
+
+    writeToSerialPort(byteArrayOf(0x71, ch9, 0x00, ch10, 0x00, ch11, 0x00, ch12, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 100L, mode = MultiPortMode.Second)
+
+    writeToSerialPort(byteArrayOf(0x51, ch13, 0x00, ch14, 0x00, ch15, 0x00, ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L, mode = MultiPortMode.Second)
 
 //    pwm1SeekBar.value = map( rawPreByte0,0,255,0,100 )
 //    pwm2SeekBar.value = map( rawPreByte1,0,255,0,100 )
@@ -199,9 +235,42 @@ suspend fun sendZerosToSolenoid() {
     ch7 = 0x00.toByte()
     ch8 = 0x00.toByte()
 
-    writeToSerialPort(byteArrayOf(0x71, ch1, 0x00, ch2, 0x00, ch3, 0x00, ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L)
+    ch9 = 0x00.toByte()
+    ch10 = 0x00.toByte()
+    ch11 = 0x00.toByte()
+    ch12 = 0x00.toByte()
+    ch13 = 0x00.toByte()
+    ch14 = 0x00.toByte()
+    ch15 = 0x00.toByte()
+    ch16 = 0x00.toByte()
 
-    writeToSerialPort(byteArrayOf(0x51, ch5, 0x00, ch6, 0x00, ch7, 0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L)
+    writeToSerialPort(byteArrayOf(
+        0x71, ch1,
+        0x00, ch2,
+        0x00, ch3,
+        0x00, ch4,
+        0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L, mode = MultiPortMode.First)
+
+    writeToSerialPort(byteArrayOf(
+        0x51, ch5,
+        0x00, ch6,
+        0x00, ch7,
+        0x00, ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L, mode = MultiPortMode.First)
+
+    // For Second port:
+
+    writeToSerialPort(byteArrayOf(
+        0x71, ch9,
+        0x00, ch10,
+        0x00, ch11,
+        0x00, ch12,
+        0x00,0x00, 0x00,0x00, 0x00,0x00), delay = 100L, mode = MultiPortMode.Second)
+
+    writeToSerialPort(byteArrayOf(
+        0x51, ch13,
+        0x00, ch14,
+        0x00, ch15,
+        0x00, ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),delay = 0L, mode = MultiPortMode.Second)
 
 }
 
@@ -228,7 +297,30 @@ suspend fun sendScenarioToController() {
 
             0x00
         )
+
+        val send2 = byteArrayOf(
+            0x73,index.toByte(),0x00,
+
+            s.chs[8].toByte(),
+            s.chs[9].toByte(),
+            s.chs[10].toByte(),
+            s.chs[11].toByte(),
+
+            s.chs[12].toByte(),
+            s.chs[13].toByte(),
+            s.chs[14].toByte(),
+            s.chs[15].toByte(),
+
+            //time.getOrNull(1).takeIf { time.size == 2 } ?: 0x00,
+            time.getOrNull(1) ?: 0x00,
+            time[0],
+
+            0x00
+        )
+
         writeToSerialPort(send,delay = 10)
+
+        writeToSerialPort(send2,delay = 10)
     }
 }
 

@@ -182,8 +182,8 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
             ScenarioStep(
                 time = newTime,
                 chs = valueSteps,
-                text = wholeSheet[i][9],
-                comment = if (wholeSheet[i].size != 11) "" else wholeSheet[i][10]
+                text = wholeSheet[i][17],
+                comment = if (wholeSheet[i].size != 19) "" else wholeSheet[i][18]
             )
         )
     }

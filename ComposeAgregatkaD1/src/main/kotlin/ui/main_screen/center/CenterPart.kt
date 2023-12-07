@@ -36,6 +36,7 @@ import storage.createMeasureExperiment
 import ui.charts.Pointer
 import ui.custom.GaugeX
 import ui.main_screen.center.support_elements.solenoidsPanel
+import ui.main_screen.center.support_elements.solenoidsPanel2
 import ui.navigation.Screens
 import utils.*
 
@@ -66,7 +67,7 @@ fun CenterPiece(
     val stateChart = remember { STATE_EXPERIMENT }
     val explMode = remember { EXPLORER_MODE }
     val expandedCom = remember { mutableStateOf(false) }
-    val isHideCurrents = remember { mutableStateOf(false) }
+    val isHideCurrents = remember { isHidedCurrents }
 
     val txt = remember { txtOfScenario }
 
@@ -175,15 +176,17 @@ fun CenterPiece(
                 //println("|<<<<<<<<<<<<<<<<<<<${it.isExperiment} [${it.firstGaugeData}]")
                 //longForChart.add(if (pressure1X > 1000) { 1000 } else pressure1X)
                 //longForChart.add(pressure1X)
+                if(pressures.size == 17) {
+                    pressure9X  = map(it.firstGaugeData, 0, 4095, ( pressures[9 ].minValue), (pressures[9 ].maxValue),)
+                    pressure10X = map(it.secondGaugeData, 0, 4095, (pressures[10].minValue), (pressures[10].maxValue),)
+                    pressure11X = map(it.thirdGaugeData, 0, 4095, ( pressures[11].minValue), (pressures[11].maxValue),)
+                    pressure12X = map(it.fourthGaugeData, 0, 4095, (pressures[12].minValue), (pressures[12].maxValue),)
+                    pressure13X = map(it.fifthGaugeData, 0, 4095, ( pressures[13].minValue), (pressures[13].maxValue),)
+                    pressure14X = map(it.sixthGaugeData, 0, 4095, ( pressures[14].minValue), (pressures[14].maxValue),)
+                    pressure15X = map(it.seventhGaugeData, 0, 4095,(pressures[15].minValue), (pressures[15].maxValue),)
+                    pressure16X = map(it.eighthGaugeData, 0, 4095, (pressures[16].minValue), (pressures[16].maxValue),)
 
-                pressure9X  = map(it.firstGaugeData, 0, 4095, ( pressures[9 ].minValue), (pressures[9 ].maxValue),)
-                pressure10X = map(it.secondGaugeData, 0, 4095, (pressures[10].minValue), (pressures[10].maxValue),)
-                pressure11X = map(it.thirdGaugeData, 0, 4095, ( pressures[11].minValue), (pressures[11].maxValue),)
-                pressure12X = map(it.fourthGaugeData, 0, 4095, (pressures[12].minValue), (pressures[12].maxValue),)
-                pressure13X = map(it.fifthGaugeData, 0, 4095, ( pressures[13].minValue), (pressures[13].maxValue),)
-                pressure14X = map(it.sixthGaugeData, 0, 4095, ( pressures[14].minValue), (pressures[14].maxValue),)
-                pressure15X = map(it.seventhGaugeData, 0, 4095,(pressures[15].minValue), (pressures[15].maxValue),)
-                pressure16X = map(it.eighthGaugeData, 0, 4095, (pressures[16].minValue), (pressures[16].maxValue),)
+                }
 
                 when (EXPLORER_MODE.value) {
                     ExplorerMode.AUTO -> {
@@ -362,8 +365,8 @@ fun CenterPiece(
                     color = Color.White
                 )
             }
-            Text("${COM_PORT},${BAUD_RATE},${limitTime}ms", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
-                , fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
+            Text("1st:${COM_PORT},${BAUD_RATE},${limitTime}ms \n2nd:${COM_PORT_2},${BAUD_RATE},${limitTime}ms ", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                , fontFamily = FontFamily.Default, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
             )
             Box(Modifier.clickable {
                 isHideCurrents.value = !isHideCurrents.value
@@ -458,6 +461,9 @@ fun CenterPiece(
         if(!isHideCurrents.value) {
             Row(Modifier.fillMaxSize().weight(2f)) {
                 solenoidsPanel(sizeRow, duration)
+            }
+            Row(Modifier.fillMaxSize().weight(2f)) {
+                solenoidsPanel2(sizeRow, duration)
             }
         }
 

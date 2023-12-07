@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
@@ -27,20 +26,20 @@ import ui.styles.fontDigital
 import utils.*
 
 @Composable
-fun solenoidsPanel(
+fun solenoidsPanel2(
     sizeRow: Size,
     duration: MutableStateFlow<Long>
 ) {
     val crctx = rememberCoroutineScope().coroutineContext
 
-    var current1 by remember { mutableStateOf(-1) }
-    var current2 by remember { mutableStateOf(-1) }
-    var current3 by remember { mutableStateOf(-1) }
-    var current4 by remember { mutableStateOf(-1) }
-    var current5 by remember { mutableStateOf(-1) }
-    var current6 by remember { mutableStateOf(-1) }
-    var current7 by remember { mutableStateOf(-1) }
-    var current8 by remember { mutableStateOf(-1) }
+    var current9 by remember { mutableStateOf(-1) }
+    var current10 by remember { mutableStateOf(-1) }
+    var current11 by remember { mutableStateOf(-1) }
+    var current12 by remember { mutableStateOf(-1) }
+    var current13 by remember { mutableStateOf(-1) }
+    var current14 by remember { mutableStateOf(-1) }
+    var current15 by remember { mutableStateOf(-1) }
+    var current16 by remember { mutableStateOf(-1) }
 
 
 
@@ -62,18 +61,18 @@ fun solenoidsPanel(
 //    }
     LaunchedEffect(true) {
         CoroutineScope(Dispatchers.IO+crctx).launch {
-            dataChunkCurrents.collect {
+            dataChunkCurrents2.collect {
                 delay(DELAY_FOR_GET_DATA)
 
-                current1 = it.firstCurrentData
-                current2 = it.secondCurrentData
-                current3 = it.thirdCurrentData
-                current4 = it.fourthCurrentData
+                current9 = it.firstCurrentData
+                current10 = it.secondCurrentData
+                current11 = it.thirdCurrentData
+                current12 = it.fourthCurrentData
 
-                current5 = it.fifthCurrentData
-                current6 = it.sixthCurrentData
-                current7 = it.seventhCurrentData
-                current8 = it.eighthCurrentData
+                current13 = it.fifthCurrentData
+                current14 = it.sixthCurrentData
+                current15 = it.seventhCurrentData
+                current16 = it.eighthCurrentData
             }
         }
 
@@ -92,7 +91,7 @@ fun solenoidsPanel(
 //        }
     }
     val aspc = 4f
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().background(Color.Magenta)) {
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth(),//.fillMaxSize(),
             //columns = GridCells.Adaptive(150.dp),
@@ -107,71 +106,71 @@ fun solenoidsPanel(
                 bottom = 0.dp
             ),
             content = {
-                if (solenoids[0].isVisible) {
+                if (solenoids[8].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
-                            justBar(index = 1,solenoids[0].displayName, current = map(x=current1,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[0].currentMaxValue), maxPWM = solenoids[0].maxPWM, step = solenoids[0].step, duration = duration)
+                            justBar(index = 9,solenoids[8].displayName, current = map(x=current9,in_min=0, in_max = 4095, out_min=0, out_max = solenoids[8].currentMaxValue), maxPWM = solenoids[8].maxPWM, step = solenoids[8].step, duration = duration)
 
                         }
                     }
                 }
-                if (solenoids[1].isVisible) {
+                if (solenoids[9].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 2,
-                                solenoids[1].displayName,
+                                index = 10,
+                                solenoids[9].displayName,
                                 current = map(
-                                    x = current2,
+                                    x = current10,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[1].currentMaxValue
+                                    out_max = solenoids[9].currentMaxValue
                                 ),
-                                maxPWM = solenoids[1].maxPWM,
-                                step = solenoids[1].step,
+                                maxPWM = solenoids[9].maxPWM,
+                                step = solenoids[9].step,
                                 duration = duration
                             )
 
                         }
                     }
                 }
-                if (solenoids[2].isVisible) {
+                if (solenoids[10].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 3,
-                                solenoids[2].displayName,
+                                index = 11,
+                                solenoids[10].displayName,
                                 current = map(
-                                    x = current3,
+                                    x = current11,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[2].currentMaxValue
+                                    out_max = solenoids[10].currentMaxValue
                                 ),
-                                maxPWM = solenoids[2].maxPWM,
-                                step = solenoids[2].step,
+                                maxPWM = solenoids[10].maxPWM,
+                                step = solenoids[10].step,
                                 duration = duration
                             )
 
                         }
                     }
                 }
-                if (solenoids[3].isVisible) {
+                if (solenoids[11].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 4,
-                                solenoids[3].displayName,
+                                index = 12,
+                                solenoids[11].displayName,
                                 current = map(
-                                    x = current4,
+                                    x = current12,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[3].currentMaxValue
+                                    out_max = solenoids[11].currentMaxValue
                                 ),
-                                maxPWM = solenoids[3].maxPWM,
-                                step = solenoids[3].step,
+                                maxPWM = solenoids[11].maxPWM,
+                                step = solenoids[11].step,
                                 duration = duration
                             )
 
@@ -179,105 +178,105 @@ fun solenoidsPanel(
                     }
                 }
                 /////
-                if(solenoids[4].isVisible) {
+                if(solenoids[12].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 5,
-                                solenoids[4].displayName,
+                                index = 13,
+                                solenoids[12].displayName,
                                 current = map(
-                                    x = current5,
+                                    x = current13,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[0].currentMaxValue
+                                    out_max = solenoids[12].currentMaxValue
                                 ),
-                                maxPWM = solenoids[4].maxPWM,
-                                step = solenoids[4].step,
+                                maxPWM = solenoids[12].maxPWM,
+                                step = solenoids[12].step,
                                 duration = duration
                             )
                         }
                     }
                 }
-                if (solenoids[5].isVisible) {
+                if (solenoids[13].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 6,
-                                solenoids[5].displayName,
+                                index = 14,
+                                solenoids[13].displayName,
                                 current = map(
-                                    x = current6,
+                                    x = current14,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[0].currentMaxValue
+                                    out_max = solenoids[13].currentMaxValue
                                 ),
-                                maxPWM = solenoids[5].maxPWM,
-                                step = solenoids[5].step,
+                                maxPWM = solenoids[13].maxPWM,
+                                step = solenoids[13].step,
                                 duration = duration
                             )
                         }
                     }
                 }
-                if (solenoids[6].isVisible) {
+                if (solenoids[14].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 7,
-                                solenoids[6].displayName,
+                                index = 15,
+                                solenoids[14].displayName,
                                 current = map(
-                                    x = current7,
+                                    x = current15,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[0].currentMaxValue
+                                    out_max = solenoids[14].currentMaxValue
                                 ),
-                                maxPWM = solenoids[6].maxPWM,
-                                step = solenoids[6].step,
+                                maxPWM = solenoids[14].maxPWM,
+                                step = solenoids[14].step,
                                 duration = duration
                             )
                         }
                     }
                 }
-                if (solenoids[7].isVisible) {
+                if (solenoids[15].isVisible) {
                     item {
                         Box(Modifier.aspectRatio(aspc)) {
                             justBar(
-                                index = 8,
-                                solenoids[7].displayName,
+                                index = 16,
+                                solenoids[15].displayName,
                                 current = map(
-                                    x = current8,
+                                    x = current16,
                                     in_min = 0,
                                     in_max = 4095,
                                     out_min = 0,
-                                    out_max = solenoids[0].currentMaxValue
+                                    out_max = solenoids[15].currentMaxValue
                                 ),
-                                maxPWM = solenoids[7].maxPWM,
-                                step = solenoids[7].step,
+                                maxPWM = solenoids[15].maxPWM,
+                                step = solenoids[15].step,
                                 duration = duration
                             )
                         }
                     }
                 }
 
-                if (solenoids[8].isVisible) {
-                    item {
-                        justBar(
-                            index = 9,
-                            solenoids[8].displayName,
-                            current = map(
-                                x = current8,
-                                in_min = 0,
-                                in_max = 4095,
-                                out_min = 0,
-                                out_max = solenoids[0].currentMaxValue
-                            ),
-                            maxPWM = solenoids[8].maxPWM,
-                            step = solenoids[8].step,
-                            duration = duration
-                        )
-                    }
-                }
+//                if (solenoids[8].isVisible) {
+//                    item {
+//                        justBar(
+//                            index = 9,
+//                            solenoids[8].displayName,
+//                            current = map(
+//                                x = current16,
+//                                in_min = 0,
+//                                in_max = 4095,
+//                                out_min = 0,
+//                                out_max = solenoids[0].currentMaxValue
+//                            ),
+//                            maxPWM = solenoids[8].maxPWM,
+//                            step = solenoids[8].step,
+//                            duration = duration
+//                        )
+//                    }
+//                }
             }
         )
 //        Row(
@@ -307,15 +306,15 @@ fun solenoidsPanel(
 
 }
 
-var ch1 = 0x00.toByte()
-var ch2 = 0x00.toByte()
-var ch3 = 0x00.toByte()
-var ch4 = 0x00.toByte()
+var ch9 = 0x00.toByte()
+var ch10 = 0x00.toByte()
+var ch11 = 0x00.toByte()
+var ch12 = 0x00.toByte()
 
-var ch5 = 0x00.toByte()
-var ch6 = 0x00.toByte()
-var ch7 = 0x00.toByte()
-var ch8 = 0x00.toByte()
+var ch13 = 0x00.toByte()
+var ch14 = 0x00.toByte()
+var ch15 = 0x00.toByte()
+var ch16 = 0x00.toByte()
 
 @Composable
 private fun justBar(
@@ -331,16 +330,16 @@ private fun justBar(
     // PWM [from 0 to 255]
     val PWMremember = remember {
         when(index) {
-            1 -> pwm1SeekBar
-            2 -> pwm2SeekBar
-            3 -> pwm3SeekBar
-            4 -> pwm4SeekBar
+            9 -> pwm9SeekBar
+            10 -> pwm10SeekBar
+            11 -> pwm11SeekBar
+            12 -> pwm12SeekBar
 
-            5 -> pwm5SeekBar
-            6 -> pwm6SeekBar
-            7 -> pwm7SeekBar
-            8 -> pwm8SeekBar
-            else -> pwm1SeekBar
+            13 -> pwm13SeekBar
+            14 -> pwm14SeekBar
+            15 -> pwm15SeekBar
+            16 -> pwm16SeekBar
+            else -> pwm9SeekBar
         }
     }
 
@@ -368,10 +367,10 @@ private fun justBar(
                             selectorForChannels(index, PWMremember.value.toByte())
                             //selectorForChannels(index, PWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x71,ch9, 0x00,ch10, 0x00,ch11, 0x00,ch12, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.Second)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x51,ch13, 0x00,ch14, 0x00,ch15, 0x00,ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.Second)
 
                             }
                             delay(100)
@@ -396,9 +395,9 @@ private fun justBar(
                             selectorForChannels(index, PWMremember.value.toByte())
                             //selectorForChannels(index, PWMremember.value.to2ByteArray()[0])
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x71,ch9, 0x00,ch10, 0x00,ch11, 0x00,ch12, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.Second)
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x51,ch13, 0x00,ch14, 0x00,ch15, 0x00,ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.Second)
                             }
                         }
                         //pos.value-= 0.1f
@@ -465,10 +464,10 @@ private fun justBar(
                         CoroutineScope(Dispatchers.IO).launch {
                             selectorForChannels(index, PWMremember.value.toByte())
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x71,ch9, 0x00,ch10, 0x00,ch11, 0x00,ch12, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.Second)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x51,ch13, 0x00,ch14, 0x00,ch15, 0x00,ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.Second)
 
                             }
                             delay(100)
@@ -493,10 +492,10 @@ private fun justBar(
                         CoroutineScope(Dispatchers.IO).launch {
                             selectorForChannels(index, PWMremember.value.toByte())
                             if (isChangedFirstFourth) {
-                                writeToSerialPort(byteArrayOf(0x71,ch1, 0x00,ch2, 0x00,ch3, 0x00,ch4, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x71,ch9, 0x00,ch10, 0x00,ch11, 0x00,ch12, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 100L, mode = MultiPortMode.Second)
 
                             }else {
-                                writeToSerialPort(byteArrayOf(0x51,ch5, 0x00,ch6, 0x00,ch7, 0x00,ch8, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.First)
+                                writeToSerialPort(byteArrayOf(0x51,ch13, 0x00,ch14, 0x00,ch15, 0x00,ch16, 0x00,0x00, 0x00,0x00, 0x00,0x00),false, delay = 0L, mode = MultiPortMode.Second)
 
                             }
                             delay(100)
@@ -527,28 +526,18 @@ private fun justBar(
 private var isChangedFirstFourth = true
 
 private fun selectorForChannels(chIndex: Int, byte: Byte) {
-    isChangedFirstFourth = chIndex in 1..4
+    isChangedFirstFourth = chIndex in 9..12
 
     when(chIndex) {
-        1 -> ch1 = byte
-        2 -> ch2 = byte
-        3 -> ch3 = byte
-        4 -> ch4 = byte
-        5 -> ch5 = byte
-        6 -> ch6 = byte
-        7 -> ch7 = byte
-        8 -> ch8 = byte
+        9 -> ch9 = byte
+        10 -> ch10 = byte
+        11 -> ch11 = byte
+        12 -> ch12 = byte
+
+        13 -> ch13 = byte
+        14 -> ch14 = byte
+        15 -> ch15 = byte
+        16 -> ch16 = byte
     }
 }
 
-@Composable
-fun SimpleProgressIndicator(
-    modifier: Modifier = Modifier,
-    progress: Float = 0.7f,
-    progressBarColor: Color = Color.Red,
-    cornerRadius: Dp = 0.dp,
-    trackColor: Color = Color(0XFFFBE8E8),
-    thumbRadius: Dp = 0.dp,
-    thumbColor: Color = Color.White,
-    thumbOffset: Dp = thumbRadius
-) {}

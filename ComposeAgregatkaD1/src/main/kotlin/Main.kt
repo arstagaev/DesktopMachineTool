@@ -42,7 +42,10 @@ fun main() = application (
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
         icon = painterResource("drawable/ava.png"),
         onKeyEvent = {
-             if ( it.key == Key.DirectionRight && it.type == KeyEventType.KeyUp) {
+            if(it.key == Key.Spacebar){
+                isHidedCurrents.value = !isHidedCurrents.value
+                false
+            } else if ( it.key == Key.DirectionRight && it.type == KeyEventType.KeyUp) {
 
                 //shiftIsPressed = true
 

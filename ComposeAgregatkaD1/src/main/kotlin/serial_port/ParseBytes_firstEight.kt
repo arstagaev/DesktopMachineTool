@@ -22,9 +22,8 @@ class PacketListener : SerialPortPacketListener {
 
     override fun serialEvent(event: SerialPortEvent) {
         CoroutineScope(Dispatchers.IO).launch {
-            val newData = event.receivedData
-            //println("${newData.toHexString()}")
-            coreParse_FirstEight(newData)
+            //println("${event.serialPort.systemPortName} ${event.receivedData.toHexString()}")
+            coreParse_FirstEight(event)
         }
 
     }
@@ -41,9 +40,11 @@ var incrX = 0
 private var lastGauge : DataChunkG? = null
 
 
-suspend fun coreParse_FirstEight(updData: ByteArray) = withContext(Dispatchers.IO) {
+private suspend fun coreParse_FirstEight(event: SerialPortEvent) = withContext(Dispatchers.IO) {
     var dch: DataChunkG? = null
     var dchCurr: DataChunkCurrent? = null
+
+    val updData = event.receivedData
 
     if (incr == 0) {
         start_time = System.currentTimeMillis()
@@ -53,7 +54,7 @@ suspend fun coreParse_FirstEight(updData: ByteArray) = withContext(Dispatchers.I
 
     if (delta >= 1000) {
         // measure number of packets:
-        println("${System.currentTimeMillis()/1000L}> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms ** $limitTime >= ${incrementTime} .state${STATE_EXPERIMENT.value.name}")
+        //println("${event.serialPort.systemPortName} ${System.currentTimeMillis()/1000L}> ${updData[0]} ${updData[15]} [size:${updData.size}] ${incr} ]-[ ${delta} ms ** $limitTime >= ${incrementTime} .state${STATE_EXPERIMENT.value.name}")
         incr = 0
     }
 
