@@ -2,6 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.commonMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.commonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.jvmMain.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.jvmMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.jvmTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.BuildSrc.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ComposeAgregatkaD1.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/DesktopMachineTool.iml" filepath="$PROJECT_DIR$/.idea/DesktopMachineTool.iml" />
     </modules>
   </component>

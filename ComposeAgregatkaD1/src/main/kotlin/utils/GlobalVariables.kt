@@ -7,6 +7,7 @@ import enums.StateExperiments
 import enums.StateParseBytes
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import org.jetbrains.skiko.OS
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
@@ -19,26 +20,30 @@ import javax.swing.JFileChooser
 
 var DELAY_FOR_GET_DATA = 0L
 var arrayOfComPorts = arrayOf<SerialPort>()
+val isWindows by lazy { !System.getProperties().getProperty("os.name").contains("Mac", ignoreCase = true) }
+val OS_SLASH by lazy {
+    if (isWindows) "\\" else  "/"
+}
 
 val MAINFOLDER = "mcm"
 
-val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","inner_marker.wav")
-val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","auto_click.wav")
-val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","run_vine.wav")
-val Dir0Configs_Error = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config","tesla_err.wav")
+val Dir0Configs_Analysis = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}config","inner_marker.wav")
+val Dir0Configs_End = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}config","auto_click.wav")
+val Dir0Configs_Run = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}config","run_vine.wav")
+val Dir0Configs_Error = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}config","tesla_err.wav")
 
 
-val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\config")
-val Dir2Reports = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\reports")
-val Dir3Scenarios = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\scenarios")
-val Dir4MainConfig_Json = File(Dir1Configs,"\\config.json")
-val Dir4MainConfig_Txt = File(Dir1Configs,"\\config.txt")
-val Dir4MainConfig_Log by lazy { File(Dir1Configs,"\\log${generateTimestampLastUpdate()}.txt") }
-val Dir5Operators = File(Dir1Configs,"\\operator_ids.txt")
+val Dir1Configs = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}config")
+val Dir2Reports = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}reports")
+val Dir3Scenarios = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}scenarios")
+val Dir4MainConfig_Json = File(Dir1Configs,"${OS_SLASH}config.json")
+val Dir4MainConfig_Txt = File(Dir1Configs,"${OS_SLASH}config.txt")
+val Dir4MainConfig_Log by lazy { File(Dir1Configs,"${OS_SLASH}log${generateTimestampLastUpdate()}.txt") }
+val Dir5Operators = File(Dir1Configs,"${OS_SLASH}operator_ids.txt")
 
-val Dir6 = File(Dir2Reports,"\\demo.txt")
-val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}\\${MAINFOLDER}\\reports\\standard")
-val Dir8 = File(Dir7ReportsStandard,"\\stndrd.txt")
+val Dir6 = File(Dir2Reports,"${OS_SLASH}demo.txt")
+val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}reports${OS_SLASH}standard")
+val Dir8 = File(Dir7ReportsStandard,"${OS_SLASH}stndrd.txt")
 val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
 
 var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo.xls")

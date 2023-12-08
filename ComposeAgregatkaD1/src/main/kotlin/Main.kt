@@ -38,17 +38,17 @@ fun main() = application (
 //    visible = true
 ) {
     Window(
-        title = "MCM-16 Ports version: 1.1",
+        title = "MCM-16 Ports version: 1.19",
         state = WindowState(size = DpSize(1000.dp, 800.dp)),
         icon = painterResource("drawable/ava.png"),
         onKeyEvent = {
-            if(it.key == Key.Spacebar){
+            println("Pressed: ${it.key} Type: ${it.type}")
+            if(it.key == Key.Spacebar && it.type == KeyEventType.KeyUp){
                 isHidedCurrents.value = !isHidedCurrents.value
-                false
+                println("isHidedCurrents pressed")
+                true
             } else if ( it.key == Key.DirectionRight && it.type == KeyEventType.KeyUp) {
-
                 //shiftIsPressed = true
-
                  CoroutineScope(Dispatchers.IO).launch {
                      indexOfScenario.value++
 

@@ -60,7 +60,7 @@ fun StarterScreen() {
 
 
             arrayOfComPorts.forEachIndexed { index, serialPort ->
-                println(">>> ${serialPort.descriptivePortName.contains("Silicon")}")
+                //println(">>> ${serialPort.descriptivePortName.contains("Silicon")}")
                 if (serialPort.descriptivePortName.contains("Silicon")) { // Silicon Labs
                     if (!isFirstPortFounded) {
                         choosenCOM.value = index

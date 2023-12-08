@@ -10,6 +10,7 @@ plugins {
 
 group = "me.tagaev"
 version = "1.0"
+var isWindows = true
 
 repositories {
     google()
@@ -21,8 +22,10 @@ repositories {
 }
 
 dependencies {
+    isWindows = compose.desktop.currentOs.contains("win", ignoreCase = true)
 
     implementation(compose.desktop.windows_x64)
+    implementation(compose.desktop.macos_arm64)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 

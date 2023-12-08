@@ -95,7 +95,7 @@ fun readParameters(file: File) : List<ParameterCommon> {
 }
 
 fun refreshParameters() {
-    logAct("createParameters")
+    logAct("refresh Parameters")
     //"comport" -> COM_P
     //"baudrate" -> BAUD
     ////"is_demo" ->
@@ -119,6 +119,7 @@ fun refreshParameters() {
     //IF first launch
     val fl = Dir4MainConfig_Txt
     if (!fl.exists()) {
+        println("Try to create new file: ${fl.absolutePath}")
         fl.createNewFile()
 //        newParameters = arrayListOf(
 //            ParameterCommon("comport","COM10"),
@@ -238,12 +239,15 @@ fun writeToFile(msg: String, fl: File) {
     //IF first launch
     //val fl = Dir4MainConfig_Log
     if (!fl.exists()) {
+        println("Try to create new file: ${fl.absolutePath}")
         fl.createNewFile()
-//        )
     }
     val fileOutputStream = FileOutputStream(fl,true)
     val outputStreamWriter = OutputStreamWriter(fileOutputStream)
+
     try {
+
+
 
         outputStreamWriter.append(msg+"\n")
 

@@ -67,7 +67,7 @@ fun CenterPiece(
     val stateChart = remember { STATE_EXPERIMENT }
     val explMode = remember { EXPLORER_MODE }
     val expandedCom = remember { mutableStateOf(false) }
-    val isHideCurrents = remember { isHidedCurrents }
+    //val isHideCurrents = remember { isHidedCurrents }
 
     val txt = remember { txtOfScenario }
 
@@ -82,12 +82,21 @@ fun CenterPiece(
         mutableStateOf(0.dp)
     }
     var isShowPlay = remember { mutableStateOf(false) }
+
+    LaunchedEffect(isHidedCurrents.value) {
+        println("isHidedCurrents triggered")
+    }
     LaunchedEffect(true) {
         ctxScope.launch {
             //EXPLORER_MODE.value = ExplorerMode.MANUAL
             //reInitSolenoids()
             indexOfScenario.value = 0
 
+            if ( isWindows == false ) {
+                println("xxxxxxxxxxxx IS MAC OS => without USB CONNECTION !!!  xxxxxxxxxxxxxxxxxx")
+
+                return@launch
+            }
             //sound_On()
             startReceiveFullData()
             comparatorToSolenoid(indexOfScenario.value)
@@ -278,6 +287,7 @@ fun CenterPiece(
                 fontWeight = FontWeight.Bold,
                 color = Color.Blue
             )
+            // TOP BAR:
             Box(Modifier.clickable {
                 expandedCom.value = !expandedCom.value
             }) {
@@ -369,7 +379,7 @@ fun CenterPiece(
                 , fontFamily = FontFamily.Default, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
             )
             Box(Modifier.clickable {
-                isHideCurrents.value = !isHideCurrents.value
+                isHidedCurrents.value = !isHidedCurrents.value
             }) {
                 Text(
                     "Hide Currents⚡️",
@@ -458,7 +468,7 @@ fun CenterPiece(
                 }
             }
         }
-        if(!isHideCurrents.value) {
+        if(!isHidedCurrents.value) {
             Row(Modifier.fillMaxSize().weight(2f)) {
                 solenoidsPanel(sizeRow, duration)
             }
@@ -468,12 +478,4 @@ fun CenterPiece(
         }
 
     }
-//    Row(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.DarkGray)
-//    ) {
-//
-//
-//    }
 }

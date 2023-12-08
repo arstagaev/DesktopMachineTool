@@ -98,6 +98,7 @@ fun openNewScenario(isRefreshForChart: Boolean = false) {
 fun openLastScenario() {
     CoroutineScope(Dispatchers.Default).launch {
         if (targetParseScenario(LAST_SCENARIO)) {
+
             screenNav.value = Screens.MAIN
         }
 

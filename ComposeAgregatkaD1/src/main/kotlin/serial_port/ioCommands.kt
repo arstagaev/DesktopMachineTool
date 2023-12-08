@@ -13,6 +13,11 @@ private val crtx2 = CoroutineName("main")
 suspend fun initSerialCommunication() {
     arrayOfComPorts = getComPorts_Array() as Array<SerialPort>
 
+//   if ( isWindows == false ) {
+//       println("IS MAC OS => without USB CONNECTION !!!")
+//       return
+//   }
+
     println(">>>serial communication has been started, COM_PORT:$COM_PORT ${BAUD_RATE}")
     serialPort = SerialPort.getCommPort(COM_PORT)
     serialPort.setComPortParameters(BAUD_RATE,8,1, SerialPort.NO_PARITY)
@@ -62,6 +67,11 @@ suspend fun startReceiveFullData() {
 //    ) {
 //        println(">>>Available Com ports:${getComPorts_Array().get(it).systemPortName} is Open: ${getComPorts_Array().get(it).isOpen}||${getComPorts_Array().get(it).descriptivePortName}")
 //    }
+    if ( isWindows == false ) {
+        println("IS MAC OS => without USB CONNECTION !!!")
+        return
+    }
+
     if (!serialPort.isOpen) {
         initSerialCommunication()
     }

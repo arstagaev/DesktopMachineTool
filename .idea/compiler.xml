@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="ComposeAgregatkaD1" target="11" />
+      <module name="ComposeAgregatkaD1.BuildSrc" target="11" />
+      <module name="ComposeAgregatkaD1.BuildSrc.main" target="11" />
+      <module name="ComposeAgregatkaD1.BuildSrc.test" target="11" />
+      <module name="ComposeAgregatkaD1.main" target="11" />
+      <module name="ComposeAgregatkaD1.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -7,15 +7,21 @@ import org.apache.poi.ss.usermodel.Row
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
+import storage.refreshParameters
 import utils.*
 import java.io.File
 import java.io.FileInputStream
 
 var wholeSheet = mutableListOf<MutableList<String>>()
 suspend fun targetParseScenario(inputScenario: File?) : Boolean {
+//https://devmark.ru/article/excel-reading
     val NUMBER_OF_PORTS = 16
-    if (inputScenario == null)
+    if (inputScenario == null) {
+        logAct("Error: inputScenario xls == null")
         return false
+    }
+    logAct("Start parsing ${inputScenario.absolutePath}")
+
     var needReWriteStandard = false
 
     val file = FileInputStream(inputScenario)
@@ -31,16 +37,17 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
     var incr = 0
 
     while (rowIterator.hasNext()) {
+        var rowComplete = mutableListOf<String>()
+
         // to bottom V
         val row: Row = rowIterator.next()
-
-        var rowComplete = mutableListOf<String>()
         val cellIterator: Iterator<Cell> = row.cellIterator()
 
         while (cellIterator.hasNext()) {
             // to right ->
             val cell = cellIterator.next()
             if (cell.toString().isNotBlank() && cell.toString().isNotEmpty() && cell.toString() != "") {
+                //print("[${cell.toString()}]")
                 rowComplete.add(cell.toString())
             }
 
@@ -49,15 +56,16 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 //                CellType.STRING -> print(cell.stringCellValue + "t")
 //            }
         }
-        println("${incr}Row: ${rowComplete.joinToString()} ${rowComplete.size}")
+        println("${incr}Row: ${rowComplete.joinToString()} | size: ${rowComplete.size}")
         incr++
         if (rowComplete.isNotEmpty()) {
             wholeSheet.add(rowComplete)
         }
-
     }
-    println("Size sheet rows:${wholeSheet[2].size} in rows column:${wholeSheet[2][2].length}")
-
+    println("Size sheet rows:${wholeSheet[2].size} last cell:  ${wholeSheet[wholeSheet.lastIndex][wholeSheet[wholeSheet.lastIndex].lastIndex].toString()}")
+    println("last row: ${wholeSheet[wholeSheet.lastIndex]}  number of rows:${wholeSheet.size}")
+    println("last column: ${wholeSheet[32]}")
+    // row ; column
     // check valid of xls:
     if ( wholeSheet.size < 22 || wholeSheet[2].size < 2)
         return false
@@ -194,6 +202,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 
     file.close()
     wholeSheet.clear()
+    refreshParameters()
     if (needReWriteStandard) {
         writeToExcel(0,0, chartFileStandard.value.name)
     }
