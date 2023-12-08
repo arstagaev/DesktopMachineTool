@@ -13,7 +13,7 @@ fun checkNeededFolders(): Boolean {
 }
 
 fun createNeededFolders() {
-    logAct("createNeededFolders")
+
 
   var dirs = arrayOf<File>()
   dirs+= Dir1Configs
@@ -28,14 +28,18 @@ fun createNeededFolders() {
   }
 }
 
-fun createDemoConfigFile() : File {
-    logAct("createDemoConfigFile")
-   val theFileXls = File(Dir3Scenarios,"scenario_demo.xls")
+fun createDemoConfigExcelFile() {
+
+   logAct("createDemoConfigFile")
+   val theFileXls = File(Dir3Scenarios,"scenario_demo_test.xls")
+
+
    if (!theFileXls.exists()) {
-           theFileXls.createNewFile()
-           logAct("Excel file-config created: ${theFileXls.absoluteFile}")
+
+       File("scenario_demo_test.xls").copyTo(theFileXls)
+
+       logAct("Excel file-config created: ${theFileXls.absoluteFile}")
    }
-    return theFileXls
 }
 
 fun readParameters(file: File) : List<ParameterCommon> {

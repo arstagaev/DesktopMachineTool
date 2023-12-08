@@ -221,6 +221,10 @@ fun GaugeX(inputSize: DpSize, progress : Int, minType : Int, maxType: Int, type:
             }
             if(rememberShowComm.value) {
                 Box(modifier = Modifier.fillMaxSize().background(colorTrans60)) {
+                    Row(Modifier.fillMaxWidth().align(Alignment.TopCenter)) {
+                        Text("+ ",modifier = Modifier.clickable {  }, fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(" -",fontFamily = FontFamily.Default, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    }
                     Text("raw: ${progress} .. ${comment}", modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(10.dp)

@@ -9,5 +9,10 @@ data class PressuresHolder(
     val unit : String,
     val commentString : String,
     val prefferedColor : String,
-    var isVisible : Boolean
+    var isVisible : Boolean,
+    val parameters: GaugeParameter? = null
+)
+
+data class GaugeParameter (
+    var size : Int = 100 // in percents, 100% is normal
 )

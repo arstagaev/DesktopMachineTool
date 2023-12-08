@@ -17,7 +17,7 @@ import java.io.File
 import javax.swing.JFileChooser
 
 
-
+val isDebugMode = false
 var DELAY_FOR_GET_DATA = 0L
 var arrayOfComPorts = arrayOf<SerialPort>()
 val isWindows by lazy { !System.getProperties().getProperty("os.name").contains("Mac", ignoreCase = true) }
@@ -44,19 +44,20 @@ val Dir5Operators = File(Dir1Configs,"${OS_SLASH}operator_ids.txt")
 val Dir6 = File(Dir2Reports,"${OS_SLASH}demo.txt")
 val Dir7ReportsStandard = File("${JFileChooser().fileSystemView.defaultDirectory.toString()}${OS_SLASH}${MAINFOLDER}${OS_SLASH}reports${OS_SLASH}standard")
 val Dir8 = File(Dir7ReportsStandard,"${OS_SLASH}stndrd.txt")
-val Dir9Scenario = File(Dir3Scenarios,"scenario_demo.xls")
+val Dir9Scenario = File(Dir3Scenarios,"scenario_demo_test.xls")
 
-var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo.xls")
+var Dir_10_ScenarioForChart = File(Dir3Scenarios,"scenario_demo_test.xls")
 
 var COM_PORT = "COM0"
 var COM_PORT_2 = "COM0"
 var BAUD_RATE = 500000
 var OPERATOR_ID = "no name"
-var SOUND_ENABLED = 1
+var SOUND_ENABLED = 0
 var LAST_SCENARIO = Dir9Scenario
 var DELAY_BEFORE_CHART = 2000
 var SAVELOG = true
 var isHidedCurrents = mutableStateOf(false)
+var scaleGauges = mutableStateOf(1.0f)
 
 var solenoids = mutableListOf<SolenoidHolder>()
 var pressures = mutableListOf<PressuresHolder>()

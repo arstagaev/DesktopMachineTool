@@ -10,10 +10,13 @@ import androidx.compose.material.*
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -39,10 +42,11 @@ import storage.openPicker
 import ui.navigation.Screens
 import ui.styles.fontDigital
 import ui.styles.fontRoboGirls
+import ui.styles.fontUbuntu
 import utils.*
 
 
-@OptIn(ExperimentalTextApi::class)
+@OptIn(ExperimentalTextApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun StarterScreen() {
     //var remarrayports = remember { arrayOfComPorts }
@@ -131,7 +135,7 @@ fun StarterScreen() {
                     Text("OPERATOR ID ⬆️",
                         modifier = Modifier.fillMaxSize().clickable {
                             expandedOperator = true
-                        }, fontSize = 20.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                        }, fontSize = 20.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
 
                     DropdownMenu(
                         modifier = Modifier.background(Color.White),
@@ -146,33 +150,47 @@ fun StarterScreen() {
             }
         }
         Row(modifier = Modifier.fillMaxSize().weight(3f).padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+            var activeOS by remember { mutableStateOf(false) }
+            var activeOLS by remember { mutableStateOf(false) }
+            var activeOC by remember { mutableStateOf(false) }
+            var activeS by remember { mutableStateOf(false) }
+
+            Box(Modifier.width(200.dp).background(if (activeOS)Color.Blue else Color.Transparent).border(BorderStroke(2.dp, Color.Blue))
+                .onPointerEvent(PointerEventType.Enter) { activeOS = true }
+                .onPointerEvent(PointerEventType.Exit) { activeOS = false }
                 .clickable {
                     openNewScenario()
 
                 }) {
                 Text("Open Scenario",
-                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
             }
 
-            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+            Box(Modifier.width(200.dp).background(if (activeOLS)Color.Blue else Color.Transparent).border(BorderStroke(2.dp, Color.Blue))
+                .onPointerEvent(PointerEventType.Enter) { activeOLS = true }
+                .onPointerEvent(PointerEventType.Exit) { activeOLS = false }
                 .clickable {
                     openLastScenario()
                 }) {
                 Text("Open last scenario",
-                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
             }
 
-            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+            Box(Modifier.width(200.dp).background(if (activeOC)Color.Blue else Color.Transparent).border(BorderStroke(2.dp, Color.Blue))
+                .onPointerEvent(PointerEventType.Enter) { activeOC = true }
+                .onPointerEvent(PointerEventType.Exit) { activeOC = false }
                 .clickable {
                    openChartViewer()
 
                 }) {
                 Text("Open Chart",
-                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                    modifier = Modifier.padding(4.dp), fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
             }
 
-            Box(Modifier.width(200.dp).border(BorderStroke(2.dp, Color.Blue))
+            Box(Modifier.width(200.dp).background(if (activeS)Color.Blue else Color.Transparent)
+                .border(BorderStroke(2.dp, Color.Blue))
+                .onPointerEvent(PointerEventType.Enter) { activeS = true }
+                .onPointerEvent(PointerEventType.Exit) { activeS = false }
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onPress = {},
@@ -188,7 +206,7 @@ fun StarterScreen() {
                 ) {
                 Text("Settings",
                     modifier = Modifier.padding(4.dp)
-                    , fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                    , fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
             }
 
 
@@ -196,7 +214,7 @@ fun StarterScreen() {
 //                .clickable { visibilitySettings.value = !visibilitySettings.value }) {
 //                Text("Settings",
 //                    modifier = Modifier.padding(4.dp)
-//                    , fontSize = 24.sp, fontFamily = FontFamily.Monospace,
+//                    , fontSize = 24.sp, fontFamily = fontUbuntu,
 //                    color = Color.White, textAlign = TextAlign.Center
 //                )
 //
@@ -205,7 +223,7 @@ fun StarterScreen() {
 //                Text("Quick",
 //                    modifier = Modifier.padding(4.dp).clickable {
 //                        screenNav.value = Screens.MAIN
-//                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+//                    }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
 //
 //            }
         }
@@ -226,7 +244,7 @@ fun StarterScreen() {
                                     if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else COM_PORT,// arrayOfComPorts[choosenCOM.value].systemPortName,
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedCom = !expandedCom
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center
+                                    }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.Blue, textAlign = TextAlign.Center
                                 )
 
                                 DropdownMenu(
@@ -261,7 +279,7 @@ fun StarterScreen() {
                                     if (arrayOfComPorts.isEmpty()) "‼️NO COM PORTS‼️" else COM_PORT_2,//arrayOfComPorts[choosenCOM2.value].systemPortName,
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedCom2 = !expandedCom2
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center
+                                    }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.Blue, textAlign = TextAlign.Center
                                 )
 
                                 DropdownMenu(
@@ -289,13 +307,13 @@ fun StarterScreen() {
                         Row {
                             Text("Baud-rate:",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
-                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                                }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
 
                             Box {
                                 Text(choosenBaud.value.toString(),
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedBaud = !expandedBaud
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+                                    }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.Blue, textAlign = TextAlign.Center)
 
                                 DropdownMenu(
                                     modifier = Modifier.background(Color.White),
@@ -333,13 +351,13 @@ fun StarterScreen() {
                         Row {
                             Text("Sound type",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
-                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                                }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
 
                             Box {
                                 Text("${SOUND_ENABLED}",
                                     modifier = Modifier.width(200.dp).padding(4.dp).clickable {
                                         expandedSound = !expandedSound
-                                    }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.Blue, textAlign = TextAlign.Center)
+                                    }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.Blue, textAlign = TextAlign.Center)
 
                                 DropdownMenu(
                                     modifier = Modifier.background(Color.White),
@@ -365,7 +383,7 @@ fun StarterScreen() {
                         Row {
                             Text("Enable Logger",
                                 modifier = Modifier.width(200.dp).padding(4.dp).clickable {
-                                }, fontSize = 24.sp, fontFamily = FontFamily.Monospace, color = Color.White, textAlign = TextAlign.Center)
+                                }, fontSize = 24.sp, fontFamily = fontUbuntu, color = Color.White, textAlign = TextAlign.Center)
 
 
                             val checkedState = remember { mutableStateOf(SAVELOG) }
@@ -399,7 +417,7 @@ fun StarterScreen() {
                             modifier = Modifier.fillMaxSize().clickable {
                             },
                             fontSize = 24.sp,
-                            fontFamily = FontFamily.Monospace,
+                            fontFamily = fontUbuntu,
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )

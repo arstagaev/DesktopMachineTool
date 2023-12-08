@@ -4,6 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Row
+import parsing_excel.models.GaugeParameter
 import parsing_excel.models.PressuresHolder
 import parsing_excel.models.ScenarioStep
 import parsing_excel.models.SolenoidHolder
@@ -97,6 +98,7 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
 //        )
 //        println("cooopppppyyy ${it} ${asd.joinToString()} ${pressures.size}")
         //incr++
+        //println("pizdec:  ${wholeSheet[11].getOrNull(it+1)?.toFloat()?.toInt() ?: 100}")
         pressures.add(
             PressuresHolder(
                 displayName =  wholeSheet[2][it+1],
@@ -107,12 +109,13 @@ suspend fun targetParseScenario(inputScenario: File?) : Boolean {
                 unit =         wholeSheet[7][it+1],
                 commentString =wholeSheet[8][it+1],
                 prefferedColor=wholeSheet[9][it+1],
-                isVisible =    wholeSheet[10].getOrNull(it+1) == "true"
+                isVisible =    wholeSheet[10].getOrNull(it+1) == "true",
+                //parameters = GaugeParameter(size = wholeSheet[11].getOrNull(it+1)?.toFloat()?.toInt() ?: 100)
             )
         )
     }
     logInfo("pressures: ${pressures.joinToString()} ]")
-
+    scaleGauges.value = wholeSheet[0][2].toString().toIntOrNull()?.let { it / 100f } ?: 1f
     var maxPWMs = arrayListOf<Int>()
 
     repeat(NUMBER_OF_PORTS) {

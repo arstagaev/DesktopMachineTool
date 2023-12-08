@@ -1,7 +1,5 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -14,20 +12,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.singleWindowApplication
 import enums.ExplorerMode
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
 import parsing_excel.writeToExcel
 import serial_port.comparatorToSolenoid
 import serial_port.pauseSerialComm
-import serial_port.sendZerosToSolenoid
+import storage.createDemoConfigExcelFile
+import storage.createNeededFolders
 import storage.readParameters
 import ui.charts.ChartWindowNew
-import ui.windows.WindowTypes
 import utils.*
-import java.awt.event.KeyEvent
-import java.io.File
 import kotlin.concurrent.fixedRateTimer
 
 
@@ -91,9 +85,16 @@ fun main() = application (
             }
         },
         onCloseRequest = {
-            CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
-                pauseSerialComm()
-                delay(500)
+            CoroutineScope(Dispatchers.IO + CoroutineName("onCloseRequest")).launch {
+                writeToExcel(row = 0, column = 3, (scaleGauges.value.toInt() * 100).toString())
+                if (isWindows) {
+                    pauseSerialComm()
+                    delay(500)
+                } else {
+                    showMeSnackBar("NO Connect to ${COM_PORT} !!", Color.Red)
+                    delay(2000)
+                }
+
                 exitApplication()
             }
 
@@ -106,7 +107,8 @@ fun main() = application (
 
         //var initParameters = readParameters(Dir4MainConfig)
 
-
+        createNeededFolders()
+        createDemoConfigExcelFile()
         initialize(readParameters(Dir4MainConfig_Txt))
 
         var isHaveConn = false

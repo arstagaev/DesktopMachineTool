@@ -68,7 +68,7 @@ fun CenterPiece(
     val explMode = remember { EXPLORER_MODE }
     val expandedCom = remember { mutableStateOf(false) }
     //val isHideCurrents = remember { isHidedCurrents }
-
+    val gscl = remember { scaleGauges }
     val txt = remember { txtOfScenario }
 
     val ctxScope =
@@ -125,7 +125,7 @@ fun CenterPiece(
                         //logGarbage("konec ${}")
                         if (
                             //limitTime >= incrementTime &&
-                            (it.isExperiment)
+                            it.isExperiment
                         ) {
                             count++
                             arr0Time   .add(incrementTime)
@@ -262,82 +262,167 @@ fun CenterPiece(
                 sizeRow = coordinates.size.toSize()
             }
     ) {
-        Row(Modifier.weight(0.5f)) {
+        Row(Modifier.fillMaxWidth().weight(0.5f), horizontalArrangement = Arrangement.SpaceBetween) {
 //                Box(Modifier.size(40.dp)) {
 //                    Image(painterResource("/trs.jpg"),"")
 //                }
-            if (isExperimentStarts.value) {
+            Row(Modifier) {
+                if (isExperimentStarts.value) {
+                    Text(
+                        "Rec...",
+                        modifier = Modifier.padding(top = (10).dp, start = 20.dp).clickable {
+                        },
+                        fontFamily = FontFamily.Default,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red
+                    )
+                }
                 Text(
-                    "Rec...",
-                    modifier = Modifier.padding(top = (10).dp, start = 20.dp).clickable {
+                    "${txt.value}",
+                    modifier = Modifier.width(90.dp).padding(top = (10).dp, start = 20.dp).clickable {
+                        //screenNav.value = Screens.STARTER
                     },
                     fontFamily = FontFamily.Default,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Red
-                )
-            }
-            Text(
-                "${txt.value}",
-                modifier = Modifier.width(90.dp).padding(top = (10).dp, start = 20.dp).clickable {
-                    //screenNav.value = Screens.STARTER
-                },
-                fontFamily = FontFamily.Default,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Blue
-            )
-            // TOP BAR:
-            Box(Modifier.clickable {
-                expandedCom.value = !expandedCom.value
-            }) {
-                Text(
-                    "Mode: ${explMode.value.name}",
-                    modifier = Modifier.padding(top = (10).dp, start = 20.dp),
-                    fontFamily = FontFamily.Default, fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold, color = Color.White
+                    color = Color.Blue
                 )
 
-                DropdownMenu(
-                    modifier = Modifier.background(Color.White),
-                    expanded = expandedCom.value,
-                    onDismissRequest = { expandedCom.value = false },
-                ) {
-                    Text(
-                        "AUTO", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
-                            .clickable(onClick = {
-                                EXPLORER_MODE.value = ExplorerMode.AUTO
-                            }), color = Color.Black
-                    )
-                    Text(
-                        "MANUAL", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
-                            .clickable(onClick = {
-                                EXPLORER_MODE.value = ExplorerMode.MANUAL
-                            }), color = Color.Black
-                    )
-                }
-            }
-            AnimatedVisibility(isShowPlay.value) {
+                // TOP BAR:
                 Box(Modifier.clickable {
-                    test_time = 0
-                    // launch
-                    if (explMode.value == ExplorerMode.AUTO) {
-                        launchPlay()
-                    } else if (explMode.value == ExplorerMode.MANUAL) {
-                        indexOfScenario.value--
-                        ctxScope.launch {
-
-                            comparatorToSolenoid(indexOfScenario.value)
-                        }
-                        scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
-                        //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
-                        //txtOfScenario.value = scenario[indexOfScenario.value].text
-                    }
-
-
+                    expandedCom.value = !expandedCom.value
                 }) {
                     Text(
-                        if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
+                        "Mode: ${explMode.value.name}",
+                        modifier = Modifier.padding(top = (10).dp, start = 20.dp),
+                        fontFamily = FontFamily.Default, fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold, color = Color.White
+                    )
+
+                    DropdownMenu(
+                        modifier = Modifier.background(Color.White),
+                        expanded = expandedCom.value,
+                        onDismissRequest = { expandedCom.value = false },
+                    ) {
+                        Text(
+                            "AUTO", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                                .clickable(onClick = {
+                                    EXPLORER_MODE.value = ExplorerMode.AUTO
+                                }), color = Color.Black
+                        )
+                        Text(
+                            "MANUAL", fontSize = 18.sp, modifier = Modifier.fillMaxSize().padding(10.dp)
+                                .clickable(onClick = {
+                                    EXPLORER_MODE.value = ExplorerMode.MANUAL
+                                }), color = Color.Black
+                        )
+                    }
+                }
+                AnimatedVisibility(isShowPlay.value) {
+                    Box(Modifier.clickable {
+                        test_time = 0
+                        // launch
+                        if (explMode.value == ExplorerMode.AUTO) {
+                            launchPlay()
+                        } else if (explMode.value == ExplorerMode.MANUAL) {
+                            indexOfScenario.value--
+                            ctxScope.launch {
+
+                                comparatorToSolenoid(indexOfScenario.value)
+                            }
+                            scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
+                            //txtOfScenario.value = scenario.getOrNull(indexOfScenario.value)?.text
+                            //txtOfScenario.value = scenario[indexOfScenario.value].text
+                        }
+
+
+                    }) {
+                        Text(
+                            if (explMode.value == ExplorerMode.AUTO) "▶" else "⏪",
+                            modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                            fontFamily = FontFamily.Default,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                Box(Modifier.clickable {
+                    //stop scenario
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if (explMode.value == ExplorerMode.AUTO) {
+                            reInitSolenoids()
+                            GLOBAL_STATE.value = StateParseBytes.WAIT
+//                            initSerialCommunication()
+//                            startReceiveFullData()
+                        } else if (explMode.value == ExplorerMode.MANUAL) {
+                            indexOfScenario.value++
+                            comparatorToSolenoid(indexOfScenario.value)
+
+                            //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { 0 }
+                            scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
+                            //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { scenario[0] }.text
+                        }
+                    }
+                }) {
+                    Text(
+                        if (explMode.value == ExplorerMode.AUTO) "⏸" else "⏩",
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                        fontFamily = FontFamily.Default,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Text("1st:${COM_PORT},${BAUD_RATE},${limitTime}ms \n2nd:${COM_PORT_2},${BAUD_RATE},${limitTime}ms ", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
+                    , fontFamily = FontFamily.Default, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
+                )
+            }
+
+            Row(Modifier) {
+                Column(Modifier.width(100.dp).fillMaxHeight()) {
+                    Box(Modifier.fillMaxSize().weight(1f).clickable {
+                        if (scaleGauges.value<= 6.1f){
+                            scaleGauges.value+= 0.25f
+                        }
+
+                    }) {
+                        Text("🔍")
+                    }
+                    Box(Modifier.fillMaxSize().weight(1f).clickable {
+                        if (scaleGauges.value> 1.1f){
+                            scaleGauges.value-= 0.25f
+                        }
+
+                    }) {
+                        Text("➖")
+                    }
+                }
+                Box(Modifier.clickable {
+                    isHidedCurrents.value = !isHidedCurrents.value
+                }) {
+                    Text(
+                        "Hide Currents⚡️",
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
+                        fontFamily = FontFamily.Default,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Box(Modifier.clickable {
+                    CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
+                        delay(10)
+                        pauseSerialComm()
+                        scenario.clear()
+                    }
+                    screenNav.value = Screens.STARTER
+                }) {
+                    Text(
+                        "Home↩️",
                         modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
                         fontFamily = FontFamily.Default,
                         fontSize = 20.sp,
@@ -347,74 +432,16 @@ fun CenterPiece(
                 }
             }
 
-            Box(Modifier.clickable {
-                //stop scenario
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (explMode.value == ExplorerMode.AUTO) {
-                        reInitSolenoids()
-                        GLOBAL_STATE.value = StateParseBytes.WAIT
-//                            initSerialCommunication()
-//                            startReceiveFullData()
-                    } else if (explMode.value == ExplorerMode.MANUAL) {
-                        indexOfScenario.value++
-                        comparatorToSolenoid(indexOfScenario.value)
-
-                        //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { 0 }
-                        scenario.getOrNull(indexOfScenario.value)?.let { txtOfScenario.value = it.text }
-                        //txtOfScenario.value = scenario.getOrElse(indexOfScenario.value) { scenario[0] }.text
-                    }
-                }
-            }) {
-                Text(
-                    if (explMode.value == ExplorerMode.AUTO) "⏸" else "⏩",
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                    fontFamily = FontFamily.Default,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-            Text("1st:${COM_PORT},${BAUD_RATE},${limitTime}ms \n2nd:${COM_PORT_2},${BAUD_RATE},${limitTime}ms ", modifier = Modifier.padding(top = (10).dp,start = 20.dp)
-                , fontFamily = FontFamily.Default, fontSize = 10.sp, fontWeight = FontWeight.Light, color = Color.DarkGray
-            )
-            Box(Modifier.clickable {
-                isHidedCurrents.value = !isHidedCurrents.value
-            }) {
-                Text(
-                    "Hide Currents⚡️",
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                    fontFamily = FontFamily.Default,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-            Box(Modifier.clickable {
-                CoroutineScope(Dispatchers.IO+CoroutineName("onCloseRequest")).launch {
-                    delay(10)
-                    pauseSerialComm()
-                    scenario.clear()
-                }
-                screenNav.value = Screens.STARTER
-            }) {
-                Text(
-                    "Home↩️",
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = (10).dp, start = 20.dp),
-                    fontFamily = FontFamily.Default,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
         }
+
+
         //Spacer(Modifier.fillMaxWidth().height(10.dp))
 
         Row(Modifier.weight(5f)) {
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxWidth(),
                 //columns = GridCells.Adaptive(150.dp),
-                columns = GridCells.Fixed(6),
+                columns = GridCells.Adaptive(200.dp*gscl.value),
                 verticalArrangement =   Arrangement.Center,
                 horizontalArrangement = Arrangement.Center,
                 // content padding
@@ -426,45 +453,47 @@ fun CenterPiece(
                 )
             ) {
                 itemsIndexed(pressures) { index , press ->
-                    Box(Modifier
-                        .aspectRatio(1f)
-                        .background(Color.Red)
-                        .onGloballyPositioned { coordinates ->
-                            // Set column height using the LayoutCoordinates
-                            if (coordinates.size.width != 0) {
-                                columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
+                    if (press.isVisible) {
+                        Box(Modifier
+                            .aspectRatio(1f).background(if (isDebugMode)Color.Red else Color.Transparent)
+                            .onGloballyPositioned { coordinates ->
+                                // Set column height using the LayoutCoordinates
+                                if (coordinates.size.width != 0) {
+                                    columnHeightDp = with(localDensity) { coordinates.size.width.toDp() }
+                                }
                             }
-                        }
-                    ) {
-                        GaugeX(
-                            DpSize(columnHeightDp, columnHeightDp),
-                            when(index) {
-                                0 -> pressure1X
-                                1 -> pressure2X
-                                2 -> pressure3X
-                                3 -> pressure4X
-                                4 -> pressure5X
-                                5 -> pressure6X
-                                6 -> pressure7X
-                                7 -> pressure8X
+                        ) {
+                            GaugeX(
+                                DpSize(columnHeightDp, columnHeightDp),
+                                when(index) {
+                                    0 -> pressure1X
+                                    1 -> pressure2X
+                                    2 -> pressure3X
+                                    3 -> pressure4X
+                                    4 -> pressure5X
+                                    5 -> pressure6X
+                                    6 -> pressure7X
+                                    7 -> pressure8X
 
-                                8 ->  pressure9X
-                                9 ->  pressure10X
-                                10 -> pressure11X
-                                11 -> pressure12X
-                                12 -> pressure13X
-                                13 -> pressure14X
-                                14 -> pressure15X
-                                15 -> pressure16X
-                                else -> 0
-                            },
-                            (pressures[index].minValue),
-                            (pressures[index].maxValue.toInt()),
-                            type = "Бар",
-                            displayName = pressures[index].displayName,
-                            comment = pressures[index].commentString
-                        )
+                                    8 ->  pressure9X
+                                    9 ->  pressure10X
+                                    10 -> pressure11X
+                                    11 -> pressure12X
+                                    12 -> pressure13X
+                                    13 -> pressure14X
+                                    14 -> pressure15X
+                                    15 -> pressure16X
+                                    else -> 0
+                                },
+                                (pressures[index].minValue),
+                                (pressures[index].maxValue.toInt()),
+                                type = "Бар",
+                                displayName = pressures[index].displayName,
+                                comment = pressures[index].commentString
+                            )
+                        }
                     }
+
                 }
             }
         }
