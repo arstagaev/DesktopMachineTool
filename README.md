@@ -3,7 +3,7 @@
 
 <table style= padding:10px">
   <tr>
-    <td>  <img src="./img/img1.png"  alt="1" width = 550px > </td>
+    <td>  <img src="./img/img1.jpg"  alt="1" width = 550px > </td>
   </tr>
 </table>
 
