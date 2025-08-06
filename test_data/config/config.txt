@@ -1,0 +1,4 @@
+comport=COM10
+baudrate=500000
+last_operator_id=РђР»РёР±РµРє
+sound_enabled=0
